@@ -100,7 +100,7 @@
     <input id="guests" type="number" min="1" max="12" formControlName="guests" autocomplete="off" />
   </div>
 
-  <button type="submit" class="search-button">Search</button>
+  <button type="submit" class="search-button">{{ submitLabel() }}</button>
 
   @if (hasError('destination', 'required')) {
     <span class="search-error">Destination is required.</span>

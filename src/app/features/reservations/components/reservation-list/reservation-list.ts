@@ -1,5 +1,6 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { toDisplayDate } from '../../../../shared/date/display-date.util';
 import { StatusBadge } from '../../../../shared/ui/status-badge/status-badge';
 import { Reservation } from '../../model/reservation.model';
 
@@ -13,8 +14,7 @@ export class ReservationList {
   readonly reservations = input<Reservation[]>([]);
 
   protected displayDate(value: string): string {
-    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    return match ? `${match[3]}.${match[2]}.${match[1]}` : value;
+    return toDisplayDate(value) || value;
   }
 
   protected displayDateTime(value: string): string {

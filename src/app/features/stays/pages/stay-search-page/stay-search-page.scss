@@ -39,13 +39,6 @@
   max-width: 1380px;
 }
 
-.stay-search-page :deep(.stay-search) {
-  backdrop-filter: blur(14px);
-  background: rgba(18, 18, 18, 0.7);
-  border-radius: 18px;
-  box-shadow: 0 24px 40px -26px rgba(0, 0, 0, 0.75);
-}
-
 .search-summary {
   display: flex;
   flex-wrap: wrap;

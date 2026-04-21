@@ -42,16 +42,12 @@ export class Navbar implements AfterViewInit {
       path: '/',
     },
     {
-      label: 'List your property',
+      label: 'New reservation',
       path: '/reservations/new',
     },
     {
       label: 'Support',
       path: '/reservations/find',
-    },
-    {
-      label: 'Trips',
-      path: '/stays/search',
     },
   ];
 

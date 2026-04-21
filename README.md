@@ -1,79 +1,194 @@
-# AcademyFrontend
+# Hotel Reservation Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.7.
+Angular frontend for a hotel reservation system. The application provides a public home page with hotel search, a stay results page, and authenticated reservation workflows connected to the backend REST API with JWT authentication.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- Public home page for registered and non-registered users
+- Hotel search form with destination, check-in date, check-out date and guest count
+- Search results page with reusable search form and available stay cards
+- Create reservation flow for `GUEST` and `ADMIN`
+- Find reservation by ID for authenticated users
+- View all reservations for `STAFF` and `ADMIN`
+- Reservation detail page with cancellation support
+- OAuth2/OIDC login flow with JWT bearer tokens
+- REST API integration for reservation operations
+- OpenAPI-generated DTO types for backend contract sync
 
-```bash
-ng serve
+## Tech Stack
+
+- Angular 21
+- TypeScript
+- Angular Router
+- Angular Reactive Forms
+- RxJS
+- angular-oauth2-oidc
+- SCSS
+- Vitest via Angular test builder
+
+## Project Structure
+
+The project follows a feature-based, DDD-lite structure:
+
+```text
+src/app/
+  core/
+    auth/        Authentication, JWT, guards
+    http/        API error handling
+    layout/      App shell and navbar
+
+  features/
+    home/        Home page and hero components
+    stays/       Stay search form, search results, local stay catalog mock
+    reservations/ Reservation API, facade, model, pages and components
+
+  shared/
+    date/        Shared date parsing and formatting utilities
+    ui/          Reusable UI components
+
+  styles/        Global application styles
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+`stays` currently uses local mock data. Reservation screens are connected to the backend REST API.
 
-## Code scaffolding
+## Main Routes
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```text
+/                     Home page
+/stays/search         Stay search results
+/reservations/new     Create reservation, roles: GUEST, ADMIN
+/reservations/find    Find/list reservations, roles: GUEST, STAFF, ADMIN
+/reservations/:id     Reservation details, roles: GUEST, STAFF, ADMIN
+/auth/unavailable     Authentication error page
+/auth/forbidden       Access denied page
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## REST API And JWT
 
-```bash
-ng generate --help
+Reservation API calls are implemented in:
+
+```text
+src/app/features/reservations/api/reservations.api.ts
 ```
 
-## Building
+The API layer supports:
 
-To build the project run:
+- `GET /reservations`
+- `POST /reservations`
+- `GET /reservations/{reservationId}`
+- `POST /reservations/{reservationId}/cancel`
 
-```bash
-ng build
+JWT tokens are attached by:
+
+```text
+src/app/core/auth/auth-token.interceptor.ts
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+The interceptor adds `Authorization: Bearer <token>` only for requests going to `environment.apiBaseUrl`.
 
-## Running unit tests
+## Environment
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Development environment:
+
+```text
+src/environments/environment.development.ts
+```
+
+Default development values:
+
+```ts
+apiBaseUrl: '/api'
+auth.issuer: 'http://localhost:8081/realms/hotel-reservation'
+auth.clientId: 'hotel-reservation-frontend'
+```
+
+The Angular dev server uses `proxy.conf.json`:
+
+```text
+/api -> http://localhost:8080
+```
+
+Expected local services:
+
+- Backend API: `http://localhost:8080`
+- Auth server / Keycloak realm: `http://localhost:8081/realms/hotel-reservation`
+- Frontend: `http://localhost:4200`
+
+## Installation
 
 ```bash
-ng test
+npm install
+```
+
+## Development Server
+
+```bash
+npm start
+```
+
+Open:
+
+```text
+http://localhost:4200
+```
+
+## Build
+
+```bash
+npm run build
+```
+
+Build output:
+
+```text
+dist/academy-frontend
+```
+
+## Tests
+
+```bash
+npm test
 ```
 
 ## API Contract Sync
 
-Frontend reservation DTO types are generated from backend OpenAPI spec.
+Frontend reservation DTO types are generated from the backend OpenAPI specification.
 
-Run:
+Generate types:
 
 ```bash
 npm run generate:api-types
 ```
 
-Verify generated file is in sync:
+Check generated types:
 
 ```bash
 npm run check:api-types
 ```
 
-Source spec:
+Source OpenAPI file:
 
-`../Academy_Backend-main/application/api-spec/src/main/resources/openapi/hotel-reservation.yaml`
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
+```text
+../Academy_Backend-main/application/api-spec/src/main/resources/openapi/hotel-reservation.yaml
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Roles
 
-## Additional Resources
+```text
+GUEST  - create reservations, find own reservations, open reservation detail
+STAFF  - find reservations and view all reservations
+ADMIN  - create reservations, find reservations and view all reservations
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Route access is enforced by:
+
+```text
+src/app/core/auth/role.guard.ts
+```
+
+## Notes
+
+- The stay catalog is currently a local mock in `StayCatalogService`.
+- Reservation workflows are connected to the REST API.
+- The project uses lazy loaded standalone Angular components.
+- Shared logic such as date parsing lives in `shared`, not inside page components.

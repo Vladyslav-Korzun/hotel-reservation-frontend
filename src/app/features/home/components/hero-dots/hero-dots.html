@@ -1,9 +1,9 @@
-<div class="home-hero-dots" aria-label="Hero backgrounds">
+<div class="hero-dots" aria-label="Hero backgrounds">
   @for (index of slideIndexes(); track index) {
     <button
       type="button"
-      class="home-hero-dots__dot"
-      [class.home-hero-dots__dot--active]="activeIndex() === index"
+      class="hero-dots__dot"
+      [class.hero-dots__dot--active]="activeIndex() === index"
       [attr.aria-label]="'Show hero image ' + (index + 1)"
       [attr.aria-pressed]="activeIndex() === index"
       (click)="slideSelected.emit(index)"

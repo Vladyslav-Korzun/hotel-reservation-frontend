@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { toDisplayDate } from '../../../../shared/date/display-date.util';
 import { StaySearchForm } from '../../components/stay-search-form/stay-search-form';
 import { StayOption, StaySearchCriteria } from '../../model/stay-search.model';
 import { StayCatalogService } from '../../services/stay-catalog.service';
@@ -13,6 +14,7 @@ import { StayCatalogService } from '../../services/stay-catalog.service';
 export class StaySearchPage {
   private readonly catalog = inject(StayCatalogService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   protected readonly criteria = signal<StaySearchCriteria | null>(null);
   protected readonly results = computed(() => {
     const criteria = this.criteria();
@@ -25,6 +27,15 @@ export class StaySearchPage {
 
   protected search(criteria: StaySearchCriteria): void {
     this.criteria.set(criteria);
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        destination: criteria.destination,
+        checkIn: criteria.checkIn,
+        checkOut: criteria.checkOut,
+        guests: criteria.guests,
+      },
+    });
   }
 
   protected reservationParams(option: StayOption): Record<string, string | number> {
@@ -47,8 +58,7 @@ export class StaySearchPage {
   }
 
   protected displayDate(value: string): string {
-    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    return match ? `${match[3]}.${match[2]}.${match[1]}` : value;
+    return toDisplayDate(value) || value;
   }
 }
 

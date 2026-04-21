@@ -2,15 +2,15 @@
   <div class="stay-search-page__backdrop" aria-hidden="true"></div>
 
   <section class="page-header stays-header">
-    <p class="eyebrow">Stay search</p>
-    <h1>Find hotels and rooms by trip settings</h1>
+    <p class="eyebrow">Available stays</p>
+    <h1>Choose a hotel for your trip</h1>
     <p class="muted stays-header__copy">
-      Search by destination, dates and guest count. Results carry real hotel and room type identifiers into reservation flow.
+      Pick a room from the results and continue to reservation with your selected dates and guest count.
     </p>
   </section>
 
   <section class="stay-search-page__form-shell">
-    <app-stay-search-form (submitted)="search($event)" />
+    <app-stay-search-form [initialCriteria]="criteria()" (submitted)="search($event)" />
   </section>
 
   @if (criteria(); as activeCriteria) {
@@ -59,8 +59,9 @@
     }
   } @else {
     <section class="empty-results">
-      <h2>Start with trip settings</h2>
-      <p class="muted">Use the search bar to load available stays in the same reservation flow.</p>
+      <h2>Start from the home page</h2>
+      <p class="muted">Enter your destination, dates and guest count to load available hotels.</p>
+      <a class="primary-button" routerLink="/">Search stays</a>
     </section>
   }
 </main>

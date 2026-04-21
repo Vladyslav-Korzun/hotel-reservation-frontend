@@ -1,4 +1,4 @@
-<section class="home-hero" aria-label="Stay search">
+<section id="stay-search" class="home-hero" aria-label="Stay search">
   <div class="home-hero__slides" aria-hidden="true">
     @for (slide of slides; track slide.imageUrl; let index = $index) {
       <div
@@ -9,16 +9,16 @@
     }
   </div>
 
-  <app-home-hero-topbar />
+  <app-hero-topbar />
 
   <div class="home-hero__content">
     <h1>Explore your place to stay</h1>
 
-    <app-home-search-form (submitted)="submitSearch($event)" />
+    <app-stay-search-form submitLabel="Checkout" (submitted)="submitSearch($event)" />
   </div>
 
-  <app-home-hero-note />
-  <app-home-hero-dots
+  <app-hero-note />
+  <app-hero-dots
     [slidesCount]="slides.length"
     [activeIndex]="activeSlideIndex()"
     (slideSelected)="selectSlide($event)"

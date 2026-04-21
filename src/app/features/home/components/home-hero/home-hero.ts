@@ -1,13 +1,13 @@
 import { Component, OnDestroy, output, signal } from '@angular/core';
+import { StaySearchForm } from '../../../stays/components/stay-search-form/stay-search-form';
 import { StaySearchCriteria } from '../../../stays/model/stay-search.model';
-import { HomeHeroDots } from '../home-hero-dots/home-hero-dots';
-import { HomeHeroNote } from '../home-hero-note/home-hero-note';
-import { HomeHeroTopbar } from '../home-hero-topbar/home-hero-topbar';
-import { HomeSearchForm } from '../home-search-form/home-search-form';
+import { HeroDots } from '../hero-dots/hero-dots';
+import { HeroNote } from '../hero-note/hero-note';
+import { HeroTopbar } from '../hero-topbar/hero-topbar';
 
 @Component({
   selector: 'app-home-hero',
-  imports: [HomeHeroTopbar, HomeSearchForm, HomeHeroNote, HomeHeroDots],
+  imports: [HeroTopbar, StaySearchForm, HeroNote, HeroDots],
   templateUrl: './home-hero.html',
   styleUrl: './home-hero.scss',
 })

@@ -1,4 +1,4 @@
-.home-hero-dots {
+.hero-dots {
   align-items: center;
   bottom: 0.9rem;
   display: flex;
@@ -10,7 +10,7 @@
   z-index: 3;
 }
 
-.home-hero-dots__dot {
+.hero-dots__dot {
   background: rgba(37, 37, 37, 0.18);
   border: 0;
   border-radius: 999px;
@@ -24,20 +24,20 @@
   width: 0.85rem;
 }
 
-.home-hero-dots__dot:hover,
-.home-hero-dots__dot:focus-visible {
+.hero-dots__dot:hover,
+.hero-dots__dot:focus-visible {
   background: rgba(37, 37, 37, 0.38);
   outline: none;
   transform: translateY(-1px);
 }
 
-.home-hero-dots__dot--active {
-  animation: home-hero-dot-pulse 420ms ease;
+.hero-dots__dot--active {
+  animation: hero-dot-pulse 420ms ease;
   background: #252525;
   width: 1.65rem;
 }
 
-@keyframes home-hero-dot-pulse {
+@keyframes hero-dot-pulse {
   0% {
     transform: scaleX(0.65);
   }

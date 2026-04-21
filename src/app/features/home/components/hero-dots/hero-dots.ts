@@ -1,11 +1,11 @@
 import { Component, input, output } from '@angular/core';
 
 @Component({
-  selector: 'app-home-hero-dots',
-  templateUrl: './home-hero-dots.html',
-  styleUrl: './home-hero-dots.scss',
+  selector: 'app-hero-dots',
+  templateUrl: './hero-dots.html',
+  styleUrl: './hero-dots.scss',
 })
-export class HomeHeroDots {
+export class HeroDots {
   readonly slidesCount = input.required<number>();
   readonly activeIndex = input.required<number>();
   readonly slideSelected = output<number>();

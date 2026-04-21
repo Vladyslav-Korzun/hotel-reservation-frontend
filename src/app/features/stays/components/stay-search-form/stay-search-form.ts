@@ -1,5 +1,14 @@
-import { Component, input, output } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { Component, effect, input, output } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  checkOutAfterCheckInValidator,
+  displayDateValidator,
+  formatDateDigits,
+  parseDisplayDate,
+  toDisplayDate,
+  todayDisplayDate,
+  tomorrowDisplayDate,
+} from '../../../../shared/date/display-date.util';
 import { StaySearchCriteria } from '../../model/stay-search.model';
 
 @Component({
@@ -10,6 +19,8 @@ import { StaySearchCriteria } from '../../model/stay-search.model';
 })
 export class StaySearchForm {
   readonly compact = input(false);
+  readonly initialCriteria = input<StaySearchCriteria | null>(null);
+  readonly submitLabel = input('Search');
   readonly submitted = output<StaySearchCriteria>();
 
   protected readonly form = new FormGroup(
@@ -33,6 +44,23 @@ export class StaySearchForm {
     },
     { validators: [checkOutAfterCheckInValidator] },
   );
+
+  private readonly syncInitialCriteria = effect(() => {
+    const criteria = this.initialCriteria();
+    if (!criteria) {
+      return;
+    }
+
+    this.form.patchValue(
+      {
+        destination: criteria.destination,
+        checkIn: toDisplayDate(criteria.checkIn) || criteria.checkIn,
+        checkOut: toDisplayDate(criteria.checkOut) || criteria.checkOut,
+        guests: criteria.guests,
+      },
+      { emitEvent: false },
+    );
+  });
 
   protected submit(): void {
     this.form.markAllAsTouched();
@@ -105,79 +133,4 @@ export class StaySearchForm {
     control.setValue(nextValue);
     control.markAsTouched();
   }
-}
-
-function checkOutAfterCheckInValidator(control: AbstractControl): ValidationErrors | null {
-  const checkIn = parseDisplayDate(String(control.get('checkIn')?.value ?? ''));
-  const checkOut = parseDisplayDate(String(control.get('checkOut')?.value ?? ''));
-
-  if (!checkIn || !checkOut) {
-    return null;
-  }
-
-  return checkOut > checkIn ? null : { checkOutAfterCheckIn: true };
-}
-
-function displayDateValidator(control: AbstractControl): ValidationErrors | null {
-  return parseDisplayDate(String(control.value ?? '')) ? null : { invalidDate: true };
-}
-
-function todayDisplayDate(): string {
-  return toDisplayDate(toIsoDate(new Date()));
-}
-
-function tomorrowDisplayDate(): string {
-  const date = new Date();
-  date.setDate(date.getDate() + 1);
-  return toDisplayDate(toIsoDate(date));
-}
-
-function toIsoDate(date: Date): string {
-  return date.toISOString().slice(0, 10);
-}
-
-function parseDisplayDate(value: string): string | null {
-  const match = value.trim().match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-  if (!match) {
-    return null;
-  }
-
-  const [, day, month, year] = match;
-  const dayNumber = Number(day);
-  const monthNumber = Number(month);
-  const yearNumber = Number(year);
-  const date = new Date(yearNumber, monthNumber - 1, dayNumber);
-
-  if (
-    Number.isNaN(date.getTime()) ||
-    date.getFullYear() !== yearNumber ||
-    date.getMonth() !== monthNumber - 1 ||
-    date.getDate() !== dayNumber
-  ) {
-    return null;
-  }
-
-  return `${year}-${month}-${day}`;
-}
-
-function toDisplayDate(value: string): string {
-  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (!match) {
-    return '';
-  }
-
-  const [, year, month, day] = match;
-  return `${day}.${month}.${year}`;
-}
-
-function formatDateDigits(value: string): string {
-  if (value.length <= 2) {
-    return value;
-  }
-
-  if (value.length <= 4) {
-    return `${value.slice(0, 2)}.${value.slice(2)}`;
-  }
-
-  return `${value.slice(0, 2)}.${value.slice(2, 4)}.${value.slice(4)}`;
 }
