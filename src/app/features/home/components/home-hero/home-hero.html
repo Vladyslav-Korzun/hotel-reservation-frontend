@@ -1,0 +1,26 @@
+<section class="home-hero" aria-label="Stay search">
+  <div class="home-hero__slides" aria-hidden="true">
+    @for (slide of slides; track slide.imageUrl; let index = $index) {
+      <div
+        class="home-hero__slide"
+        [class.home-hero__slide--active]="activeSlideIndex() === index"
+        [style.background-image]="'linear-gradient(90deg, rgba(12, 13, 12, 0.72), rgba(12, 13, 12, 0.36)), linear-gradient(180deg, rgba(12, 13, 12, 0.3), rgba(12, 13, 12, 0.68)), url(' + slide.imageUrl + ')'"
+      ></div>
+    }
+  </div>
+
+  <app-home-hero-topbar />
+
+  <div class="home-hero__content">
+    <h1>Explore your place to stay</h1>
+
+    <app-home-search-form (submitted)="submitSearch($event)" />
+  </div>
+
+  <app-home-hero-note />
+  <app-home-hero-dots
+    [slidesCount]="slides.length"
+    [activeIndex]="activeSlideIndex()"
+    (slideSelected)="selectSlide($event)"
+  />
+</section>

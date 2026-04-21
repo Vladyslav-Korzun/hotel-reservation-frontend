@@ -1,0 +1,33 @@
+<header class="site-header">
+  <nav
+    class="site-nav"
+    aria-label="Main navigation"
+    [style.--indicator-left.px]="indicatorLeft()"
+    [style.--indicator-width.px]="indicatorWidth()"
+  >
+    <span class="site-nav__indicator" aria-hidden="true"></span>
+
+    @for (item of visibleItems(); track item.label) {
+      @if (item.path) {
+        <a
+          #navLink
+          class="site-nav__link"
+          [class.site-nav__link--active]="activeLabel() === item.label"
+          [routerLink]="item.path"
+        >
+          {{ item.label }}
+        </a>
+      } @else {
+        <button
+          #navLink
+          type="button"
+          class="site-nav__link site-nav__button"
+          [class.site-nav__link--active]="activeLabel() === item.label"
+          (click)="runAction(item)"
+        >
+          {{ item.label }}
+        </button>
+      }
+    }
+  </nav>
+</header>

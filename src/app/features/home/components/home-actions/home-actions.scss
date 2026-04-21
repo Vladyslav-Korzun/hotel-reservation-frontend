@@ -1,0 +1,32 @@
+.home-actions {
+  align-items: center;
+  background: #f6f6f6;
+  color: #252525;
+  display: flex;
+  gap: 1.5rem;
+  justify-content: space-between;
+  padding: 2.2rem 4.4rem 3rem;
+}
+
+.home-actions h2 {
+  max-width: 560px;
+}
+
+.home-actions__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+@media (max-width: 920px) {
+  .home-actions {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 1.5rem 1rem 2.5rem;
+  }
+
+  .home-actions__buttons {
+    justify-content: flex-start;
+  }
+}

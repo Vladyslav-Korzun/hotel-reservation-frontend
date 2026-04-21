@@ -1,0 +1,43 @@
+<section class="summary">
+  <div class="summary-header">
+    <div>
+      <p class="eyebrow">Reservation</p>
+      <h2>Reservation overview</h2>
+      <p class="summary-subtitle">{{ reservation().reservationId }}</p>
+    </div>
+    <app-status-badge [status]="reservation().status" />
+  </div>
+
+  <dl>
+    <div>
+      <dt>Property reference</dt>
+      <dd>{{ reservation().hotelId }}</dd>
+    </div>
+    <div>
+      <dt>Room reference</dt>
+      <dd>{{ reservation().roomTypeId }}</dd>
+    </div>
+    <div>
+      <dt>Stay dates</dt>
+      <dd>{{ reservation().checkIn }} to {{ reservation().checkOut }}</dd>
+    </div>
+    <div>
+      <dt>Guests</dt>
+      <dd>{{ reservation().guestCount }}</dd>
+    </div>
+    <div>
+      <dt>Created by</dt>
+      <dd>{{ reservation().createdBy }}</dd>
+    </div>
+    <div>
+      <dt>Created at</dt>
+      <dd>{{ reservation().createdAt | date: 'medium' }}</dd>
+    </div>
+    @if (reservation().cancelledAt) {
+      <div>
+        <dt>Cancelled at</dt>
+        <dd>{{ reservation().cancelledAt | date: 'medium' }}</dd>
+      </div>
+    }
+  </dl>
+</section>

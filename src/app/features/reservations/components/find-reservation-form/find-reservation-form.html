@@ -1,0 +1,24 @@
+<form class="find-reservation-card find-reservation-form" [formGroup]="form()" (ngSubmit)="submitted.emit()">
+  <div class="form-row">
+    <label for="reservationId">Reservation ID</label>
+    <input
+      id="reservationId"
+      type="text"
+      autocomplete="off"
+      formControlName="reservationId"
+      placeholder="af884cad-7b10-4e17-ad82-551a23020ffe"
+    />
+    @if (canViewAllReservations()) {
+      <span class="field-hint">Leave this field empty to load all reservations.</span>
+    } @else {
+      <span class="field-hint">Use the reservation ID from create response or detail page.</span>
+    }
+  </div>
+
+  <div class="actions find-reservation-form__actions">
+    <button type="submit" class="primary-button">Open reservation</button>
+    @if (canViewAllReservations()) {
+      <button type="button" class="secondary-button" (click)="showAllRequested.emit()">Show all reservations</button>
+    }
+  </div>
+</form>

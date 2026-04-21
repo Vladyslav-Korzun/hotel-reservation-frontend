@@ -1,0 +1,31 @@
+.home-hero-note {
+  border-left: 2px solid #c49c74;
+  bottom: 7.5rem;
+  display: grid;
+  gap: 0.55rem;
+  max-width: 485px;
+  padding-left: 1.35rem;
+  position: absolute;
+  right: 8.5rem;
+  z-index: 2;
+}
+
+.home-hero-note p {
+  font-size: 1.58rem;
+  font-weight: 900;
+  line-height: 1.16;
+}
+
+.home-hero-note span {
+  color: rgba(246, 246, 246, 0.78);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+@media (max-width: 920px) {
+  .home-hero-note {
+    bottom: 5.8rem;
+    left: 1rem;
+    right: 1rem;
+  }
+}

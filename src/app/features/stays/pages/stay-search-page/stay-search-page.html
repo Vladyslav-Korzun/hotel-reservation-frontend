@@ -1,0 +1,66 @@
+<main class="stay-search-page">
+  <div class="stay-search-page__backdrop" aria-hidden="true"></div>
+
+  <section class="page-header stays-header">
+    <p class="eyebrow">Stay search</p>
+    <h1>Find hotels and rooms by trip settings</h1>
+    <p class="muted stays-header__copy">
+      Search by destination, dates and guest count. Results carry real hotel and room type identifiers into reservation flow.
+    </p>
+  </section>
+
+  <section class="stay-search-page__form-shell">
+    <app-stay-search-form (submitted)="search($event)" />
+  </section>
+
+  @if (criteria(); as activeCriteria) {
+    <section class="search-summary">
+      <span>{{ activeCriteria.destination }}</span>
+      <span>{{ displayDate(activeCriteria.checkIn) }} to {{ displayDate(activeCriteria.checkOut) }}</span>
+      <span>{{ activeCriteria.guests }} guests</span>
+    </section>
+
+    @if (results().length) {
+      <section class="stay-results">
+        @for (option of results(); track option.hotelId + '-' + option.roomTypeId; let index = $index) {
+          <article class="stay-card">
+            <div class="stay-visual" [style.background-image]="'url(' + stayImage(index) + ')'">
+              <span>{{ option.rating }}</span>
+            </div>
+
+            <div class="stay-copy">
+              <p class="eyebrow">{{ option.location }}</p>
+              <h2>{{ option.hotelName }}</h2>
+              <p class="room-name">{{ option.roomName }}</p>
+              <p class="muted stay-copy__description">{{ option.description }}</p>
+
+              <div class="tag-row">
+                @for (tag of option.tags; track tag) {
+                  <span>{{ tag }}</span>
+                }
+              </div>
+            </div>
+
+            <div class="stay-action">
+              <strong>€{{ option.nightlyPrice }}</strong>
+              <small>per night</small>
+              <a class="primary-button" routerLink="/reservations/new" [queryParams]="reservationParams(option)">
+                Reserve
+              </a>
+            </div>
+          </article>
+        }
+      </section>
+    } @else {
+      <section class="empty-results">
+        <h2>No matching rooms</h2>
+        <p class="muted">Try another destination or reduce guest count.</p>
+      </section>
+    }
+  } @else {
+    <section class="empty-results">
+      <h2>Start with trip settings</h2>
+      <p class="muted">Use the search bar to load available stays in the same reservation flow.</p>
+    </section>
+  }
+</main>

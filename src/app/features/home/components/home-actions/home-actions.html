@@ -1,0 +1,17 @@
+<section class="home-actions" aria-label="Reservation actions">
+  <div>
+    <p class="eyebrow">Hotel Reservation</p>
+    <h2>Start with the stay, continue when you are ready.</h2>
+  </div>
+
+  <div class="home-actions__buttons">
+    <a class="primary-button" routerLink="/stays/search">Search stays</a>
+
+    @if (auth.isAuthenticated()) {
+      <a class="secondary-button" routerLink="/reservations/new">Create reservation</a>
+      <a class="secondary-button" routerLink="/reservations/find">Find reservation</a>
+    } @else {
+      <button type="button" class="secondary-button" (click)="login()">Sign in to reserve</button>
+    }
+  </div>
+</section>

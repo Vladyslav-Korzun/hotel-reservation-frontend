@@ -1,0 +1,48 @@
+<main class="create-reservation-page">
+  <div class="create-reservation-page__backdrop" aria-hidden="true"></div>
+
+  <section class="reservation-hero">
+    <p class="eyebrow">Reservation</p>
+    <h1>Confirm your stay</h1>
+    <p class="muted reservation-hero__copy">
+      Review your selected property, dates and guests before creating the reservation.
+    </p>
+  </section>
+
+  <section class="reservation-layout">
+    <div class="reservation-layout__main">
+      @if (problem(); as problemDetail) {
+        <app-error-message [problem]="problemDetail" />
+      }
+
+      <app-reservation-form
+        [displayDetails]="displayDetails"
+        [initialValue]="initialRequest"
+        [submitting]="saving()"
+        (submitted)="createReservation($event)"
+      />
+    </div>
+
+    <aside class="reservation-aside">
+      <section class="reservation-card">
+        <p class="eyebrow">What happens next</p>
+        <h2>After confirmation</h2>
+        <ul class="reservation-list">
+          <li>Your booking will be created in pending status.</li>
+          <li>You will be redirected straight to the reservation detail.</li>
+          <li>The selected room and dates stay attached to this reservation.</li>
+        </ul>
+      </section>
+
+      <section class="reservation-card">
+        <p class="eyebrow">Reminder</p>
+        <h2>Before you submit</h2>
+        <ul class="reservation-list">
+          <li>Check-out must be later than check-in.</li>
+          <li>Guest count must be at least 1.</li>
+          <li>Property and room are taken from the selected stay card.</li>
+        </ul>
+      </section>
+    </aside>
+  </section>
+</main>

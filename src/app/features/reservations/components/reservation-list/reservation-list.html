@@ -1,0 +1,54 @@
+@if (reservations().length) {
+  <section class="reservation-list">
+    <div class="reservation-list__summary">
+      <span>{{ reservations().length }} reservations</span>
+    </div>
+
+    <div class="reservation-list__grid">
+      @for (reservation of reservations(); track reservation.reservationId) {
+        <article class="reservation-card">
+          <div class="reservation-card__header">
+            <div>
+              <p class="eyebrow">Reservation</p>
+              <h2>{{ reservation.reservationId }}</h2>
+            </div>
+            <app-status-badge [status]="reservation.status" />
+          </div>
+
+          <dl class="reservation-card__meta">
+            <div>
+              <dt>Stay</dt>
+              <dd>{{ displayDate(reservation.checkIn) }} to {{ displayDate(reservation.checkOut) }}</dd>
+            </div>
+            <div>
+              <dt>Guests</dt>
+              <dd>{{ reservation.guestCount }}</dd>
+            </div>
+            <div>
+              <dt>Created by</dt>
+              <dd>{{ reservation.createdBy }}</dd>
+            </div>
+            <div>
+              <dt>Created at</dt>
+              <dd>{{ displayDateTime(reservation.createdAt) }}</dd>
+            </div>
+          </dl>
+
+          <div class="reservation-card__footer">
+            <div class="reservation-card__references">
+              <span>Property #{{ reservation.hotelId }}</span>
+              <span>Room #{{ reservation.roomTypeId }}</span>
+            </div>
+
+            <a class="primary-button" [routerLink]="['/reservations', reservation.reservationId]">Open</a>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+} @else {
+  <section class="reservation-list__empty">
+    <h2>No reservations found</h2>
+    <p>No bookings match the current reservation view.</p>
+  </section>
+}

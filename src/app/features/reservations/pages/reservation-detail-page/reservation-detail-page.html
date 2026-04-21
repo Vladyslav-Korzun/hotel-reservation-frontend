@@ -1,0 +1,46 @@
+<main class="reservation-detail-page">
+  <div class="reservation-detail-page__backdrop" aria-hidden="true"></div>
+
+  <section class="reservation-detail-hero">
+    <p class="eyebrow">Reservation</p>
+    <h1>Your booking details</h1>
+    @if (reservation(); as currentReservation) {
+      <p class="reservation-detail-hero__id">{{ currentReservation.reservationId }}</p>
+    }
+  </section>
+
+  @if (problem(); as problemDetail) {
+    <div class="reservation-detail-page__content">
+      <app-error-message [problem]="problemDetail" />
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="reservation-detail-page__content">
+      <app-loading-state label="Loading reservation..." />
+    </div>
+  } @else if (reservation(); as currentReservation) {
+    <section class="reservation-detail-layout">
+      <app-reservation-summary [reservation]="currentReservation" />
+
+      <aside class="reservation-detail-card reservation-detail-actions">
+        <p class="eyebrow">Actions</p>
+        <h2>Manage reservation</h2>
+        <p class="reservation-detail-actions__copy">Only pending reservations can be cancelled.</p>
+
+        <button
+          type="button"
+          class="danger-button"
+          [disabled]="!canCancel(currentReservation)"
+          (click)="cancelReservation()"
+        >
+          @if (cancelling()) {
+            Cancelling...
+          } @else {
+            Cancel reservation
+          }
+        </button>
+      </aside>
+    </section>
+  }
+</main>

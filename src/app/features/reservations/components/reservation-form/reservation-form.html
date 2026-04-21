@@ -1,0 +1,70 @@
+<form class="reservation-form" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="reservation-form__summary">
+    <div class="summary-tile">
+      <span>Property</span>
+      <strong>{{ propertyLabel() }}</strong>
+      @if (locationLabel()) {
+        <small>{{ locationLabel() }}</small>
+      }
+    </div>
+
+    <div class="summary-tile">
+      <span>Room</span>
+      <strong>{{ roomLabel() }}</strong>
+      <small>Selected from your stay results</small>
+    </div>
+  </div>
+
+  <input type="hidden" formControlName="hotelId" />
+  <input type="hidden" formControlName="roomTypeId" />
+
+  @if (hasError('hotelId', 'required') || hasError('hotelId', 'min')) {
+    <span class="field-error reservation-form__meta-error">Please start from a stay card so the property is selected.</span>
+  }
+
+  @if (hasError('roomTypeId', 'required') || hasError('roomTypeId', 'min')) {
+    <span class="field-error reservation-form__meta-error">Please choose a room from stay results before reserving.</span>
+  }
+
+  <div class="reservation-form__grid">
+    <div class="form-row">
+    <label for="checkIn">Check-in</label>
+    <input id="checkIn" type="date" formControlName="checkIn" />
+    @if (hasError('checkIn', 'required')) {
+      <span class="field-error">Check-in date is required.</span>
+    }
+  </div>
+
+  <div class="form-row">
+    <label for="checkOut">Check-out</label>
+    <input id="checkOut" type="date" formControlName="checkOut" />
+    @if (hasError('checkOut', 'required')) {
+      <span class="field-error">Check-out date is required.</span>
+    }
+    @if (hasDateRangeError()) {
+      <span class="field-error">Check-out must be after check-in.</span>
+    }
+  </div>
+
+  <div class="form-row">
+    <label for="guestCount">Guests</label>
+    <input id="guestCount" type="number" min="1" formControlName="guestCount" autocomplete="off" />
+    @if (hasError('guestCount', 'required')) {
+      <span class="field-error">Guest count is required.</span>
+    }
+    @if (hasError('guestCount', 'min')) {
+      <span class="field-error">Guest count must be greater than zero.</span>
+    }
+  </div>
+  </div>
+
+  <div class="actions reservation-form__actions">
+    <button type="submit" class="primary-button" [disabled]="submitting()">
+      @if (submitting()) {
+        Creating...
+      } @else {
+        Confirm reservation
+      }
+    </button>
+  </div>
+</form>

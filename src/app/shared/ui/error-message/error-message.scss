@@ -1,0 +1,19 @@
+.error-message {
+  background: linear-gradient(180deg, #fff8f7, #fff1f0);
+  border: 1px solid #f1b3ae;
+  border-radius: 14px;
+  color: #7a1f16;
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  padding: 0.95rem 1rem;
+  box-shadow: 0 14px 20px -22px rgba(122, 31, 22, 0.95);
+}
+
+.error-message strong {
+  font-size: 0.96rem;
+}
+
+.error-message p {
+  font-size: 0.9rem;
+}

@@ -1,0 +1,6 @@
+<section class="error-message" role="alert">
+  <strong>{{ problem().title || 'Request failed' }}</strong>
+  @if (problem().detail) {
+    <p>{{ problem().detail }}</p>
+  }
+</section>

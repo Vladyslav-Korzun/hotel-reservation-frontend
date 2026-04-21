@@ -1,0 +1,111 @@
+<form class="stay-search" [class.compact]="compact()" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="search-field search-field--destination">
+    <button type="submit" class="search-trigger" aria-label="Submit search">
+      <span class="field-icon field-icon--search" aria-hidden="true"></span>
+    </button>
+    <label for="destination">Destination</label>
+    <input id="destination" type="text" formControlName="destination" autocomplete="off" placeholder="Stavanger, Norway" />
+  </div>
+
+  <div class="date-range-group">
+    <div class="date-range">
+      <div class="date-field-group">
+        <div class="search-field search-field--check-in">
+          <button
+            type="button"
+            class="calendar-trigger"
+            aria-label="Open check-in date picker"
+            (click)="openPicker(checkInPicker)"
+          >
+            <span class="field-icon field-icon--calendar" aria-hidden="true"></span>
+          </button>
+          <input
+            id="checkIn"
+            class="date-text-input"
+            type="text"
+            formControlName="checkIn"
+            inputmode="numeric"
+            placeholder="DD.MM.YYYY"
+            autocomplete="off"
+            (input)="formatDateInput('checkIn')"
+            (blur)="normalizeDate('checkIn')"
+          />
+          <input
+            #checkInPicker
+            class="date-picker-proxy"
+            type="date"
+            [value]="nativeDateValue(form.controls.checkIn.value)"
+            (change)="applyPickerDate('checkIn', checkInPicker.value)"
+            tabindex="-1"
+            aria-hidden="true"
+          />
+        </div>
+
+        @if (hasError('checkIn', 'invalidDate')) {
+          <span class="date-field-error">Use format DD.MM.YYYY.</span>
+        }
+      </div>
+
+      <div class="date-field-group">
+        <div class="search-field search-field--check-out">
+          <button
+            type="button"
+            class="calendar-trigger"
+            aria-label="Open check-out date picker"
+            (click)="openPicker(checkOutPicker)"
+          >
+            <span class="field-icon field-icon--calendar" aria-hidden="true"></span>
+          </button>
+          <input
+            id="checkOut"
+            class="date-text-input"
+            type="text"
+            formControlName="checkOut"
+            inputmode="numeric"
+            placeholder="DD.MM.YYYY"
+            autocomplete="off"
+            (input)="formatDateInput('checkOut')"
+            (blur)="normalizeDate('checkOut')"
+          />
+          <input
+            #checkOutPicker
+            class="date-picker-proxy"
+            type="date"
+            [value]="nativeDateValue(form.controls.checkOut.value)"
+            (change)="applyPickerDate('checkOut', checkOutPicker.value)"
+            tabindex="-1"
+            aria-hidden="true"
+          />
+        </div>
+
+        @if (hasError('checkOut', 'invalidDate')) {
+          <span class="date-field-error">Use format DD.MM.YYYY.</span>
+        }
+      </div>
+    </div>
+
+    @if (hasDateRangeError()) {
+      <span class="date-range-error">Check-out must be after check-in.</span>
+    }
+  </div>
+
+  <div class="search-field search-field--guests">
+    <span class="field-icon field-icon--guests" aria-hidden="true"></span>
+    <label for="guests">Guests</label>
+    <div class="guest-stepper" aria-label="Guests count">
+      <button type="button" (click)="changeGuests(-1)" aria-label="Remove guest">-</button>
+      <span>{{ form.controls.guests.value }}</span>
+      <button type="button" (click)="changeGuests(1)" aria-label="Add guest">+</button>
+    </div>
+    <input id="guests" type="number" min="1" max="12" formControlName="guests" autocomplete="off" />
+  </div>
+
+  <button type="submit" class="search-button">Search</button>
+
+  @if (hasError('destination', 'required')) {
+    <span class="search-error">Destination is required.</span>
+  }
+  @if (hasError('guests', 'min') || hasError('guests', 'max')) {
+    <span class="search-error">Guests must be between 1 and 12.</span>
+  }
+</form>

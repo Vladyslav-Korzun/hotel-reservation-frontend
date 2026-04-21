@@ -1,0 +1,48 @@
+.home-hero-dots {
+  align-items: center;
+  bottom: 0.9rem;
+  display: flex;
+  gap: 0.38rem;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  right: 0;
+  z-index: 3;
+}
+
+.home-hero-dots__dot {
+  background: rgba(37, 37, 37, 0.18);
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  height: 0.38rem;
+  padding: 0;
+  transition:
+    background-color 180ms ease,
+    transform 180ms ease,
+    width 220ms ease;
+  width: 0.85rem;
+}
+
+.home-hero-dots__dot:hover,
+.home-hero-dots__dot:focus-visible {
+  background: rgba(37, 37, 37, 0.38);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.home-hero-dots__dot--active {
+  animation: home-hero-dot-pulse 420ms ease;
+  background: #252525;
+  width: 1.65rem;
+}
+
+@keyframes home-hero-dot-pulse {
+  0% {
+    transform: scaleX(0.65);
+  }
+
+  100% {
+    transform: scaleX(1);
+  }
+}

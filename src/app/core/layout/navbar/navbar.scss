@@ -1,0 +1,95 @@
+.site-header {
+  display: flex;
+  justify-content: center;
+  left: 0;
+  pointer-events: none;
+  position: fixed;
+  top: 20px;
+  width: 100%;
+  z-index: 20;
+}
+
+.site-nav {
+  align-items: center;
+  backdrop-filter: blur(20px);
+  background: rgba(246, 246, 246, 0.85);
+  border-radius: 50px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 0.75rem;
+  height: auto;
+  justify-content: center;
+  padding: 14px 40px;
+  pointer-events: auto;
+  position: relative;
+  width: fit-content;
+}
+
+.site-nav::before {
+  display: none;
+}
+
+.site-nav__indicator {
+  background: #252525;
+  border-radius: 50px;
+  height: calc(100% - 28px);
+  left: var(--indicator-left, 0);
+  position: absolute;
+  top: 14px;
+  transition:
+    left 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55),
+    width 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  width: var(--indicator-width, 0);
+  z-index: 0;
+}
+
+.site-nav__link {
+  background: transparent;
+  border: 0;
+  border-radius: 50px;
+  color: #252525;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1;
+  padding: 0.78rem 1.25rem;
+  position: relative;
+  text-decoration: none;
+  transition:
+    color 520ms ease;
+  white-space: nowrap;
+  z-index: 1;
+}
+
+.site-nav__button {
+  appearance: none;
+}
+
+.site-nav__link:hover {
+  color: #6b4520;
+}
+
+.site-nav__link--active {
+  color: #f6f6f6;
+}
+
+.site-nav__link--active:hover {
+  color: #f6f6f6;
+}
+
+@media (max-width: 860px) {
+  .site-header {
+    position: static;
+    top: auto;
+  }
+
+  .site-nav {
+    border-radius: 24px;
+    gap: 1rem;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 12px 16px;
+    width: calc(100% - 2rem);
+  }
+}
