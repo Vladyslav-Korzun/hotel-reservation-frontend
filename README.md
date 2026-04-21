@@ -1,19 +1,38 @@
 # Hotel Reservation Frontend
 
-Angular frontend for a hotel reservation system. The application provides a public home page with hotel search, a stay results page, and authenticated reservation workflows connected to the backend REST API with JWT authentication.
+Frontend part of the Hotel Reservation project. The application is built with Angular and demonstrates a hotel reservation flow with authentication, role-based access, REST API integration and a DDD-lite project structure.
 
-## Features
+## What Is Implemented
 
-- Public home page for registered and non-registered users
-- Hotel search form with destination, check-in date, check-out date and guest count
-- Search results page with reusable search form and available stay cards
-- Create reservation flow for `GUEST` and `ADMIN`
-- Find reservation by ID for authenticated users
-- View all reservations for `STAFF` and `ADMIN`
-- Reservation detail page with cancellation support
-- OAuth2/OIDC login flow with JWT bearer tokens
-- REST API integration for reservation operations
-- OpenAPI-generated DTO types for backend contract sync
+- Public home page for both anonymous and authenticated users.
+- Hotel/stay search form with:
+  - destination,
+  - check-in date,
+  - check-out date,
+  - guest count.
+- Search results page with available hotel/room options.
+- Reusable search form component used on the home page and on the search results page.
+- Create reservation page connected to the backend REST API.
+- Find reservation by ID.
+- Show all reservations for `STAFF` and `ADMIN`.
+- Reservation detail page.
+- Cancel reservation action.
+- OAuth2/OIDC login through Keycloak.
+- JWT token is automatically attached to backend API requests.
+- Role-based route guards.
+- OpenAPI-generated DTO types for API contract synchronization.
+
+## What Is Not Fully Implemented Yet
+
+The stay/hotel catalog is currently a frontend mock:
+
+```text
+src/app/features/stays/services/stay-catalog.service.ts
+```
+
+Reason: the current backend implementation mainly covers the reservation vertical slice. Hotel search and room availability can later be moved from the local mock to real backend endpoints without changing the whole frontend structure, because it is already isolated inside the `stays` feature.
+
+Reservation operations are connected to the real backend REST API.
 
 ## Tech Stack
 
@@ -22,107 +41,93 @@ Angular frontend for a hotel reservation system. The application provides a publ
 - Angular Router
 - Angular Reactive Forms
 - RxJS
-- angular-oauth2-oidc
 - SCSS
-- Vitest via Angular test builder
+- `angular-oauth2-oidc`
+- JWT bearer authentication
+- OpenAPI-generated API types
 
 ## Project Structure
 
-The project follows a feature-based, DDD-lite structure:
+The frontend follows a feature-based DDD-lite structure:
 
 ```text
 src/app/
   core/
-    auth/        Authentication, JWT, guards
+    auth/        Authentication, JWT interceptor, route guards
     http/        API error handling
     layout/      App shell and navbar
 
   features/
     home/        Home page and hero components
-    stays/       Stay search form, search results, local stay catalog mock
-    reservations/ Reservation API, facade, model, pages and components
+    stays/       Stay search, results page and local stay catalog mock
+    reservations/ Reservation API, facade, models, pages and components
 
   shared/
-    date/        Shared date parsing and formatting utilities
+    date/        Shared date parsing/formatting utilities
     ui/          Reusable UI components
 
   styles/        Global application styles
 ```
 
-`stays` currently uses local mock data. Reservation screens are connected to the backend REST API.
+Important architectural decisions:
 
-## Main Routes
+- `core` contains application infrastructure.
+- `features` contain business areas.
+- `shared` contains reusable code without business ownership.
+- Reservation components do not call `HttpClient` directly; they use `ReservationsFacade`.
+- API calls are isolated in `ReservationsApi`.
 
-```text
-/                     Home page
-/stays/search         Stay search results
-/reservations/new     Create reservation, roles: GUEST, ADMIN
-/reservations/find    Find/list reservations, roles: GUEST, STAFF, ADMIN
-/reservations/:id     Reservation details, roles: GUEST, STAFF, ADMIN
-/auth/unavailable     Authentication error page
-/auth/forbidden       Access denied page
-```
+## How To Run The Project
 
-## REST API And JWT
-
-Reservation API calls are implemented in:
-
-```text
-src/app/features/reservations/api/reservations.api.ts
-```
-
-The API layer supports:
-
-- `GET /reservations`
-- `POST /reservations`
-- `GET /reservations/{reservationId}`
-- `POST /reservations/{reservationId}/cancel`
-
-JWT tokens are attached by:
-
-```text
-src/app/core/auth/auth-token.interceptor.ts
-```
-
-The interceptor adds `Authorization: Bearer <token>` only for requests going to `environment.apiBaseUrl`.
-
-## Environment
-
-Development environment:
-
-```text
-src/environments/environment.development.ts
-```
-
-Default development values:
-
-```ts
-apiBaseUrl: '/api'
-auth.issuer: 'http://localhost:8081/realms/hotel-reservation'
-auth.clientId: 'hotel-reservation-frontend'
-```
-
-The Angular dev server uses `proxy.conf.json`:
-
-```text
-/api -> http://localhost:8080
-```
+The frontend expects the backend and Keycloak to be running locally.
 
 Expected local services:
 
-- Backend API: `http://localhost:8080`
-- Auth server / Keycloak realm: `http://localhost:8081/realms/hotel-reservation`
-- Frontend: `http://localhost:4200`
+```text
+Frontend:  http://localhost:4200
+Backend:   http://localhost:8080
+Keycloak:  http://localhost:8081
+```
 
-## Installation
+### 1. Start Backend Infrastructure
 
-```bash
+From the backend project folder:
+
+```powershell
+cd ../Academy_Backend-main
+docker compose up -d
+```
+
+This starts:
+
+- PostgreSQL on `localhost:5432`
+- Keycloak on `localhost:8081`
+
+### 2. Start Backend Application
+
+From the backend project folder:
+
+```powershell
+mvn -pl application/springboot -am spring-boot:run
+```
+
+Backend Swagger UI:
+
+```text
+http://localhost:8080/swagger-ui/index.html
+```
+
+### 3. Install Frontend Dependencies
+
+From this frontend project folder:
+
+```powershell
 npm install
 ```
 
-## Development Server
+### 4. Start Frontend
 
-```bash
+```powershell
 npm start
 ```
 
@@ -132,9 +137,136 @@ Open:
 http://localhost:4200
 ```
 
+The frontend uses `proxy.conf.json`:
+
+```text
+/api -> http://localhost:8080
+```
+
+## Keycloak Setup For Testing
+
+The frontend development environment expects:
+
+```text
+Realm:     hotel-reservation
+Issuer:    http://localhost:8081/realms/hotel-reservation
+Client ID: hotel-reservation-frontend
+```
+
+Recommended frontend client settings in Keycloak:
+
+```text
+Client type: OpenID Connect
+Client authentication: Off
+Valid redirect URIs: http://localhost:4200/*
+Web origins: http://localhost:4200
+Standard flow: On
+```
+
+Required realm roles:
+
+```text
+GUEST
+STAFF
+ADMIN
+```
+
+## Test Users
+
+Create these users in Keycloak if they are not already present:
+
+| Username | Password   | Role  | Purpose |
+|----------|------------|-------|---------|
+| `guest1` | `guest123` | GUEST | Create reservations and open own reservation details |
+| `staff1` | `staff123` | STAFF | Search reservations and view all reservations |
+| `admin2` | `admin123` | ADMIN | Create reservations and view all reservations |
+
+Keycloak admin console:
+
+```text
+http://localhost:8081
+```
+
+Default Keycloak admin from `docker-compose.yml`:
+
+| Username | Password |
+|----------|----------|
+| `admin`  | `admin`  |
+
+Note: the backend setup documentation contains `guest1 / guest123` as an example user. `staff1 / staff123` and `admin2 / admin123` should be present in Keycloak for full role testing.
+
+## Role Permissions In The Frontend
+
+```text
+GUEST
+- can create a reservation
+- can find/open reservation details
+
+STAFF
+- can find reservations
+- can load all reservations
+- cannot create a new reservation from the protected route
+
+ADMIN
+- can create a reservation
+- can find reservations
+- can load all reservations
+```
+
+Route protection:
+
+```text
+/reservations/new   -> GUEST, ADMIN
+/reservations/find  -> GUEST, STAFF, ADMIN
+/reservations/:id   -> GUEST, STAFF, ADMIN
+```
+
+## Main Application Flow
+
+1. Open the home page.
+2. Enter destination, dates and guest count.
+3. Click search.
+4. The app navigates to `/stays/search` and shows available stay options.
+5. Select a room and click `Reserve`.
+6. Login as `guest1`.
+7. Create the reservation.
+8. Open reservation details or search by reservation ID.
+9. Login as `staff1` or `admin2` to load all reservations.
+
+## REST API Integration
+
+Reservation API calls are implemented in:
+
+```text
+src/app/features/reservations/api/reservations.api.ts
+```
+
+Used endpoints:
+
+```text
+GET  /reservations
+POST /reservations
+GET  /reservations/{reservationId}
+POST /reservations/{reservationId}/cancel
+```
+
+JWT token attachment is implemented in:
+
+```text
+src/app/core/auth/auth-token.interceptor.ts
+```
+
+The interceptor adds:
+
+```text
+Authorization: Bearer <access_token>
+```
+
+only for API requests going to `environment.apiBaseUrl`.
+
 ## Build
 
-```bash
+```powershell
 npm run build
 ```
 
@@ -146,7 +278,7 @@ dist/academy-frontend
 
 ## Tests
 
-```bash
+```powershell
 npm test
 ```
 
@@ -156,13 +288,13 @@ Frontend reservation DTO types are generated from the backend OpenAPI specificat
 
 Generate types:
 
-```bash
+```powershell
 npm run generate:api-types
 ```
 
 Check generated types:
 
-```bash
+```powershell
 npm run check:api-types
 ```
 
@@ -172,23 +304,32 @@ Source OpenAPI file:
 ../Academy_Backend-main/application/api-spec/src/main/resources/openapi/hotel-reservation.yaml
 ```
 
-## Roles
+## Environment Files
+
+Development configuration:
 
 ```text
-GUEST  - create reservations, find own reservations, open reservation detail
-STAFF  - find reservations and view all reservations
-ADMIN  - create reservations, find reservations and view all reservations
+src/environments/environment.development.ts
 ```
 
-Route access is enforced by:
+Production configuration:
 
 ```text
-src/app/core/auth/role.guard.ts
+src/environments/environment.ts
 ```
 
-## Notes
+Development values:
 
-- The stay catalog is currently a local mock in `StayCatalogService`.
-- Reservation workflows are connected to the REST API.
-- The project uses lazy loaded standalone Angular components.
-- Shared logic such as date parsing lives in `shared`, not inside page components.
+```ts
+apiBaseUrl: '/api'
+auth.issuer: 'http://localhost:8081/realms/hotel-reservation'
+auth.clientId: 'hotel-reservation-frontend'
+```
+
+## Notes For Evaluation
+
+- The required REST API + JWT integration is implemented on the reservation screens.
+- Role-based access is implemented in the frontend with route guards.
+- The application is intentionally structured by features instead of putting all pages and components into one folder.
+- The hotel search uses mock data because the backend reservation slice is the implemented API part.
+- The mock is isolated in `StayCatalogService`, so replacing it with a real hotels API later will not require rewriting the whole app.
