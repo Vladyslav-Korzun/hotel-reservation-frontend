@@ -43,6 +43,6 @@ deploy:
     - export IMAGE_TAG="${CI_COMMIT_SHORT_SHA}"
   script:
     - kubectl -n app set image deployment/fsa-fe fsa-fe="$ACR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG"
-    - kubectl -n app rollout status deployment/fsa-fe --timeout=180s
+    - kubectl -n app rollout status deployment/fsa-fe --timeout=600s
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "master"'
