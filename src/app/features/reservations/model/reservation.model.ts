@@ -1,11 +1,11 @@
+import { AccommodationParty } from '../../../shared/accommodation/accommodation-party.model';
 import { ReservationStatus } from './reservation-status';
 
-export interface CreateReservationRequest {
+export interface CreateReservationRequest extends AccommodationParty {
   hotelId: number;
   roomTypeId: number;
   checkIn: string;
   checkOut: string;
-  guestCount: number;
 }
 
 export interface ReservationDisplayDetails {
@@ -14,13 +14,13 @@ export interface ReservationDisplayDetails {
   location: string;
 }
 
-export interface Reservation {
+export interface Reservation extends AccommodationParty {
   reservationId: string;
   hotelId: number;
+  roomId: number | null;
   roomTypeId: number;
   checkIn: string;
   checkOut: string;
-  guestCount: number;
   status: ReservationStatus;
   createdAt: string;
   cancelledAt: string | null;

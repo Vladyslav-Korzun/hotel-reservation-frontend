@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
+import { readAccommodationPartyFromQuery } from '../../../../shared/accommodation/accommodation-party-query.util';
 import { toProblemDetail } from '../../../../core/http/api-error.util';
 import { ProblemDetail } from '../../../../core/http/problem-detail.model';
 import { ErrorMessage } from '../../../../shared/ui/error-message/error-message';
@@ -46,9 +47,9 @@ function readInitialRequest(route: ActivatedRoute): Partial<CreateReservationReq
   const params = route.snapshot.queryParamMap;
   const hotelId = Number(params.get('hotelId'));
   const roomTypeId = Number(params.get('roomTypeId'));
-  const guestCount = Number(params.get('guestCount'));
   const checkIn = params.get('checkIn') ?? '';
   const checkOut = params.get('checkOut') ?? '';
+  const party = readAccommodationPartyFromQuery(params, 1);
 
   const request: Partial<CreateReservationRequest> = {};
 
@@ -58,9 +59,9 @@ function readInitialRequest(route: ActivatedRoute): Partial<CreateReservationReq
   if (Number.isFinite(roomTypeId) && roomTypeId > 0) {
     request.roomTypeId = roomTypeId;
   }
-  if (Number.isFinite(guestCount) && guestCount > 0) {
-    request.guestCount = guestCount;
-  }
+  request.adults = party.adults;
+  request.childrenAges = party.childrenAges;
+  request.pets = party.pets;
   if (checkIn) {
     request.checkIn = checkIn;
   }

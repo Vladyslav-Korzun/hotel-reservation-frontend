@@ -1,0 +1,84 @@
+<main class="stay-detail-page">
+  <div class="stay-detail-page__backdrop" aria-hidden="true"></div>
+
+  <section class="stay-detail-hero">
+    <div class="stay-detail-hero__copy">
+      <p class="eyebrow">Room details</p>
+      <h1>{{ stay.roomName }}</h1>
+      <p class="stay-detail-hero__hotel">{{ stay.hotelName }}</p>
+      <p class="muted stay-detail-hero__location">{{ stay.location || 'All cities' }}</p>
+    </div>
+
+    <div class="stay-detail-hero__visual" [style.background-image]="'url(' + stayImage() + ')'">
+      <span>{{ stay.availableCount }} left</span>
+    </div>
+  </section>
+
+  <section class="stay-detail-layout">
+    <div class="stay-detail-main">
+      <article class="stay-detail-card">
+        <p class="eyebrow">Overview</p>
+        <h2>What this room offers</h2>
+        <p class="stay-detail-copy">
+          A clean booking option for guests who want a clear room choice before moving into the reservation flow.
+          Review the live price, travel dates and current availability before you continue.
+        </p>
+
+        <div class="stay-detail-chips">
+          @for (item of highlights(); track item) {
+            <span>{{ item }}</span>
+          }
+        </div>
+      </article>
+
+      <article class="stay-detail-card">
+        <p class="eyebrow">Stay setup</p>
+        <h2>Your selected trip</h2>
+        <ul class="stay-detail-list">
+          @for (item of travelNotes(); track item) {
+            <li>{{ item }}</li>
+          }
+        </ul>
+      </article>
+    </div>
+
+    <aside class="stay-detail-aside">
+      <section class="stay-booking-card">
+        <p class="eyebrow">Booking</p>
+        <h2>Reserve this room</h2>
+        <div class="stay-booking-card__price">
+          <strong>{{ stay.nightlyPrice | currency: stay.currency : 'symbol' : '1.2-2' }}</strong>
+          <small>per night</small>
+        </div>
+
+        <dl class="stay-booking-card__meta">
+          <div>
+            <dt>Party</dt>
+            <dd>{{ partySummary() }}</dd>
+          </div>
+          <div>
+            <dt>Room policy</dt>
+            <dd>{{ stay.maxAdults }}A / {{ stay.maxChildren }}C / {{ stay.maxInfants }}I</dd>
+          </div>
+          <div>
+            <dt>Pets</dt>
+            <dd>{{ stay.petsAllowed ? 'Up to ' + stay.maxPets : 'Not allowed' }}</dd>
+          </div>
+          <div>
+            <dt>Check-in</dt>
+            <dd>{{ displayDate(stay.checkIn) }}</dd>
+          </div>
+          <div>
+            <dt>Check-out</dt>
+            <dd>{{ displayDate(stay.checkOut) }}</dd>
+          </div>
+        </dl>
+
+        <div class="stay-booking-card__actions">
+          <a class="primary-button" routerLink="/reservations/new" [queryParams]="reserveQueryParams">Reserve now</a>
+          <a class="secondary-button" routerLink="/stays/search" [queryParams]="searchQueryParams">Back to results</a>
+        </div>
+      </section>
+    </aside>
+  </section>
+</main>

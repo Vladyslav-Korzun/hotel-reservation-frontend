@@ -4,18 +4,24 @@
       <span class="field-icon field-icon--search" aria-hidden="true"></span>
     </button>
     <label for="destination">Destination</label>
-    <input id="destination" type="text" formControlName="destination" autocomplete="off" placeholder="Stavanger, Norway" />
+    <input id="destination" type="text" formControlName="destination" autocomplete="off" placeholder="Any city" />
+  </div>
+
+  <div class="search-field search-field--hotel-id">
+    <span class="field-icon field-icon--hotel-id" aria-hidden="true"></span>
+    <label for="hotelId">Hotel ID</label>
+    <input id="hotelId" type="number" min="1" formControlName="hotelId" autocomplete="off" placeholder="Any hotel" />
   </div>
 
   <div class="date-range-group">
-    <div class="date-range">
+    <div class="date-range" [class.date-range--open]="datePickerOpen" (click)="openDatePicker()">
       <div class="date-field-group">
         <div class="search-field search-field--check-in">
           <button
             type="button"
             class="calendar-trigger"
             aria-label="Open check-in date picker"
-            (click)="openPicker(checkInPicker)"
+            (click)="openDatePicker()"
           >
             <span class="field-icon field-icon--calendar" aria-hidden="true"></span>
           </button>
@@ -43,8 +49,12 @@
 
         @if (hasError('checkIn', 'invalidDate')) {
           <span class="date-field-error">Use format DD.MM.YYYY.</span>
+        } @else if (hasError('checkIn', 'dateInPast')) {
+          <span class="date-field-error">Date cannot be in the past.</span>
         }
       </div>
+
+      <span class="date-range__separator" aria-hidden="true">&mdash;</span>
 
       <div class="date-field-group">
         <div class="search-field search-field--check-out">
@@ -52,7 +62,7 @@
             type="button"
             class="calendar-trigger"
             aria-label="Open check-out date picker"
-            (click)="openPicker(checkOutPicker)"
+            (click)="openDatePicker()"
           >
             <span class="field-icon field-icon--calendar" aria-hidden="true"></span>
           </button>
@@ -80,6 +90,8 @@
 
         @if (hasError('checkOut', 'invalidDate')) {
           <span class="date-field-error">Use format DD.MM.YYYY.</span>
+        } @else if (hasError('checkOut', 'dateInPast')) {
+          <span class="date-field-error">Date cannot be in the past.</span>
         }
       </div>
     </div>
@@ -87,25 +99,239 @@
     @if (hasDateRangeError()) {
       <span class="date-range-error">Check-out must be after check-in.</span>
     }
+
+    @if (datePickerOpen) {
+      <div class="date-popover" (click)="$event.stopPropagation()">
+        <div class="date-popover__tabs">
+          <button type="button" class="date-popover__tab date-popover__tab--active">Calendar</button>
+        </div>
+
+        <div class="date-popover__navigation">
+          <button
+            type="button"
+            aria-label="Previous month"
+            [disabled]="!canShowPreviousMonths()"
+            (click)="showPreviousMonths()"
+          >
+            ‹
+          </button>
+          <button type="button" aria-label="Next month" (click)="showNextMonths()">›</button>
+        </div>
+
+        <div class="date-popover__months">
+          @for (month of calendarMonths(); track month.label) {
+            <section class="date-month">
+              <h3>{{ month.label }}</h3>
+              <div class="date-month__weekdays">
+                @for (weekday of weekdayLabels; track weekday) {
+                  <span>{{ weekday }}</span>
+                }
+              </div>
+              <div class="date-month__days">
+                @for (blank of month.leadingBlanks; track blank) {
+                  <span aria-hidden="true"></span>
+                }
+                @for (day of month.days; track day.date) {
+                  <button
+                    type="button"
+                    class="date-month__day"
+                    [class.date-month__day--selected]="isSelectedDate(day.date)"
+                    [class.date-month__day--in-range]="isDateInSelectedRange(day.date)"
+                    [class.date-month__day--disabled]="day.disabled"
+                    [disabled]="day.disabled"
+                    (click)="selectCalendarDate(day.date)"
+                  >
+                    {{ day.label }}
+                  </button>
+                }
+              </div>
+            </section>
+          }
+        </div>
+
+        <div class="date-popover__quick-actions">
+          <button type="button" (click)="closeDatePicker()">Exact dates</button>
+          <button type="button" (click)="applyStayLength(1)">+ 1 day</button>
+          <button type="button" (click)="applyStayLength(2)">+ 2 days</button>
+          <button type="button" (click)="applyStayLength(3)">+ 3 days</button>
+          <button type="button" (click)="applyStayLength(7)">+ 7 days</button>
+        </div>
+      </div>
+    }
   </div>
 
-  <div class="search-field search-field--guests">
-    <span class="field-icon field-icon--guests" aria-hidden="true"></span>
-    <label for="guests">Guests</label>
-    <div class="guest-stepper" aria-label="Guests count">
-      <button type="button" (click)="changeGuests(-1)" aria-label="Remove guest">-</button>
-      <span>{{ form.controls.guests.value }}</span>
-      <button type="button" (click)="changeGuests(1)" aria-label="Add guest">+</button>
-    </div>
-    <input id="guests" type="number" min="1" max="12" formControlName="guests" autocomplete="off" />
+  <div
+    class="search-field search-field--guests"
+    role="button"
+    tabindex="0"
+    [attr.aria-expanded]="guestsPickerOpen"
+    (click)="toggleGuestsPicker()"
+    (keydown.enter)="toggleGuestsPicker()"
+    (keydown.space)="toggleGuestsPicker()"
+  >
+    <button
+      type="button"
+      class="guests-trigger"
+      aria-label="Open guests selector"
+      [attr.aria-expanded]="guestsPickerOpen"
+      tabindex="-1"
+    >
+      <span class="field-icon field-icon--guests" aria-hidden="true"></span>
+      <span class="guests-trigger__label">Guests</span>
+      <span class="guests-trigger__value">{{ guestsSummary() }}</span>
+      <span class="guests-trigger__caret" [class.open]="guestsPickerOpen" aria-hidden="true"></span>
+    </button>
+
+    @if (guestsPickerOpen) {
+      <div class="guests-popover" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+        <div class="guests-popover__header">
+          <div>
+            <h3>Guests</h3>
+            <p class="guests-popover__summary">{{ guestsSummary() }}</p>
+          </div>
+          <button type="button" class="guests-popover__done" (click)="closeGuestsPicker()">Done</button>
+        </div>
+
+        <div class="guests-panel-card">
+          <div class="guests-counter-row">
+            <div class="guests-counter-copy">
+              <strong>Adults</strong>
+            </div>
+            <div class="guests-counter">
+              <button
+                type="button"
+                [disabled]="!counterCanDecrease('adults')"
+                (click)="changeCounter('adults', -1)"
+                aria-label="Remove adult"
+              >
+                -
+              </button>
+              <span>{{ form.controls.adults.value }}</span>
+              <button
+                type="button"
+                [disabled]="!counterCanIncrease('adults')"
+                (click)="changeCounter('adults', 1)"
+                aria-label="Add adult"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <div class="guests-counter-row">
+            <div class="guests-counter-copy">
+              <strong>Children</strong>
+            </div>
+            <div class="guests-counter">
+              <button
+                type="button"
+                [disabled]="!counterCanDecrease('children')"
+                (click)="changeCounter('children', -1)"
+                aria-label="Remove child"
+              >
+                -
+              </button>
+              <span>{{ form.controls.children.value }}</span>
+              <button
+                type="button"
+                [disabled]="!counterCanIncrease('children')"
+                (click)="changeCounter('children', 1)"
+                aria-label="Add child"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+
+        @if (childrenAgeControls().length) {
+          <div class="guests-panel-card guests-age-editor">
+            <strong class="guests-section-title">Child age</strong>
+            <div class="guests-age-grid">
+              @for (control of childrenAgeControls(); track $index; let index = $index) {
+                <select
+                  class="guests-age-select"
+                  [attr.aria-label]="'Child ' + (index + 1) + ' age'"
+                  [formControl]="control"
+                >
+                  @for (age of childAgeOptions; track age) {
+                    <option [ngValue]="age">{{ childAgeLabel(age) }} old</option>
+                  }
+                </select>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="guests-pets">
+          <div class="guests-pets__header">
+            <div>
+              <strong>Pets</strong>
+              <span>Optional. Add each pet separately.</span>
+            </div>
+            <button type="button" class="guests-pets__add" (click)="addPet()">Add pet</button>
+          </div>
+
+          @if (petControls().length) {
+            <div class="guests-pets__list">
+              @for (pet of petControls(); track $index; let index = $index) {
+                <div class="pet-editor" [formGroup]="pet">
+                  <label class="pet-editor__field">
+                    <span>Pet type</span>
+                    <select class="pet-editor__control" formControlName="type">
+                      @for (type of petTypes; track type) {
+                        <option [value]="type">{{ type }}</option>
+                      }
+                    </select>
+                  </label>
+                  <label class="pet-editor__field">
+                    <span>Pet size</span>
+                    <select class="pet-editor__control" formControlName="size">
+                      @for (size of petSizes; track size) {
+                        <option [value]="size">{{ size }}</option>
+                      }
+                    </select>
+                  </label>
+                  <label class="pet-editor__field pet-editor__field--weight">
+                    <span>Pet weight</span>
+                    <select class="pet-editor__control" formControlName="weightKg">
+                      @for (option of petWeightOptions; track option.value) {
+                        <option [ngValue]="option.value">{{ option.label }}</option>
+                      }
+                    </select>
+                  </label>
+                  <button type="button" class="pet-editor__remove" (click)="removePet(index)">Remove</button>
+                </div>
+                @if (hasPetWeightError(index, 'required') || hasPetWeightError(index, 'min')) {
+                  <span class="search-error">Pet weight must be zero or greater.</span>
+                }
+              }
+            </div>
+          } @else {
+            <p class="guests-pets__empty">No pets selected.</p>
+          }
+        </div>
+      </div>
+    }
   </div>
 
   <button type="submit" class="search-button">{{ submitLabel() }}</button>
 
-  @if (hasError('destination', 'required')) {
-    <span class="search-error">Destination is required.</span>
-  }
-  @if (hasError('guests', 'min') || hasError('guests', 'max')) {
-    <span class="search-error">Guests must be between 1 and 12.</span>
+  @if (
+    hasError('adults', 'min') ||
+    hasError('adults', 'max') ||
+    hasError('children', 'min') ||
+    hasError('children', 'max')
+  ) {
+    <span class="search-error">Guest selection is out of allowed range.</span>
+  } @else if (childrenAgeControls().length) {
+    @for (control of childrenAgeControls(); track $index; let index = $index) {
+      @if (hasChildrenAgeError(index, 'required') || hasChildrenAgeError(index, 'min') || hasChildrenAgeError(index, 'max')) {
+        <span class="search-error">Each child age must be between 0 and 17.</span>
+      }
+    }
+  } @else if (hasError('hotelId', 'min')) {
+    <span class="search-error">Hotel ID must be greater than zero.</span>
   }
 </form>
+

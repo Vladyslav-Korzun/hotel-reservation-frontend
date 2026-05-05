@@ -5,7 +5,7 @@
     <p class="eyebrow">Available stays</p>
     <h1>Choose a hotel for your trip</h1>
     <p class="muted stays-header__copy">
-      Pick a room from the results and continue to reservation with your selected dates and guest count.
+      Pick a room from the results and continue to reservation with your selected travel party and dates.
     </p>
   </section>
 
@@ -15,37 +15,49 @@
 
   @if (criteria(); as activeCriteria) {
     <section class="search-summary">
-      <span>{{ activeCriteria.destination }}</span>
+      <span>{{ activeCriteria.destination || 'All cities' }}</span>
+      <span>{{ activeCriteria.hotelId ? 'Hotel #' + activeCriteria.hotelId : 'Any hotel' }}</span>
       <span>{{ displayDate(activeCriteria.checkIn) }} to {{ displayDate(activeCriteria.checkOut) }}</span>
-      <span>{{ activeCriteria.guests }} guests</span>
+      <span>{{ partySummary(activeCriteria) }}</span>
     </section>
 
-    @if (results().length) {
+    @if (problem(); as problemDetail) {
+      <app-error-message [problem]="problemDetail" />
+    }
+
+    @if (loading()) {
+      <app-loading-state label="Loading available rooms..." />
+    } @else if (results().length) {
       <section class="stay-results">
         @for (option of results(); track option.hotelId + '-' + option.roomTypeId; let index = $index) {
           <article class="stay-card">
             <div class="stay-visual" [style.background-image]="'url(' + stayImage(index) + ')'">
-              <span>{{ option.rating }}</span>
+              <span>{{ option.availableCount }} left</span>
             </div>
 
             <div class="stay-copy">
-              <p class="eyebrow">{{ option.location }}</p>
+              <p class="eyebrow">{{ activeCriteria.destination || 'All cities' }}</p>
               <h2>{{ option.hotelName }}</h2>
               <p class="room-name">{{ option.roomName }}</p>
-              <p class="muted stay-copy__description">{{ option.description }}</p>
 
               <div class="tag-row">
-                @for (tag of option.tags; track tag) {
-                  <span>{{ tag }}</span>
-                }
+                <span>{{ option.maxAdults }} adults · {{ option.maxChildren }} children</span>
+                <span>{{ option.maxTotalGuests }} total guests</span>
+                <span>{{ option.petsAllowed ? 'Pets allowed' : 'No pets' }}</span>
+                <span>{{ option.availableCount }} available</span>
+                <span>{{ displayDate(activeCriteria.checkIn) }} to {{ displayDate(activeCriteria.checkOut) }}</span>
               </div>
             </div>
 
             <div class="stay-action">
-              <strong>€{{ option.nightlyPrice }}</strong>
+              <strong>{{ option.nightlyPrice | currency: option.currency : 'symbol' : '1.2-2' }}</strong>
               <small>per night</small>
-              <a class="primary-button" routerLink="/reservations/new" [queryParams]="reservationParams(option)">
-                Reserve
+              <a
+                class="primary-button"
+                [routerLink]="roomDetailsLink(option)"
+                [queryParams]="roomDetailsQueryParams(option)"
+              >
+                View room
               </a>
             </div>
           </article>
@@ -54,13 +66,13 @@
     } @else {
       <section class="empty-results">
         <h2>No matching rooms</h2>
-        <p class="muted">Try another destination or reduce guest count.</p>
+        <p class="muted">Try another destination, adjust guest ages, or remove pets.</p>
       </section>
     }
   } @else {
-    <section class="empty-results">
-      <h2>Start from the home page</h2>
-      <p class="muted">Enter your destination, dates and guest count to load available hotels.</p>
+      <section class="empty-results">
+        <h2>Start from the home page</h2>
+      <p class="muted">Enter your destination or hotel ID, dates and accommodation party to load available hotels.</p>
       <a class="primary-button" routerLink="/">Search stays</a>
     </section>
   }

@@ -53,6 +53,81 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.reservation-form__party {
+  background: rgba(247, 247, 242, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.reservation-form__party-header {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.reservation-form__party-header h3 {
+  color: #f7f7f2;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.reservation-form__party-header p,
+.reservation-form__empty-note {
+  color: rgba(246, 246, 246, 0.68);
+  margin: 0.2rem 0 0;
+}
+
+.counter-inline {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.65rem;
+}
+
+.counter-inline button {
+  align-items: center;
+  background: rgba(247, 247, 242, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #f7f7f2;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1rem;
+  font-weight: 800;
+  height: 2.3rem;
+  justify-content: center;
+  width: 2.3rem;
+}
+
+.counter-inline span {
+  color: #f7f7f2;
+  font-weight: 900;
+}
+
+.reservation-form__children-grid,
+.reservation-form__pets-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.reservation-form__children-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.reservation-form__pet-card {
+  align-items: start;
+  background: rgba(247, 247, 242, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 0.85rem;
+}
+
 .form-row {
   display: grid;
   gap: 0.45rem;
@@ -64,7 +139,8 @@
   font-weight: 800;
 }
 
-.form-row input {
+.form-row input,
+.form-row select {
   background: rgba(247, 247, 242, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 10px;
@@ -73,7 +149,8 @@
   padding: 0.9rem 1rem;
 }
 
-.form-row input:focus {
+.form-row input:focus,
+.form-row select:focus {
   border-color: rgba(217, 176, 127, 0.7);
   box-shadow: 0 0 0 1px rgba(217, 176, 127, 0.34);
   outline: none;
@@ -95,10 +172,25 @@
   min-width: 220px;
 }
 
+.reservation-form__add-pet {
+  min-width: 0;
+}
+
+.reservation-form__remove-pet {
+  align-self: end;
+}
+
 @media (max-width: 900px) {
   .reservation-form__summary,
-  .reservation-form__grid {
+  .reservation-form__grid,
+  .reservation-form__children-grid,
+  .reservation-form__pet-card {
     grid-template-columns: 1fr;
+  }
+
+  .reservation-form__party-header {
+    align-items: start;
+    flex-direction: column;
   }
 
   .reservation-form__actions {

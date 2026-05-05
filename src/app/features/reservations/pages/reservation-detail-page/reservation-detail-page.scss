@@ -73,6 +73,14 @@
   color: rgba(246, 246, 246, 0.72);
 }
 
+.reservation-detail-actions__hint {
+  color: rgba(241, 213, 178, 0.88);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.reservation-detail-actions .primary-button,
+.reservation-detail-actions .secondary-button,
 .reservation-detail-actions .danger-button {
   margin-top: 0.3rem;
   width: 100%;

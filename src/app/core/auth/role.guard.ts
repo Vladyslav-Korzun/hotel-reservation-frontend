@@ -16,7 +16,7 @@ export function roleGuard(allowedRoles: readonly UserRole[]): CanActivateFn {
 
     if (!authService.isAuthenticated()) {
       authService.login(state.url);
-      return router.parseUrl('/');
+      return false;
     }
 
     return authService.hasAnyRole(allowedRoles) ? true : router.parseUrl('/auth/forbidden');

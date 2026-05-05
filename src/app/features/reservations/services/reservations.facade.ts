@@ -24,16 +24,27 @@ export class ReservationsFacade {
   cancelReservation(reservationId: string): Observable<void> {
     return this.api.cancelReservation(reservationId);
   }
+
+  checkInReservation(reservationId: string): Observable<Reservation> {
+    return this.api.checkInReservation(reservationId).pipe(map(toReservation));
+  }
+
+  checkOutReservation(reservationId: string): Observable<Reservation> {
+    return this.api.checkOutReservation(reservationId).pipe(map(toReservation));
+  }
 }
 
 function toReservation(dto: ReservationResponseDto): Reservation {
   return {
     reservationId: dto.reservationId,
     hotelId: dto.hotelId,
+    roomId: dto.roomId ?? null,
     roomTypeId: dto.roomTypeId,
     checkIn: dto.checkIn,
     checkOut: dto.checkOut,
-    guestCount: dto.guestCount,
+    adults: dto.adults,
+    childrenAges: dto.childrenAges,
+    pets: dto.pets,
     status: toReservationStatus(dto.status),
     createdAt: dto.createdAt,
     cancelledAt: dto.cancelledAt ?? null,
@@ -42,7 +53,14 @@ function toReservation(dto: ReservationResponseDto): Reservation {
 }
 
 function toReservationStatus(status: string): ReservationStatus {
-  if (status === 'PENDING' || status === 'CANCELLED') {
+  if (
+    status === 'PENDING' ||
+    status === 'CONFIRMED' ||
+    status === 'CANCELLED' ||
+    status === 'CHECKED_IN' ||
+    status === 'CHECKED_OUT' ||
+    status === 'NO_SHOW'
+  ) {
     return status;
   }
 

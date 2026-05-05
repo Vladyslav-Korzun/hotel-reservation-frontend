@@ -1,8 +1,10 @@
-export interface StaySearchCriteria {
+import { AccommodationParty } from '../../../shared/accommodation/accommodation-party.model';
+
+export interface StaySearchCriteria extends AccommodationParty {
   destination: string;
+  hotelId: number | null;
   checkIn: string;
   checkOut: string;
-  guests: number;
 }
 
 export interface StayOption {
@@ -10,11 +12,13 @@ export interface StayOption {
   roomTypeId: number;
   hotelName: string;
   roomName: string;
-  location: string;
-  capacity: number;
+  maxAdults: number;
+  maxChildren: number;
+  maxInfants: number;
+  maxTotalGuests: number;
+  petsAllowed: boolean;
+  maxPets: number;
   nightlyPrice: number;
-  rating: number;
-  tags: readonly string[];
-  description: string;
+  currency: string;
+  availableCount: number;
 }
-

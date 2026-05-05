@@ -10,6 +10,7 @@ describe('ReservationsFacade', () => {
       createReservation: () => of(createReservationDto({ status: 'PENDING', cancelledAt: null })),
       getReservation: () => of(createReservationDto({ status: 'PENDING', cancelledAt: null })),
       cancelReservation: () => of(void 0),
+      listReservations: () => of([]),
     };
 
     TestBed.configureTestingModule({
@@ -26,14 +27,16 @@ describe('ReservationsFacade', () => {
     );
 
     expect(reservation.status).toBe('PENDING');
+    expect(reservation.roomId).toBeNull();
     expect(reservation.cancelledAt).toBeNull();
   });
 
-  it('throws for unsupported reservation status', async () => {
+  it('maps supported backend reservation statuses', async () => {
     const apiMock = {
-      createReservation: () => of(createReservationDto({ status: 'CONFIRMED', cancelledAt: null })),
+      createReservation: () => of(createReservationDto({ status: 'CHECKED_IN', roomId: 301, cancelledAt: null })),
       getReservation: () => of(createReservationDto({ status: 'CONFIRMED', cancelledAt: null })),
       cancelReservation: () => of(void 0),
+      listReservations: () => of([]),
     };
 
     TestBed.configureTestingModule({
@@ -44,10 +47,22 @@ describe('ReservationsFacade', () => {
     });
 
     const facade = TestBed.inject(ReservationsFacade);
+    const reservation = await firstValueFrom(
+      facade.getReservation('af884cad-7b10-4e17-ad82-551a23020ffe'),
+    );
+    const checkedInReservation = await firstValueFrom(
+      facade.createReservation({
+        hotelId: 1,
+        roomTypeId: 2,
+        checkIn: '2026-05-10',
+        checkOut: '2026-05-12',
+        guestCount: 2,
+      }),
+    );
 
-    await expect(
-      firstValueFrom(facade.getReservation('af884cad-7b10-4e17-ad82-551a23020ffe')),
-    ).rejects.toThrow(/Unsupported reservation status/);
+    expect(reservation.status).toBe('CONFIRMED');
+    expect(checkedInReservation.status).toBe('CHECKED_IN');
+    expect(checkedInReservation.roomId).toBe(301);
   });
 });
 
@@ -55,6 +70,7 @@ function createReservationDto(override: Partial<ReservationResponseDto>): Reserv
   return {
     reservationId: 'af884cad-7b10-4e17-ad82-551a23020ffe',
     hotelId: 1,
+    roomId: null,
     roomTypeId: 2,
     checkIn: '2026-05-10',
     checkOut: '2026-05-12',

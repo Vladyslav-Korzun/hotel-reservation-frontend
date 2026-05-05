@@ -28,35 +28,110 @@
 
   <div class="reservation-form__grid">
     <div class="form-row">
-    <label for="checkIn">Check-in</label>
-    <input id="checkIn" type="date" formControlName="checkIn" />
-    @if (hasError('checkIn', 'required')) {
-      <span class="field-error">Check-in date is required.</span>
-    }
+      <label for="checkIn">Check-in</label>
+      <input id="checkIn" type="date" formControlName="checkIn" />
+      @if (hasError('checkIn', 'required')) {
+        <span class="field-error">Check-in date is required.</span>
+      }
+    </div>
+
+    <div class="form-row">
+      <label for="checkOut">Check-out</label>
+      <input id="checkOut" type="date" formControlName="checkOut" />
+      @if (hasError('checkOut', 'required')) {
+        <span class="field-error">Check-out date is required.</span>
+      }
+      @if (hasDateRangeError()) {
+        <span class="field-error">Check-out must be after check-in.</span>
+      }
+    </div>
+
+    <div class="form-row">
+      <label for="adults">Adults</label>
+      <input id="adults" type="number" min="1" max="12" formControlName="adults" autocomplete="off" />
+      @if (hasError('adults', 'required') || hasError('adults', 'min')) {
+        <span class="field-error">At least one adult is required.</span>
+      }
+    </div>
   </div>
 
-  <div class="form-row">
-    <label for="checkOut">Check-out</label>
-    <input id="checkOut" type="date" formControlName="checkOut" />
-    @if (hasError('checkOut', 'required')) {
-      <span class="field-error">Check-out date is required.</span>
-    }
-    @if (hasDateRangeError()) {
-      <span class="field-error">Check-out must be after check-in.</span>
-    }
-  </div>
+  <section class="reservation-form__party">
+    <div class="reservation-form__party-header">
+      <div>
+        <h3>Children</h3>
+        <p>Set the child count and provide each age for backend policy checks.</p>
+      </div>
+      <div class="counter-inline">
+        <button type="button" (click)="changeChildCount(-1)">-</button>
+        <span>{{ form.controls.childCount.value }}</span>
+        <button type="button" (click)="changeChildCount(1)">+</button>
+      </div>
+    </div>
 
-  <div class="form-row">
-    <label for="guestCount">Guests</label>
-    <input id="guestCount" type="number" min="1" formControlName="guestCount" autocomplete="off" />
-    @if (hasError('guestCount', 'required')) {
-      <span class="field-error">Guest count is required.</span>
+    @if (childrenAgeControls().length) {
+      <div class="reservation-form__children-grid">
+        @for (control of childrenAgeControls(); track $index; let index = $index) {
+          <label class="form-row">
+            <span>Child {{ index + 1 }} age</span>
+            <input type="number" min="0" max="17" [formControl]="control" />
+            @if (hasChildrenAgeError(index, 'required') || hasChildrenAgeError(index, 'min') || hasChildrenAgeError(index, 'max')) {
+              <span class="field-error">Use an age between 0 and 17.</span>
+            }
+          </label>
+        }
+      </div>
     }
-    @if (hasError('guestCount', 'min')) {
-      <span class="field-error">Guest count must be greater than zero.</span>
+  </section>
+
+  <section class="reservation-form__party">
+    <div class="reservation-form__party-header">
+      <div>
+        <h3>Pets</h3>
+        <p>Add pets if the selected room needs to match pet policy.</p>
+      </div>
+      <button type="button" class="secondary-button reservation-form__add-pet" (click)="addPet()">Add pet</button>
+    </div>
+
+    @if (petControls().length) {
+      <div class="reservation-form__pets-list">
+        @for (pet of petControls(); track $index; let index = $index) {
+          <div class="reservation-form__pet-card" [formGroup]="pet">
+            <div class="form-row">
+              <label>Type</label>
+              <select formControlName="type">
+                @for (type of petTypes; track type) {
+                  <option [value]="type">{{ type }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label>Size</label>
+              <select formControlName="size">
+                @for (size of petSizes; track size) {
+                  <option [value]="size">{{ size }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label>Weight kg</label>
+              <input type="number" min="0" step="0.1" formControlName="weightKg" />
+              @if (hasPetWeightError(index, 'required') || hasPetWeightError(index, 'min')) {
+                <span class="field-error">Weight must be zero or greater.</span>
+              }
+            </div>
+
+            <button type="button" class="danger-button reservation-form__remove-pet" (click)="removePet(index)">
+              Remove pet
+            </button>
+          </div>
+        }
+      </div>
+    } @else {
+      <p class="reservation-form__empty-note">No pets will be included in this reservation.</p>
     }
-  </div>
-  </div>
+  </section>
 
   <div class="actions reservation-form__actions">
     <button type="submit" class="primary-button" [disabled]="submitting()">

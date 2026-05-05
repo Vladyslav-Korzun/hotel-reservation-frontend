@@ -15,6 +15,15 @@ export function displayDateValidator(control: AbstractControl): ValidationErrors
   return parseDisplayDate(String(control.value ?? '')) ? null : { invalidDate: true };
 }
 
+export function dateNotInPastValidator(control: AbstractControl): ValidationErrors | null {
+  const value = parseDisplayDate(String(control.value ?? ''));
+  if (!value) {
+    return null;
+  }
+
+  return value >= toIsoDate(new Date()) ? null : { dateInPast: true };
+}
+
 export function todayDisplayDate(): string {
   return toDisplayDate(toIsoDate(new Date()));
 }

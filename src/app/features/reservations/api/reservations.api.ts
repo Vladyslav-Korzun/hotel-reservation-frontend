@@ -24,4 +24,18 @@ export class ReservationsApi {
   cancelReservation(reservationId: string): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/${encodeURIComponent(reservationId)}/cancel`, null);
   }
+
+  checkInReservation(reservationId: string): Observable<ReservationResponseDto> {
+    return this.http.post<ReservationResponseDto>(
+      `${environment.apiBaseUrl}/staff/reservations/${encodeURIComponent(reservationId)}/check-in`,
+      null,
+    );
+  }
+
+  checkOutReservation(reservationId: string): Observable<ReservationResponseDto> {
+    return this.http.post<ReservationResponseDto>(
+      `${environment.apiBaseUrl}/staff/reservations/${encodeURIComponent(reservationId)}/check-out`,
+      null,
+    );
+  }
 }

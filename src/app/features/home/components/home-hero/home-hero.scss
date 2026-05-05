@@ -1,12 +1,13 @@
 .home-hero {
   min-height: 100vh;
-  overflow: hidden;
+  overflow: visible;
   padding: 2.35rem 4.4rem 4rem;
   position: relative;
 }
 
 .home-hero__slides {
   inset: 0;
+  overflow: hidden;
   position: absolute;
 }
 
@@ -45,7 +46,7 @@
   margin-top: 6.8rem;
   max-width: 1378px;
   position: relative;
-  z-index: 2;
+  z-index: 20;
 }
 
 .home-hero__content h1 {

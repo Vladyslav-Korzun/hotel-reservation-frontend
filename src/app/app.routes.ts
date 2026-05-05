@@ -9,8 +9,15 @@ export const routes: Routes = [
   },
   {
     path: 'stays/search',
+    canActivate: [roleGuard(['GUEST', 'STAFF', 'ADMIN'])],
     loadComponent: () =>
       import('./features/stays/pages/stay-search-page/stay-search-page').then((m) => m.StaySearchPage),
+  },
+  {
+    path: 'stays/:hotelId/rooms/:roomTypeId',
+    canActivate: [roleGuard(['GUEST', 'STAFF', 'ADMIN'])],
+    loadComponent: () =>
+      import('./features/stays/pages/stay-detail-page/stay-detail-page').then((m) => m.StayDetailPage),
   },
   {
     path: 'reservations/new',

@@ -1,13 +1,25 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { provideOAuthClient } from 'angular-oauth2-oidc';
+import { signal } from '@angular/core';
 import { App } from './app';
+import { AuthService } from './core/auth/auth.service';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter([]), provideOAuthClient()],
+      providers: [
+        provideRouter([]),
+        {
+          provide: AuthService,
+          useValue: {
+            initialize: () => Promise.resolve(),
+            isAuthenticated: signal(false),
+            login: () => undefined,
+            logout: () => undefined,
+          },
+        },
+      ],
     }).compileComponents();
   });
 
@@ -22,6 +34,7 @@ describe('App', () => {
     fixture.detectChanges();
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.brand')?.textContent).toContain('Bookme.com');
+    expect(compiled.querySelector('.site-nav')).not.toBeNull();
+    expect(compiled.textContent).toContain('Home');
   });
 });

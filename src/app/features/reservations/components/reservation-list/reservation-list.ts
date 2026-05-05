@@ -1,5 +1,6 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { formatAccommodationPartySummary } from '../../../../shared/accommodation/accommodation-party-presenter.util';
 import { toDisplayDate } from '../../../../shared/date/display-date.util';
 import { StatusBadge } from '../../../../shared/ui/status-badge/status-badge';
 import { Reservation } from '../../model/reservation.model';
@@ -31,5 +32,9 @@ export class ReservationList {
       hour: '2-digit',
       minute: '2-digit',
     }).format(date);
+  }
+
+  protected partySummary(reservation: Reservation): string {
+    return formatAccommodationPartySummary(reservation);
   }
 }

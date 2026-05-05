@@ -21,8 +21,8 @@
               <dd>{{ displayDate(reservation.checkIn) }} to {{ displayDate(reservation.checkOut) }}</dd>
             </div>
             <div>
-              <dt>Guests</dt>
-              <dd>{{ reservation.guestCount }}</dd>
+              <dt>Party</dt>
+              <dd>{{ partySummary(reservation) }}</dd>
             </div>
             <div>
               <dt>Created by</dt>

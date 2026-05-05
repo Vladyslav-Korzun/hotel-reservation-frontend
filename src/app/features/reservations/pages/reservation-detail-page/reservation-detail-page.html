@@ -26,7 +26,36 @@
       <aside class="reservation-detail-card reservation-detail-actions">
         <p class="eyebrow">Actions</p>
         <h2>Manage reservation</h2>
-        <p class="reservation-detail-actions__copy">Only pending reservations can be cancelled.</p>
+        <p class="reservation-detail-actions__copy">
+          Guests can cancel pending or confirmed reservations. Staff can also check reservations in and out.
+        </p>
+        <p class="reservation-detail-actions__hint">{{ stayOperationsHint(currentReservation) }}</p>
+
+        <button
+          type="button"
+          class="primary-button"
+          [disabled]="!canCheckIn(currentReservation)"
+          (click)="checkInReservation()"
+        >
+          @if (checkingIn()) {
+            Checking in...
+          } @else {
+            Check in guest
+          }
+        </button>
+
+        <button
+          type="button"
+          class="secondary-button"
+          [disabled]="!canCheckOut(currentReservation)"
+          (click)="checkOutReservation()"
+        >
+          @if (checkingOut()) {
+            Checking out...
+          } @else {
+            Check out guest
+          }
+        </button>
 
         <button
           type="button"
