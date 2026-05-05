@@ -12,7 +12,7 @@ variables:
 build_image:
   stage: build
   tags:
-    - fsa
+    - fsa-korzun
   image: docker:27.4.0
   services:
     - name: docker:27.4.0-dind
@@ -31,7 +31,7 @@ build_image:
 deploy:
   stage: deploy
   tags:
-    - fsa
+    - fsa-korzun
   image:
     name: bitnami/kubectl:1.30.5
     entrypoint: [""]
