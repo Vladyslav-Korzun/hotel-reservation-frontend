@@ -42,6 +42,7 @@ deploy:
     - echo "$KUBECONFIG_BASE64" | base64 -d > ~/.kube/config
     - export IMAGE_TAG="${CI_COMMIT_SHORT_SHA}"
   script:
+    - kubectl -n app patch deployment/fsa-fe --type merge -p '{"spec":{"strategy":{"type":"RollingUpdate","rollingUpdate":{"maxSurge":0,"maxUnavailable":1}}}}'
     - kubectl -n app set image deployment/fsa-fe fsa-fe="$ACR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG"
     - kubectl -n app rollout status deployment/fsa-fe --timeout=600s
   rules:
