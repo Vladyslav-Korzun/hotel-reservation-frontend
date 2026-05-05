@@ -33,7 +33,7 @@ deploy:
   tags:
     - fsa-korzun
   image:
-    name: bitnami/kubectl:1.30.5
+    name: alpine/k8s:1.30.5
     entrypoint: [""]
   needs:
     - build_image
