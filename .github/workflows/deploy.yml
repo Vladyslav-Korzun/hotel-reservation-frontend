@@ -1,10 +1,6 @@
 name: Build and deploy frontend
 
 on:
-  push:
-    branches:
-      - main
-      - master
   workflow_dispatch:
 
 env:
@@ -51,4 +47,3 @@ jobs:
         run: |
           kubectl -n app set image deployment/fsa-fe fsa-fe="$ACR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG"
           kubectl -n app rollout status deployment/fsa-fe --timeout=180s
-
