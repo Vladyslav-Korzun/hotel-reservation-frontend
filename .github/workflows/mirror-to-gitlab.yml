@@ -22,4 +22,5 @@ jobs:
           GITLAB_PROJECT_PATH: ${{ secrets.GITLAB_PROJECT_PATH }}
         run: |
           git remote add gitlab "https://oauth2:${GITLAB_TOKEN}@gitlab.fullstackacademy.sk/${GITLAB_PROJECT_PATH}.git"
-          git push --mirror gitlab
+          git push --force gitlab "refs/heads/*:refs/heads/*"
+          git push --force gitlab "refs/tags/*:refs/tags/*"
