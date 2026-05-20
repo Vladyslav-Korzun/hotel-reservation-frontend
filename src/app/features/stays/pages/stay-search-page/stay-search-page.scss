@@ -1,190 +1,161 @@
-.stay-search-page {
-  color: #f6f6f6;
-  min-height: 100vh;
-  padding: 7.5rem 3.5rem 4rem;
-  position: relative;
-}
-
 .stay-search-page__backdrop {
   background:
     linear-gradient(90deg, rgba(12, 13, 12, 0.78), rgba(12, 13, 12, 0.42)),
     linear-gradient(180deg, rgba(12, 13, 12, 0.34), rgba(12, 13, 12, 0.72)),
     url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=2000&q=80') center / cover
       no-repeat;
-  inset: 0;
-  position: absolute;
 }
 
-.stays-header,
-.stay-search-page__form-shell,
-.search-summary,
-.stay-results,
-.empty-results {
+.stays-header {
+  margin-bottom: 1.25rem;
+}
+
+.stays-header__copy {
+  color: var(--color-text-muted);
+  max-width: 720px;
+}
+
+.stay-search-page__content {
   position: relative;
   z-index: 1;
 }
 
-.stays-header {
-  margin: 0 auto 1.25rem;
-  max-width: 1380px;
-}
-
-.stays-header__copy {
-  color: rgba(246, 246, 246, 0.74);
-  max-width: 720px;
-}
-
 .stay-search-page__form-shell {
-  margin: 0 auto;
-  max-width: 1380px;
+  position: relative;
   z-index: 4;
 }
 
-.search-summary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin: 1.1rem auto 0;
-  max-width: 1380px;
-}
-
-.search-summary span {
-  background: rgba(18, 18, 18, 0.64);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
-  color: #f1d5b2;
+.search-badge {
+  background: var(--color-bg-badge);
+  border: 1px solid var(--color-border);
+  color: var(--color-gold-muted);
   font-size: 0.82rem;
   font-weight: 900;
   padding: 0.38rem 0.8rem;
 }
 
-.stay-results {
-  display: grid;
-  gap: 1.1rem;
-  margin: 1.2rem auto 0;
-  max-width: 1380px;
+// ─── Filter bar ───────────────────────────────────────────────────────────────
+
+.filter-bar__divider {
+  background: var(--color-border);
+  height: 1.25rem;
+  width: 1px;
 }
+
+.filter-pill {
+  background: var(--color-bg-badge);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.38rem 0.9rem;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  &:hover {
+    border-color: rgba(196, 156, 116, 0.5);
+    color: var(--color-gold-muted);
+  }
+
+  &.filter-pill--active {
+    background: rgba(196, 156, 116, 0.14);
+    border-color: var(--color-gold-muted);
+    color: var(--color-gold);
+    font-weight: 900;
+  }
+}
+
+// ─── Stay card (matches hotel-card visual style) ──────────────────────────────
 
 .stay-card {
-  align-items: stretch;
-  backdrop-filter: blur(12px);
-  background: rgba(18, 18, 18, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
-  box-shadow: 0 24px 40px -26px rgba(0, 0, 0, 0.75);
-  display: grid;
-  gap: 1.25rem;
-  grid-template-columns: 220px minmax(0, 1fr) auto;
+  --bs-card-bg: var(--color-bg-card);
+  --bs-card-border-color: var(--color-border);
+  --bs-card-border-radius: var(--radius-sm);
+
+  box-shadow: 0 28px 58px -38px rgba(0, 0, 0, 0.88);
+  color: var(--color-text-body);
   overflow: hidden;
-  padding: 1rem;
 }
 
-.stay-visual {
-  align-items: end;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  border-radius: 14px;
-  display: flex;
-  min-height: 180px;
-  padding: 0.8rem;
+.stay-card__media {
+  background:
+    linear-gradient(135deg, rgba(39, 38, 36, 0.98), rgba(15, 15, 15, 0.98)),
+    radial-gradient(circle at 75% 20%, rgba(196, 156, 116, 0.18), transparent 34%);
+  overflow: hidden;
   position: relative;
 }
 
-.stay-visual::after {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.58));
-  border-radius: inherit;
-  content: '';
-  inset: 0;
-  position: absolute;
+.stay-card__img {
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
 }
 
-.stay-visual span {
+.stay-card__count {
   background: rgba(247, 247, 242, 0.94);
-  border-radius: 8px;
-  color: #151515;
+  border-radius: var(--radius-sm);
+  bottom: 0.8rem;
+  color: var(--color-ink);
+  font-size: 0.78rem;
   font-weight: 900;
+  left: 0.8rem;
   padding: 0.28rem 0.58rem;
-  position: relative;
+  position: absolute;
   z-index: 1;
 }
 
-.stay-copy {
-  display: grid;
-  gap: 0.48rem;
+.stay-card__location {
+  color: var(--color-gold-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  text-transform: uppercase;
 }
 
-.stay-copy h2 {
-  color: #f7f7f2;
-}
-
-.stay-copy__description {
-  color: rgba(246, 246, 246, 0.72);
+.stay-card__title {
+  color: var(--color-text);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.45rem, 1.9vw, 1.85rem);
+  font-weight: 500;
+  line-height: 1.12;
 }
 
 .room-name {
-  color: #d9b07f;
-  font-weight: 900;
+  color: var(--color-gold-muted);
+  font-weight: 700;
 }
 
-.tag-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-top: 0.35rem;
+.stay-price-row {
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.75rem;
 }
 
-.tag-row span {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  color: rgba(246, 246, 246, 0.76);
-  font-size: 0.78rem;
-  font-weight: 800;
-  padding: 0.24rem 0.62rem;
+.stay-price {
+  color: var(--color-gold);
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
-.stay-action {
-  align-content: center;
-  display: grid;
-  gap: 0.14rem;
-  justify-items: end;
-  min-width: 140px;
+.stay-price-label {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
 }
 
-.stay-action strong {
-  color: #f7f7f2;
-  font-size: 1.62rem;
-}
-
-.stay-action small {
-  color: rgba(246, 246, 246, 0.68);
-  font-weight: 800;
-  margin-bottom: 0.7rem;
-}
+// ─── Empty / error states ─────────────────────────────────────────────────────
 
 .empty-results {
   backdrop-filter: blur(12px);
-  background: rgba(18, 18, 18, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
-  display: grid;
-  gap: 0.45rem;
-  margin: 1.2rem auto 0;
-  max-width: 1380px;
-  padding: 1.25rem;
-  position: relative;
+  background: var(--color-bg-card-soft);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
 }
 
 @media (max-width: 980px) {
   .stay-search-page {
-    padding: 6.5rem 1rem 3rem;
-  }
-
-  .stay-card {
-    grid-template-columns: 1fr;
-  }
-
-  .stay-action {
-    justify-items: start;
+    padding-bottom: 3rem;
   }
 }

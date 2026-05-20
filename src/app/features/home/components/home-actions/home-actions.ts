@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
 
@@ -10,6 +10,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 })
 export class HomeActions {
   protected readonly auth = inject(AuthService);
+  protected readonly canSelfBook = computed(() => this.auth.hasAnyRole(['GUEST']));
 
   protected login(): void {
     this.auth.login('/');

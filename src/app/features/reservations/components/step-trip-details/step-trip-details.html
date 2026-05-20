@@ -1,0 +1,121 @@
+<section class="wpanel">
+
+  <header class="wpanel__head">
+    <h2>When are you traveling?</h2>
+    <p>Confirm your stay dates and who's coming along.</p>
+  </header>
+
+  <!-- Dates -->
+  <div class="std__dates">
+    <app-date-range-picker
+      [compact]="true"
+      [checkInControl]="checkInControl()"
+      [checkOutControl]="checkOutControl()"
+      [rangeError]="rangeError()"
+      [availabilityByDate]="availabilityByDate()"
+      (visibleRangeChange)="visibleRangeChange.emit($event)"
+    />
+  </div>
+
+  <header class="wpanel__subhead">
+    <h3>Who's coming?</h3>
+    <p>Backend uses these numbers to match room capacity policy.</p>
+  </header>
+
+  <!-- Adults -->
+  <div class="std__counter-row">
+    <div class="std__counter-copy">
+      <strong>Adults</strong>
+      <span>Age 18 or above · this room allows up to {{ adultsCap() }}</span>
+    </div>
+    <div class="wp-counter" role="group" aria-label="Adults count">
+      <button type="button" [disabled]="adultsValue() <= 1" (click)="changeAdults(-1)" aria-label="Remove adult">−</button>
+      <span>{{ adultsValue() }}</span>
+      <button type="button" [disabled]="adultsAtCap()" (click)="changeAdults(1)" aria-label="Add adult">+</button>
+    </div>
+  </div>
+
+  <!-- Children + infants combined counter; classification happens on Step 2 from DOB -->
+  <div class="std__counter-row">
+    <div class="std__counter-copy">
+      <strong>{{ childrenSectionTitle() }}</strong>
+      <span>{{ childrenPolicyHint() }}</span>
+    </div>
+    <div class="wp-counter" role="group" aria-label="Children count">
+      <button type="button" [disabled]="childrenCount() <= 0" (click)="changeChildren(-1)" aria-label="Remove child">−</button>
+      <span>{{ childrenCount() }}</span>
+      <button type="button" [disabled]="childrenAtCap()" (click)="changeChildren(1)" aria-label="Add child">+</button>
+    </div>
+  </div>
+
+  <!-- Per-child age picker (collapsible chips). Backend needs real ages to classify
+       infant vs child against the hotel policy. DOB on Step 2 will overwrite. -->
+  @if (childrenCount() > 0) {
+    <div class="wp-card wp-age-list std__ages">
+      @for (control of childrenAgeControls(); track $index; let i = $index) {
+        <div class="wp-age-row" [class.wp-age-row--open]="isChildExpanded(i)">
+          <button
+            type="button"
+            class="wp-age-row__head"
+            [attr.aria-expanded]="isChildExpanded(i)"
+            (click)="toggleChildExpansion(i)"
+          >
+            <strong>{{ childRowTitle(control.value, i) }}</strong>
+            <span class="wp-age-row__value">
+              {{ childAgeLabel(control.value ?? 0) }}
+              @if (childRowBadge(control.value); as badge) {
+                <small class="wp-age-row__badge">· {{ badge }}</small>
+              }
+            </span>
+            <span class="wp-age-row__caret" aria-hidden="true"></span>
+          </button>
+          @if (isChildExpanded(i)) {
+            <div class="wp-age-chips" role="radiogroup" [attr.aria-label]="'Child ' + (i + 1) + ' age'">
+              @for (age of childAgeOptions; track age) {
+                <button
+                  type="button"
+                  class="wp-age-chip"
+                  [class.wp-age-chip--selected]="control.value === age"
+                  [attr.aria-checked]="control.value === age"
+                  role="radio"
+                  (click)="setChildAge(i, age)"
+                >{{ age }}</button>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Pets -->
+  <header class="wpanel__subhead">
+    <h3>Bringing a pet?</h3>
+    <p>
+      @if (!petsAllowed()) {
+        This room type does not allow pets.
+      } @else if (petsCap() > 0) {
+        This room allows up to {{ petsCap() }} {{ petsCap() === 1 ? 'pet' : 'pets' }}.
+      } @else {
+        Some rooms allow pets — confirm pet details so we match the right room.
+      }
+    </p>
+  </header>
+
+  <app-pet-editor-list
+    [petsArray]="petsArray()"
+    [allowed]="petsAllowed()"
+    [maxPets]="petsCap()"
+  />
+
+  <div class="wpanel__nav">
+    <div></div>
+    <button type="button" class="wpanel__btn-primary" (click)="onContinue()">
+      Continue to guests
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M5 12h14M13 6l6 6-6 6"/>
+      </svg>
+    </button>
+  </div>
+
+</section>

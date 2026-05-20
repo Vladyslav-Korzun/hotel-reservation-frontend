@@ -28,4 +28,24 @@ export class ReservationSummary {
   protected petsSummary(reservation: Reservation): string {
     return formatPetsSummary(reservation.pets);
   }
+
+  protected hasPriceSnapshot(reservation: Reservation): boolean {
+    return (
+      reservation.basePriceAmount !== null ||
+      reservation.servicesPriceAmount !== null ||
+      reservation.discountAmount !== null ||
+      reservation.finalPriceAmount !== null
+    );
+  }
+
+  protected money(amount: number | null, currency: string | null): string {
+    if (amount === null) {
+      return '';
+    }
+
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency || 'EUR',
+    }).format(amount);
+  }
 }

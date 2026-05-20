@@ -1,0 +1,30 @@
+:host {
+  display: block;
+}
+
+.home-final-cta {
+  background:
+    linear-gradient(135deg, rgba(196, 156, 116, 0.06) 0%, transparent 60%),
+    var(--color-bg-deep);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.home-final-cta__title {
+  color: var(--color-text);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.home-final-cta__subtitle {
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+  max-width: 480px;
+  margin-inline: auto;
+}
+
+.home-final-cta__btn {
+  min-height: 52px;
+  padding: 0.75rem 2rem;
+}

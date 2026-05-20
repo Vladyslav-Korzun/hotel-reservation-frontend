@@ -1,0 +1,22 @@
+<article class="rsc">
+  <a
+    class="rsc__link"
+    [routerLink]="['/stays', option().hotelId, 'rooms', option().roomTypeId]"
+    [queryParams]="linkQueryParams()"
+  >
+    <div class="rsc__img" [style.background-image]="'url(' + imgSrc() + ')'">
+      <span class="rsc__avail">{{ option().availableCount }} left</span>
+    </div>
+    <div class="rsc__body">
+      <div class="rsc__name">{{ option().roomName }}</div>
+      @if (showHotelName()) {
+        <div class="rsc__hotel">{{ option().hotelName }}</div>
+      }
+      <div class="rsc__cap">{{ capacityLabel() }}</div>
+      <div class="rsc__price">
+        <b>{{ option().nightlyPrice | currency: option().currency : 'symbol' : '1.0-0' }}</b>
+        <small>&nbsp;/ night</small>
+      </div>
+    </div>
+  </a>
+</article>

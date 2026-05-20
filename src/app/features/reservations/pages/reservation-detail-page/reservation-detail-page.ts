@@ -8,8 +8,7 @@ import { ProblemDetail } from '../../../../core/http/problem-detail.model';
 import { ErrorMessage } from '../../../../shared/ui/error-message/error-message';
 import { LoadingState } from '../../../../shared/ui/loading-state/loading-state';
 import { ReservationSummary } from '../../components/reservation-summary/reservation-summary';
-import { Reservation } from '../../model/reservation.model';
-import { isCancellableReservation, isCheckInAllowedReservation, isCheckOutAllowedReservation } from '../../model/reservation-status';
+import { Reservation, isCancellableReservation, isCheckInAllowedReservation, isCheckOutAllowedReservation } from '../../model/reservation.model';
 import { ReservationsFacade } from '../../services/reservations.facade';
 
 @Component({
@@ -92,6 +91,10 @@ export class ReservationDetailPage {
   protected cancelReservation(): void {
     const reservationId = this.reservationId();
     if (!reservationId || this.cancelling()) {
+      return;
+    }
+
+    if (!window.confirm('Cancel this reservation?')) {
       return;
     }
 

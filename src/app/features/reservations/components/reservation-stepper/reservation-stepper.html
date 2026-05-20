@@ -1,0 +1,31 @@
+<nav class="rsp" aria-label="Reservation wizard steps">
+  @for (view of steps(); track view.step) {
+    <button
+      type="button"
+      class="rsp__step"
+      [class.rsp__step--done]="view.state === 'done'"
+      [class.rsp__step--current]="view.state === 'current'"
+      [class.rsp__step--upcoming]="view.state === 'upcoming'"
+      [disabled]="!isClickable(view.step)"
+      [attr.aria-current]="view.state === 'current' ? 'step' : null"
+      (click)="onStepClick(view.step)"
+    >
+      <span class="rsp__num">
+        @if (view.state === 'done') {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+            <path d="M5 12l5 5L20 7"/>
+          </svg>
+        } @else {
+          {{ view.step }}
+        }
+      </span>
+      <span class="rsp__label">
+        <small>{{ view.hint }}</small>
+        <span>{{ view.label }}</span>
+      </span>
+    </button>
+    @if (!view.isLast) {
+      <span class="rsp__line" aria-hidden="true"></span>
+    }
+  }
+</nav>

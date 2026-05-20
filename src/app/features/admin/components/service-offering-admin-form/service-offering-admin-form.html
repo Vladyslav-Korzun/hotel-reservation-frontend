@@ -1,0 +1,22 @@
+<form class="card admin-form dark-form" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="admin-form__header">
+    <p class="eyebrow">Services</p>
+    <h2>Create, update or deactivate service</h2>
+  </div>
+
+  <div class="row g-3 admin-form__grid">
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Operation</span><select class="form-select" formControlName="mode"><option value="create">Create</option><option value="update">Update</option><option value="deactivate">Deactivate</option></select></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Hotel id</span><input class="form-control" type="number" min="1" formControlName="hotelId" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Path service id</span><input class="form-control" type="number" min="1" formControlName="serviceId" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Service offering id</span><input class="form-control" type="number" min="1" formControlName="serviceOfferingId" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Code</span><input class="form-control" formControlName="code" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Name</span><input class="form-control" formControlName="name" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Price amount</span><input class="form-control" type="number" min="0" formControlName="priceAmount" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Price currency</span><input class="form-control" formControlName="priceCurrency" /></label>
+    <label class="col-12 form-row"><span class="form-label">Description</span><textarea class="form-control" formControlName="description"></textarea></label>
+    <label class="col-12 form-row"><span class="form-label">Availability rule</span><textarea class="form-control" formControlName="availabilityRule"></textarea></label>
+    <label class="col-12 form-check admin-form__check"><input class="form-check-input" type="checkbox" formControlName="active" /><span class="form-check-label">Active</span></label>
+  </div>
+
+  <button type="submit" class="btn btn-brand-light admin-form__submit" [disabled]="submitting()">Submit service change</button>
+</form>

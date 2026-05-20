@@ -1,0 +1,42 @@
+<form class="card admin-form dark-form" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="admin-form__header">
+    <p class="eyebrow">Room types</p>
+    <h2>Create or update room type</h2>
+  </div>
+
+  <div class="row g-3 admin-form__grid">
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Operation</span><select class="form-select" formControlName="mode"><option value="create">Create</option><option value="update">Update</option></select></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Path room type id</span><input class="form-control" type="number" min="1" formControlName="pathRoomTypeId" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Room type id</span><input class="form-control" type="number" min="1" formControlName="roomTypeId" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Hotel id</span><input class="form-control" type="number" min="1" formControlName="hotelId" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Name</span><input class="form-control" formControlName="name" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Max adults</span><input class="form-control" type="number" min="1" formControlName="maxAdults" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Max children</span><input class="form-control" type="number" min="0" formControlName="maxChildren" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Max infants</span><input class="form-control" type="number" min="0" formControlName="maxInfants" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Max total guests</span><input class="form-control" type="number" min="1" formControlName="maxTotalGuests" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Max pets</span><input class="form-control" type="number" min="0" formControlName="maxPets" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Allowed pet types</span><input class="form-control" placeholder="DOG,CAT,OTHER" formControlName="allowedPetTypes" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Max pet weight kg</span><input class="form-control" type="number" min="0" formControlName="maxPetWeightKg" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Pet fee amount</span><input class="form-control" type="number" min="0" formControlName="petFeeAmount" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Pet fee currency</span><input class="form-control" formControlName="petFeeCurrency" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Base price amount</span><input class="form-control" type="number" min="0" formControlName="basePriceAmount" /></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row"><span class="form-label">Base price currency</span><input class="form-control" formControlName="basePriceCurrency" /></label>
+    <label class="col-12 form-row"><span class="form-label">Description</span><textarea class="form-control" formControlName="description"></textarea></label>
+    <label class="col-12 form-check admin-form__check"><input class="form-check-input" type="checkbox" formControlName="petsAllowed" /><span class="form-check-label">Pets allowed</span></label>
+    <label class="col-12 col-md-6 col-xl-4 form-row">
+      <span class="form-label">Bed setup</span>
+      <input class="form-control" maxlength="120" placeholder="e.g. 1 king bed + sofa bed" formControlName="bedSetup" />
+    </label>
+    <label class="col-12 col-md-6 col-xl-4 form-row">
+      <span class="form-label">Room size (m²)</span>
+      <input class="form-control" type="number" min="1" max="1000" step="0.1" placeholder="e.g. 28.5" formControlName="roomSizeSqm" />
+    </label>
+    <label class="col-12 form-row">
+      <span class="form-label">Amenities</span>
+      <input class="form-control" placeholder="WIFI,AIR_CONDITIONING,SEA_VIEW" formControlName="amenities" />
+      <small class="field-hint">Comma-separated codes. Allowed: {{ amenitiesHint }}</small>
+    </label>
+  </div>
+
+  <button type="submit" class="btn btn-brand-light admin-form__submit" [disabled]="submitting()">Save room type</button>
+</form>

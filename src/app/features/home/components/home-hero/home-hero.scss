@@ -30,7 +30,7 @@
 }
 
 .home-hero::after {
-  background: #f6f6f6;
+  background: var(--color-surface);
   border-radius: 34px 34px 0 0;
   bottom: -1px;
   content: '';
@@ -50,7 +50,7 @@
 }
 
 .home-hero__content h1 {
-  color: #f6f6f6;
+  color: var(--color-text-body);
   font-size: clamp(3rem, 7vw, 5.4rem);
   line-height: 0.95;
   max-width: 650px;

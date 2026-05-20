@@ -1,0 +1,30 @@
+<section class="wpanel">
+  <header class="wpanel__head">
+    <h2>Make it special</h2>
+    <p>Add optional hotel services to your stay. You can change them later from the reservation.</p>
+  </header>
+
+  @if (loading()) {
+    <app-loading-state label="Loading hotel services..." />
+  } @else {
+    <app-service-offering-selector
+      [services]="services()"
+      (selectionsChanged)="selectionsChanged.emit($event)"
+    />
+  }
+
+  <div class="wpanel__nav">
+    <button type="button" class="wpanel__btn-back" (click)="back.emit()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M19 12H5M11 6l-6 6 6 6"/>
+      </svg>
+      Back to guests
+    </button>
+    <button type="button" class="wpanel__btn-primary" (click)="next.emit()">
+      Continue to review
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M5 12h14M13 6l6 6-6 6"/>
+      </svg>
+    </button>
+  </div>
+</section>

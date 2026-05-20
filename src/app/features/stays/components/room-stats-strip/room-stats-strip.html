@@ -1,0 +1,54 @@
+<div class="room-stats">
+  <div class="room-stat">
+    <div class="room-stat__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path d="M2 11h20v8H2z"/>
+        <path d="M4 11V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/>
+        <path d="M2 19v2M22 19v2"/>
+      </svg>
+    </div>
+    <div class="room-stat__label">Capacity</div>
+    <div class="room-stat__value">{{ maxAdults() }} adults</div>
+    <div class="room-stat__sub">+ {{ maxChildren() }} children, {{ maxInfants() }} infants</div>
+  </div>
+
+  @if (hasBedSetup()) {
+    <div class="room-stat">
+      <div class="room-stat__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M3 7v10M21 7v10"/>
+          <path d="M5 7h14a2 2 0 0 1 2 2v5H3V9a2 2 0 0 1 2-2z"/>
+          <path d="M3 13h18"/>
+        </svg>
+      </div>
+      <div class="room-stat__label">Bed setup</div>
+      <div class="room-stat__value">{{ bedSetup() }}</div>
+      <div class="room-stat__sub">as configured by hotel</div>
+    </div>
+  }
+
+  @if (hasRoomSize()) {
+    <div class="room-stat">
+      <div class="room-stat__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M3 9l9-6 9 6v11a1 1 0 0 1-1 1h-5v-7H10v7H4a1 1 0 0 1-1-1z"/>
+        </svg>
+      </div>
+      <div class="room-stat__label">Room size</div>
+      <div class="room-stat__value">{{ roomSizeLabel() }}</div>
+      <div class="room-stat__sub">floor area</div>
+    </div>
+  }
+
+  <div class="room-stat">
+    <div class="room-stat__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 7v5l3 2"/>
+      </svg>
+    </div>
+    <div class="room-stat__label">Availability</div>
+    <div class="room-stat__value">{{ availableCount() }} {{ availableCount() === 1 ? 'room' : 'rooms' }} left</div>
+    <div class="room-stat__sub">for selected dates</div>
+  </div>
+</div>

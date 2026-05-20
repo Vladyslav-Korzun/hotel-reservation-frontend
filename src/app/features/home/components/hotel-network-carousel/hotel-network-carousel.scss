@@ -1,0 +1,292 @@
+﻿:host {
+  display: block;
+}
+
+// ─── Section background ───────────────────────────────────────────────────────
+
+.hotel-network {
+  background:
+    linear-gradient(180deg, var(--color-surface) 0, #ede7dd 44%, #121312 44%, var(--color-bg) 100%);
+  overflow: hidden;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+// ─── Section header ───────────────────────────────────────────────────────────
+
+.hotel-network__title {
+  color: var(--color-ink-body);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.hotel-network__subtitle {
+  color: #6f6a65;
+  font-size: 1rem;
+  font-weight: 700;
+  max-width: 640px;
+  margin-inline: auto;
+}
+
+// ─── Carousel container ───────────────────────────────────────────────────────
+
+.hotel-carousel {
+  position: relative;
+  margin-bottom: 0.5rem;
+}
+
+.hotel-carousel__viewport {
+  min-height: 640px;
+  overflow: hidden;
+  position: relative;
+}
+
+// ─── Card depth effect (custom — Bootstrap cannot cover this) ─────────────────
+
+.hotel-slide {
+  background: rgba(18, 18, 17, 0.96);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 34px 80px -48px rgba(0, 0, 0, 0.95);
+  color: var(--color-text-body);
+  left: 50%;
+  max-width: 540px;
+  min-height: 600px;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  top: 1.4rem;
+  transform: translateX(-50%) scale(0.78);
+  transition:
+    opacity 280ms ease,
+    transform 420ms ease,
+    filter 420ms ease;
+  width: min(540px, 68vw);
+  z-index: 0;
+}
+
+.hotel-slide--active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) scale(1);
+  z-index: 3;
+}
+
+.hotel-slide--previous,
+.hotel-slide--next {
+  filter: brightness(0.72);
+  opacity: 0.72;
+  pointer-events: auto;
+  transform: translateX(calc(-50% - 340px)) scale(0.86);
+  z-index: 2;
+}
+
+.hotel-slide--next {
+  transform: translateX(calc(-50% + 340px)) scale(0.86);
+}
+
+// ─── Card media ───────────────────────────────────────────────────────────────
+
+.hotel-slide__media {
+  aspect-ratio: 16 / 11;
+  background:
+    linear-gradient(135deg, rgba(39, 38, 36, 0.98), rgba(15, 15, 15, 0.98)),
+    radial-gradient(circle at 75% 20%, rgba(196, 156, 116, 0.18), transparent 34%);
+  overflow: hidden;
+}
+
+.hotel-slide__img,
+.hotel-slide__placeholder {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
+}
+
+// ─── Card text ────────────────────────────────────────────────────────────────
+
+.hotel-slide__location {
+  color: var(--color-gold-muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  margin: 0;
+}
+
+.hotel-slide__name {
+  color: var(--color-text);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.6rem, 2.2vw, 2.2rem);
+  font-weight: 500;
+  line-height: 1.05;
+}
+
+.hotel-slide__description {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+// ─── Carousel controls (extend Bootstrap .btn) ───────────────────────────────
+
+.hotel-carousel__control {
+  align-items: center;
+  background: rgba(15, 15, 14, 0.86);
+  border: 1px solid rgba(201, 190, 179, 0.32);
+  border-radius: 50%;
+  box-shadow: 0 18px 42px -26px rgba(0, 0, 0, 0.9);
+  display: inline-flex;
+  height: 3rem;
+  justify-content: center;
+  padding: 0;
+  position: absolute;
+  top: 46%;
+  transform: translateY(-50%);
+  width: 3rem;
+  z-index: 5;
+
+  span {
+    border-left: 2px solid #f6efe7;
+    border-top: 2px solid #f6efe7;
+    display: block;
+    height: 0.6rem;
+    width: 0.6rem;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-gold);
+    border-color: var(--color-gold);
+
+    span {
+      border-color: var(--color-ink);
+    }
+  }
+}
+
+.hotel-carousel__control--previous {
+  left: max(0.5rem, calc(50% - 358px));
+
+  span {
+    transform: rotate(-45deg) translate(1px, 1px);
+  }
+}
+
+.hotel-carousel__control--next {
+  right: max(0.5rem, calc(50% - 358px));
+
+  span {
+    transform: rotate(135deg) translate(1px, 1px);
+  }
+}
+
+// ─── Pagination dots ──────────────────────────────────────────────────────────
+
+.hotel-carousel__dots {
+  position: relative;
+  z-index: 4;
+  margin-top: 0.25rem;
+}
+
+.hotel-carousel__dot {
+  background: rgba(246, 239, 231, 0.28);
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  height: 0.5rem;
+  padding: 0;
+  transition: width 200ms ease, background 200ms ease;
+  width: 0.5rem;
+
+  &.active {
+    background: var(--color-gold);
+    width: 1.7rem;
+  }
+}
+
+// ─── Empty state ──────────────────────────────────────────────────────────────
+
+.hotel-network__empty {
+  background: rgba(15, 15, 14, 0.82);
+  border: 1px solid var(--color-border-md);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-body);
+
+  p {
+    color: var(--color-text-muted);
+  }
+}
+
+// ─── CTA strip ────────────────────────────────────────────────────────────────
+
+.hotel-network__cta-text {
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+
+@media (max-width: 1100px) {
+  .hotel-slide {
+    width: min(500px, 70vw);
+  }
+
+  .hotel-slide--previous {
+    transform: translateX(calc(-50% - 285px)) scale(0.84);
+  }
+
+  .hotel-slide--next {
+    transform: translateX(calc(-50% + 285px)) scale(0.84);
+  }
+}
+
+@media (max-width: 768px) {
+  .hotel-network {
+    background: linear-gradient(180deg, var(--color-surface) 0, #ede7dd 32%, #121312 32%, var(--color-bg) 100%);
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .hotel-network__subtitle {
+    margin-inline: 0;
+  }
+
+  .hotel-carousel__viewport {
+    min-height: 610px;
+  }
+
+  .hotel-slide {
+    min-height: 570px;
+    top: 1rem;
+    width: 100%;
+  }
+
+  .hotel-slide--active {
+    transform: translateX(-50%) scale(1);
+  }
+
+  .hotel-slide--previous {
+    opacity: 0;
+    transform: translateX(calc(-50% - 110%)) scale(0.92);
+  }
+
+  .hotel-slide--next {
+    opacity: 0;
+    transform: translateX(calc(-50% + 110%)) scale(0.92);
+  }
+
+  .hotel-carousel__control {
+    top: 32%;
+  }
+
+  .hotel-carousel__control--previous {
+    left: 0.5rem;
+  }
+
+  .hotel-carousel__control--next {
+    right: 0.5rem;
+  }
+}

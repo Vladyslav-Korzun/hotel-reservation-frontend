@@ -1,0 +1,130 @@
+.lrs {
+  position: sticky;
+  top: 100px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: 0 24px 60px -32px rgba(0, 0, 0, 0.7);
+  display: grid;
+  gap: 22px;
+}
+
+/* Room header */
+.lrs__room {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 14px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.lrs__img {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  background: var(--color-bg-field) center / cover no-repeat;
+}
+
+.lrs__room-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.lrs__hotel { color: var(--color-text); font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+.lrs__room-name {
+  font-family: var(--font-serif); font-size: 20px; font-weight: 500;
+  color: var(--color-text); line-height: 1.1;
+}
+.lrs__location { color: var(--color-text-muted); font-size: 12px; margin-top: 2px; }
+
+/* Section label (uppercase) */
+.lrs__section-label {
+  color: var(--color-text-muted); font-size: 11px; letter-spacing: 0.1em;
+  text-transform: uppercase; font-weight: 700; margin-bottom: 12px;
+}
+
+/* Dates */
+.lrs__dates {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.lrs__date { display: flex; flex-direction: column; gap: 2px; }
+.lrs__date small {
+  color: var(--color-text-subtle); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.lrs__date strong {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 500; line-height: 1.1;
+}
+.lrs__date span { color: var(--color-text-muted); font-size: 11.5px; }
+
+.lrs__arrow { display: inline-flex; align-items: center; color: var(--color-gold); }
+.lrs__arrow svg { width: 16px; height: 16px; }
+
+.lrs__nights {
+  text-align: center; color: var(--color-gold-hover);
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  margin-top: 10px; padding-top: 10px;
+  border-top: 1px dashed var(--color-border);
+}
+
+/* Guests */
+.lrs__guests { display: grid; gap: 6px; font-size: 13.5px; }
+.lrs__guests-line { display: flex; justify-content: space-between; align-items: center; }
+.lrs__guests-line span { color: var(--color-text-muted); }
+.lrs__guests-line b { color: var(--color-text); font-weight: 700; }
+.lrs__dim { color: var(--color-text-subtle); font-weight: 500; font-size: 11.5px; }
+
+/* Breakdown */
+.lrs__breakdown { display: grid; gap: 10px; font-size: 13.5px; }
+.lrs__row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.lrs__row > span:first-child { color: var(--color-text-muted); display: flex; flex-direction: column; gap: 1px; }
+.lrs__row > span:last-child { color: var(--color-text); font-weight: 700; flex-shrink: 0; }
+.lrs__row-sub { color: var(--color-text-subtle); font-size: 11px; font-weight: 500; }
+.lrs__row-pending { color: var(--color-text-subtle); font-weight: 500; font-style: italic; font-size: 12px; }
+.lrs__row--dim,
+.lrs__row--dim > span:first-child,
+.lrs__row--dim > span:last-child {
+  color: var(--color-text-subtle); font-weight: 500;
+}
+
+.lrs__total {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-top: 10px; padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+}
+.lrs__total-label { font-family: var(--font-serif); font-size: 18px; font-weight: 500; }
+.lrs__total-amount {
+  font-family: var(--font-serif); font-size: 28px; font-weight: 500;
+  color: var(--color-gold-hover); letter-spacing: -0.01em;
+}
+.lrs__total-amount--pending { color: var(--color-text-subtle); }
+.lrs__total-note {
+  color: var(--color-text-subtle); font-size: 11px; font-style: italic;
+  text-align: right; margin-top: 4px;
+}
+
+/* Free-cancellation pill */
+.lrs__pill {
+  display: inline-flex; align-items: center; justify-self: start; gap: 8px;
+  padding: 7px 13px;
+  background: rgba(143, 185, 110, 0.1);
+  border: 1px solid rgba(143, 185, 110, 0.25);
+  color: #afd089;
+  border-radius: var(--radius-pill);
+  font-size: 12px; font-weight: 700;
+}
+.lrs__pill svg { width: 14px; height: 14px; }
+
+@media (max-width: 1199px) { .lrs { position: static; } }
+
+@media (max-width: 720px) {
+  .lrs__dates { grid-template-columns: 1fr; gap: 14px; }
+  .lrs__arrow { transform: rotate(90deg); justify-self: start; }
+}

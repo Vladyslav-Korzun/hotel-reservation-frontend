@@ -13,6 +13,10 @@ export class ReservationsApi {
     return this.http.get<ReservationResponseDto[]>(this.baseUrl);
   }
 
+  listMyReservations(): Observable<ReservationResponseDto[]> {
+    return this.http.get<ReservationResponseDto[]>(`${environment.apiBaseUrl}/me/reservations`);
+  }
+
   createReservation(request: CreateReservationRequestDto): Observable<ReservationResponseDto> {
     return this.http.post<ReservationResponseDto>(this.baseUrl, request);
   }
@@ -35,6 +39,13 @@ export class ReservationsApi {
   checkOutReservation(reservationId: string): Observable<ReservationResponseDto> {
     return this.http.post<ReservationResponseDto>(
       `${environment.apiBaseUrl}/staff/reservations/${encodeURIComponent(reservationId)}/check-out`,
+      null,
+    );
+  }
+
+  markNoShowReservation(reservationId: string): Observable<ReservationResponseDto> {
+    return this.http.post<ReservationResponseDto>(
+      `${environment.apiBaseUrl}/staff/reservations/${encodeURIComponent(reservationId)}/no-show`,
       null,
     );
   }

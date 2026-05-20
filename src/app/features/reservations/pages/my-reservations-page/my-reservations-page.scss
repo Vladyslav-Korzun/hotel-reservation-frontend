@@ -1,0 +1,50 @@
+﻿.my-reservations-page {
+  color: var(--color-text-body);
+  min-height: 100vh;
+  padding: 7.5rem 0 4rem;
+  position: relative;
+}
+
+.my-reservations-page__backdrop {
+  background:
+    linear-gradient(90deg, rgba(12, 13, 12, 0.78), rgba(12, 13, 12, 0.42)),
+    linear-gradient(180deg, rgba(12, 13, 12, 0.34), rgba(12, 13, 12, 0.72)),
+    url('https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=2000&q=80') center / cover
+      no-repeat;
+  inset: 0;
+  position: absolute;
+}
+
+.my-reservations-page__content {
+  position: relative;
+  z-index: 1;
+}
+
+.my-reservations-hero {
+  align-items: flex-end;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.my-reservations-hero__copy {
+  color: rgba(246, 246, 246, 0.74);
+  max-width: 720px;
+}
+
+
+.my-reservations-feedback {
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 720px) {
+  .my-reservations-page {
+    padding-bottom: 3rem;
+  }
+
+  .my-reservations-hero {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

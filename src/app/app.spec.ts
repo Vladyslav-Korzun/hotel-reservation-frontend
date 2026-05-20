@@ -14,7 +14,9 @@ describe('App', () => {
           provide: AuthService,
           useValue: {
             initialize: () => Promise.resolve(),
+            user: signal(null),
             isAuthenticated: signal(false),
+            hasAnyRole: () => false,
             login: () => undefined,
             logout: () => undefined,
           },

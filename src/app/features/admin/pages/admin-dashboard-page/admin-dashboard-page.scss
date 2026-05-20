@@ -1,0 +1,90 @@
+﻿.admin-page {
+  color: var(--color-text-body);
+  min-height: 100vh;
+  padding: 7.5rem 0 4rem;
+  position: relative;
+}
+
+.admin-page__backdrop {
+  background:
+    linear-gradient(90deg, rgba(12, 13, 12, 0.86), rgba(12, 13, 12, 0.58)),
+    linear-gradient(180deg, rgba(12, 13, 12, 0.34), rgba(12, 13, 12, 0.72)),
+    url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=2000&q=80') center / cover
+      no-repeat;
+  inset: 0;
+  position: absolute;
+}
+
+.admin-page__content {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-hero {
+  display: grid;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.admin-hero__copy {
+  color: rgba(246, 246, 246, 0.74);
+  max-width: 760px;
+}
+
+.admin-tabs {
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.admin-tabs__button {
+  background: var(--color-bg-card-soft);
+  border: 1px solid rgba(201, 190, 179, 0.18);
+  border-radius: 999px;
+  color: #f7f7f2;
+  font-weight: 800;
+  min-height: 42px;
+  padding: 0.55rem 0.95rem;
+}
+
+.admin-tabs__button:hover,
+.admin-tabs__button:focus {
+  color: #f1d5b2;
+}
+
+.admin-tabs__button.active {
+  background: #c49c74;
+  border-color: #c49c74;
+  color: var(--color-ink-body);
+}
+
+.admin-feedback {
+  margin-bottom: 1rem;
+}
+
+.admin-result {
+  background: var(--color-bg-card);
+  border: 1px solid rgba(201, 190, 179, 0.18);
+  border-radius: var(--radius-lg);
+  color: #f7f7f2;
+}
+
+.admin-result p {
+  color: rgba(246, 246, 246, 0.72);
+  margin: 0;
+}
+
+.admin-result pre {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  margin: 0.75rem 0 0;
+  max-height: 560px;
+  overflow: auto;
+  padding: 0.85rem;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 720px) {
+  .admin-page {
+    padding-bottom: 3rem;
+  }
+}

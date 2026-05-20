@@ -1,24 +1,18 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { AccommodationParty } from '../../../shared/accommodation/accommodation-party.model';
-import { AvailableRoomResponseDto } from './stay-search.dto';
-
-export interface SearchAvailableRoomsRequest extends AccommodationParty {
-  city?: string;
-  hotelId?: number;
-  checkIn: string;
-  checkOut: string;
-}
+import { RoomAvailabilityDayDto } from './availability.dto';
+import { AvailableRoomResponseDto, SearchAvailableRoomsRequestDto } from './stay-search.dto';
 
 @Injectable({ providedIn: 'root' })
 export class StaysApi {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.apiBaseUrl}/rooms/search`;
+  private readonly searchUrl = `${environment.apiBaseUrl}/rooms/search`;
+  private readonly hotelsUrl = `${environment.apiBaseUrl}/hotels`;
 
-  searchAvailableRooms(request: SearchAvailableRoomsRequest): Observable<AvailableRoomResponseDto[]> {
-    return this.http.post<AvailableRoomResponseDto[]>(this.baseUrl, {
+  searchAvailableRooms(request: SearchAvailableRoomsRequestDto): Observable<AvailableRoomResponseDto[]> {
+    const body: SearchAvailableRoomsRequestDto = {
       city: request.city?.trim() || undefined,
       hotelId: request.hotelId,
       checkIn: request.checkIn,
@@ -26,6 +20,23 @@ export class StaysApi {
       adults: request.adults,
       childrenAges: request.childrenAges,
       pets: request.pets,
-    });
+    };
+
+    return this.http.post<AvailableRoomResponseDto[]>(this.searchUrl, body);
+  }
+
+  /**
+   * Public endpoint — returns per-day availability for a room type
+   * within `[from, to]` inclusive (max 90 days enforced by backend).
+   */
+  getAvailabilityCalendar(
+    hotelId: number,
+    roomTypeId: number,
+    fromIso: string,
+    toIso: string,
+  ): Observable<RoomAvailabilityDayDto[]> {
+    const url = `${this.hotelsUrl}/${hotelId}/room-types/${roomTypeId}/availability-calendar`;
+    const params = new HttpParams().set('from', fromIso).set('to', toIso);
+    return this.http.get<RoomAvailabilityDayDto[]>(url, { params });
   }
 }

@@ -1,0 +1,45 @@
+<section class="room-gallery" aria-label="Room photos">
+  <button
+    type="button"
+    class="room-gallery__main"
+    [style.background-image]="'url(' + mainSrc() + ')'"
+    aria-label="Open main photo"
+    (click)="open(0)"
+  ></button>
+
+  <div class="room-gallery__thumbs">
+    @for (thumb of thumbs(); track thumb; let i = $index) {
+      <button
+        type="button"
+        class="room-gallery__thumb"
+        [style.background-image]="'url(' + thumb + ')'"
+        [attr.aria-label]="'Open photo ' + (i + 2)"
+        (click)="open(i + 1)"
+      ></button>
+    }
+  </div>
+
+  @if (images().length > 1) {
+    <button
+      type="button"
+      class="room-gallery__view-all"
+      (click)="open(0)"
+      aria-label="View all photos"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7" rx="1"/>
+        <rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/>
+        <rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+      View all ({{ images().length }})
+    </button>
+  }
+</section>
+
+<app-photo-lightbox
+  [images]="images()"
+  [openAtIndex]="openIndex()"
+  altPrefix="Room photo"
+  (closed)="onClosed()"
+/>

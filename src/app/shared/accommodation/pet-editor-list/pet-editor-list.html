@@ -1,0 +1,69 @@
+@if (!allowed()) {
+  <p class="wp-pet-empty">This room type does not allow pets.</p>
+} @else if (petCount() === 0) {
+  <div class="wp-pet-empty wp-pet-empty--with-add">
+    <span>{{ emptyLabel() }}</span>
+    <button type="button" class="wp-pet-add" [disabled]="atCap()" (click)="addPet()">
+      <span aria-hidden="true">＋</span> {{ addLabel() }}
+    </button>
+  </div>
+} @else {
+  <div class="wp-pet-list">
+    @for (pet of petControls(); track $index; let i = $index) {
+      <article class="wp-pet-card" [formGroup]="pet">
+        <div class="wp-pet-card__head">
+          <strong>Pet {{ i + 1 }}</strong>
+          <button
+            type="button"
+            class="wp-pet-card__remove"
+            (click)="removePet(i)"
+            aria-label="Remove pet"
+          >Remove</button>
+        </div>
+
+        <div class="wp-pet-card__grid">
+          <div class="wp-field">
+            <span>Type</span>
+            <div class="wp-seg">
+              @for (type of petTypes; track type) {
+                <button
+                  type="button"
+                  [class.wp-seg--selected]="pet.controls.type.value === type"
+                  (click)="selectType(i, type)"
+                >{{ type }}</button>
+              }
+            </div>
+          </div>
+
+          <div class="wp-field">
+            <span>Weight (kg)</span>
+            <div class="wp-pet-card__weight-grid" role="radiogroup" aria-label="Pet weight">
+              @for (opt of weightOptions; track opt.value) {
+                <button
+                  type="button"
+                  class="wp-age-chip"
+                  [class.wp-age-chip--selected]="pet.controls.weightKg.value === opt.value"
+                  [attr.aria-checked]="pet.controls.weightKg.value === opt.value"
+                  role="radio"
+                  (click)="selectWeight(i, opt.value)"
+                >{{ opt.label }}</button>
+              }
+            </div>
+          </div>
+        </div>
+
+        @if (hasPetWeightError(i, 'required') || hasPetWeightError(i, 'min')) {
+          <span class="wp-pet-card__error">Pet weight must be zero or greater.</span>
+        }
+      </article>
+    }
+
+    @if (!atCap()) {
+      <button type="button" class="wp-pet-add wp-pet-add--inline" (click)="addPet()">
+        <span aria-hidden="true">＋</span> Add another pet
+      </button>
+    } @else {
+      <p class="wp-pet-cap">Maximum {{ maxPets() }} {{ maxPets() === 1 ? 'pet' : 'pets' }} reached.</p>
+    }
+  </div>
+}

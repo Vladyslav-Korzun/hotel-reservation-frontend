@@ -1,0 +1,207 @@
+<section class="wpanel">
+
+  <header class="wpanel__head">
+    <h2>Tell us about your guests</h2>
+    <p>The hotel needs this info to register every guest at check-in.</p>
+  </header>
+
+  <!-- Per-booking contact (sent to backend; defaults to profile when blank) -->
+  <section class="sgd__contact">
+    <header class="sgd__contact-head">
+      <strong>Contact for this booking</strong>
+      <span>We'll send your confirmation here and use it if the hotel needs to reach you.</span>
+    </header>
+
+    <div class="sgd__contact-grid">
+      <label class="wp-field">
+        <span>Email</span>
+        <input
+          type="email"
+          autocomplete="email"
+          [formControl]="contactEmailControl()"
+          [placeholder]="profileEmailHint() || 'you@example.com'"
+          [class.wp-field__input--invalid]="contactEmailControl().touched && contactEmailControl().invalid"
+        />
+        @if (contactEmailControl().touched && contactEmailControl().hasError('email')) {
+          <span class="wp-field__error">Use a valid email address.</span>
+        } @else if (!contactEmailControl().value && profileEmailHint()) {
+          <span class="field-hint sgd__field-hint">Leave blank to use your profile email ({{ profileEmailHint() }}).</span>
+        }
+      </label>
+
+      <label class="wp-field">
+        <span>Phone</span>
+        <input
+          type="tel"
+          inputmode="tel"
+          autocomplete="tel"
+          maxlength="32"
+          [formControl]="contactPhoneControl()"
+          placeholder="+421 912 345 678"
+          [class.wp-field__input--invalid]="contactPhoneControl().touched && contactPhoneControl().invalid"
+          (input)="formatPhoneInput()"
+          (blur)="formatPhoneInput()"
+        />
+        @if (!contactPhoneControl().value) {
+          <span class="field-hint sgd__field-hint">Optional. Used for SMS and on-site contact.</span>
+        }
+      </label>
+    </div>
+  </section>
+
+  <div class="sgd__list">
+    @for (view of guestViews(); track view.index) {
+      <article class="sgd__card" [class.sgd__card--primary]="view.isBooker" [formGroup]="view.control">
+
+        <div class="sgd__card-head">
+          <span class="sgd__avatar" aria-hidden="true">
+            @if (view.isAdult) {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="8" r="4"/><path d="M4 21v-1a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v1"/>
+              </svg>
+            } @else {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="12" cy="7" r="3"/><path d="M5 21v-1a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v1"/>
+              </svg>
+            }
+          </span>
+          <div class="sgd__title">
+            <div class="sgd__role">{{ view.positionLabel }}</div>
+            <div class="sgd__sub">
+              @if (view.isBooker) {
+                Primary guest · makes the reservation
+              } @else if (view.isAdult) {
+                Accompanying guest
+              } @else if (view.childAge !== null && view.childAge > 0) {
+                Age {{ view.childAge }} · from date of birth
+              } @else {
+                Age will be calculated from date of birth
+              }
+            </div>
+          </div>
+          @if (view.isBooker) {
+            <span class="sgd__badge">Booker</span>
+          } @else if (view.ageGroup === 'infant') {
+            <span class="sgd__badge sgd__badge--infant">Infant</span>
+          } @else if (view.ageGroup === 'child') {
+            <span class="sgd__badge sgd__badge--child">Child</span>
+          } @else if (view.ageGroup === 'adult-equivalent-minor') {
+            <span class="sgd__badge sgd__badge--minor">Counts as adult</span>
+          } @else if (view.ageGroup === 'invalid') {
+            <span class="sgd__badge sgd__badge--invalid">Out of range</span>
+          }
+        </div>
+
+        <div class="sgd__fields">
+          <label class="wp-field">
+            <span>First name</span>
+            <input
+              type="text"
+              formControlName="firstName"
+              autocomplete="given-name"
+              placeholder="e.g. Maria"
+              [class.wp-field__input--invalid]="
+                view.control.controls.firstName.touched && view.control.controls.firstName.invalid
+              "
+            />
+            @if (view.control.controls.firstName.touched && view.control.controls.firstName.hasError('required')) {
+              <span class="wp-field__error">First name is required.</span>
+            }
+          </label>
+          <label class="wp-field">
+            <span>Last name</span>
+            <input
+              type="text"
+              formControlName="lastName"
+              autocomplete="family-name"
+              placeholder="e.g. Korotka"
+              [class.wp-field__input--invalid]="
+                view.control.controls.lastName.touched && view.control.controls.lastName.invalid
+              "
+            />
+            @if (view.control.controls.lastName.touched && view.control.controls.lastName.hasError('required')) {
+              <span class="wp-field__error">Last name is required.</span>
+            }
+          </label>
+          <label class="wp-field">
+            <span>Date of birth</span>
+            <input
+              type="text"
+              formControlName="dateOfBirth"
+              inputmode="numeric"
+              placeholder="DD.MM.YYYY"
+              autocomplete="bday"
+              maxlength="10"
+              [class.wp-field__input--invalid]="
+                view.control.controls.dateOfBirth.touched && view.control.controls.dateOfBirth.invalid
+              "
+              (input)="formatDobInput(view.control)"
+              (blur)="normalizeDobInput(view.control)"
+            />
+            @if (view.control.controls.dateOfBirth.touched) {
+              @if (view.control.controls.dateOfBirth.hasError('required')) {
+                <span class="wp-field__error">Date of birth is required.</span>
+              } @else if (view.control.controls.dateOfBirth.hasError('invalidDate')) {
+                <span class="wp-field__error">Use format DD.MM.YYYY.</span>
+              } @else if (view.control.controls.dateOfBirth.hasError('dateInFuture')) {
+                <span class="wp-field__error">Date of birth cannot be in the future.</span>
+              }
+            }
+          </label>
+          <div class="wp-field">
+            <span>Gender</span>
+            <div class="wp-seg" role="group" [attr.aria-label]="view.positionLabel + ' gender'">
+              @for (g of genders; track g) {
+                <button
+                  type="button"
+                  [class.wp-seg--selected]="view.control.controls.gender.value === g"
+                  (click)="setGender(view.control, g)"
+                >{{ g.charAt(0) + g.slice(1).toLowerCase() }}</button>
+              }
+            </div>
+          </div>
+        </div>
+
+      </article>
+    }
+  </div>
+
+  <div class="wpanel__divider"></div>
+
+  <header class="wpanel__subhead">
+    <h3>Anything special?</h3>
+    <p>Optional note for the hotel.</p>
+  </header>
+
+  <div class="sgd__textarea">
+    <div class="sgd__textarea-head">
+      <span class="sgd__textarea-label">Special requests</span>
+      <span class="sgd__textarea-counter">
+        {{ specialRequestsControl().value.length }} / 500
+      </span>
+    </div>
+    <textarea
+      rows="3"
+      maxlength="500"
+      [formControl]="specialRequestsControl()"
+      placeholder="e.g. early check-in, allergies, room near the elevator…"
+      [class.wp-field__input--invalid]="specialRequestsControl().invalid"
+    ></textarea>
+  </div>
+
+  <div class="wpanel__nav">
+    <button type="button" class="wpanel__btn-back" (click)="back.emit()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M19 12H5M11 6l-6 6 6 6"/>
+      </svg>
+      Back to trip
+    </button>
+    <button type="button" class="wpanel__btn-primary" (click)="next.emit()">
+      Continue to services
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M5 12h14M13 6l6 6-6 6"/>
+      </svg>
+    </button>
+  </div>
+
+</section>

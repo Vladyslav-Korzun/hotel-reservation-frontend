@@ -1,0 +1,134 @@
+.rsp {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 22px 28px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+}
+
+.rsp__step {
+  background: transparent;
+  border: 0;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  text-align: left;
+  transition: color 0.15s;
+
+  &:hover:not(:disabled):not(.rsp__step--current) {
+    color: var(--color-gold-hover);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+}
+
+.rsp__step--done {
+  color: var(--color-gold-hover);
+}
+
+.rsp__step--current {
+  color: var(--color-text);
+  cursor: default;
+}
+
+.rsp__num {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 500;
+  flex-shrink: 0;
+  background: var(--color-bg-field);
+  transition: all 0.2s;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.rsp__step--done .rsp__num {
+  background: linear-gradient(180deg, var(--color-gold-hover), var(--color-gold));
+  border-color: var(--color-gold);
+  color: var(--color-ink);
+}
+
+.rsp__step--current .rsp__num {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 4px var(--color-gold-focus);
+  color: var(--color-gold-hover);
+}
+
+.rsp__label {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.15;
+
+  small {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-subtle);
+    font-weight: 700;
+  }
+
+  span {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.rsp__line {
+  flex: 1;
+  height: 1px;
+  min-width: 24px;
+  background: var(--color-border);
+  margin: 0 14px;
+}
+
+.rsp__step--done + .rsp__line {
+  background: linear-gradient(90deg, var(--color-gold), var(--color-border));
+}
+
+@media (max-width: 720px) {
+  .rsp {
+    padding: 16px;
+  }
+  // Collapse: hide labels except current
+  .rsp__step:not(.rsp__step--current) .rsp__label {
+    display: none;
+  }
+  .rsp__step--current .rsp__label span {
+    font-size: 14px;
+  }
+  .rsp__line {
+    min-width: 12px;
+    margin: 0 6px;
+  }
+}

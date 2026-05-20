@@ -1,0 +1,45 @@
+/* Step-trip-details — only the bits unique to this step.
+   Shared primitives (.wp-counter, .wp-field, .wp-seg, .wp-card) live in _wizard-panel.scss */
+
+.std__dates {
+  margin-bottom: 24px;
+}
+
+.std__counter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 14px 0;
+  border-top: 1px solid var(--color-border);
+
+  &:first-of-type {
+    border-top: 0;
+    padding-top: 0;
+  }
+}
+
+.std__counter-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  strong {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  span {
+    color: var(--color-text-muted);
+    font-size: 12.5px;
+  }
+}
+
+/* Spacing for the age-picker block (visual lives in .wp-age-* primitives) */
+.std__ages {
+  margin: 8px 0 18px;
+}
+
+/* Pet editor styles moved to shared/accommodation/pet-editor-list/ */

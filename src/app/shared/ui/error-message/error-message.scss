@@ -1,13 +1,11 @@
 .error-message {
-  background: linear-gradient(180deg, #fff8f7, #fff1f0);
-  border: 1px solid #f1b3ae;
-  border-radius: 14px;
-  color: #7a1f16;
-  display: grid;
-  gap: 0.35rem;
+  background: rgba(180, 35, 24, 0.16);
+  border: 1px solid rgba(242, 112, 101, 0.35);
+  border-radius: var(--radius-md);
+  color: #ffd8d5;
   margin-bottom: 1rem;
   padding: 0.95rem 1rem;
-  box-shadow: 0 14px 20px -22px rgba(122, 31, 22, 0.95);
+  box-shadow: 0 18px 34px -28px rgba(0, 0, 0, 0.9);
 }
 
 .error-message strong {
@@ -16,4 +14,5 @@
 
 .error-message p {
   font-size: 0.9rem;
+  margin-top: 0.35rem;
 }

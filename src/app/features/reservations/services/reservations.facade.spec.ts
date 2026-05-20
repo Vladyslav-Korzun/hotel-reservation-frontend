@@ -56,7 +56,11 @@ describe('ReservationsFacade', () => {
         roomTypeId: 2,
         checkIn: '2026-05-10',
         checkOut: '2026-05-12',
-        guestCount: 2,
+        stayingGuests: [
+          { firstName: 'Vladyslav', lastName: 'Korzun', age: 30, gender: 'MALE' },
+          { firstName: 'Guest', lastName: 'Guest', age: 28, gender: 'OTHER' },
+        ],
+        pets: [],
       }),
     );
 
@@ -70,11 +74,15 @@ function createReservationDto(override: Partial<ReservationResponseDto>): Reserv
   return {
     reservationId: 'af884cad-7b10-4e17-ad82-551a23020ffe',
     hotelId: 1,
+    guestId: 10,
     roomId: null,
     roomTypeId: 2,
     checkIn: '2026-05-10',
     checkOut: '2026-05-12',
-    guestCount: 2,
+    adults: 2,
+    childrenAges: [],
+    stayingGuests: [],
+    pets: [],
     status: 'PENDING',
     createdAt: '2026-04-07T20:15:30Z',
     cancelledAt: null,

@@ -7,7 +7,7 @@
 }
 
 .hero-topbar__brand {
-  color: #f6f6f6;
+  color: var(--color-text-body);
   font-size: 1.72rem;
   font-weight: 500;
   text-decoration: none;
@@ -22,7 +22,7 @@
 .hero-topbar__app-link {
   border: 1px solid rgba(246, 246, 246, 0.78);
   border-radius: 999px;
-  color: #f6f6f6;
+  color: var(--color-text-body);
   font-weight: 800;
   min-width: 132px;
   padding: 0.62rem 1.15rem;

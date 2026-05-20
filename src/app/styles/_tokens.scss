@@ -1,0 +1,50 @@
+// Design tokens — single source of truth for all brand values.
+// Import this file anywhere you need brand colors instead of hardcoding hex.
+
+:root {
+  // Backgrounds
+  --color-bg:          #0f1110;
+  --color-bg-deep:     #0a0c0b;
+  --color-bg-card:     rgba(18, 18, 18, 0.74);
+  --color-bg-card-soft: rgba(18, 18, 18, 0.72);
+  --color-bg-badge:    rgba(18, 18, 18, 0.64);
+  --color-bg-field:    rgba(18, 18, 18, 0.86);
+  --color-bg-subtle:   rgba(255, 255, 255, 0.04);
+
+  // Gold accent
+  --color-gold:        #c49c74;
+  --color-gold-hover:  #f4d2a4;
+  --color-gold-muted:  #d6b48d;
+  --color-gold-focus:  rgba(202, 160, 111, 0.14);
+
+  // Text
+  --color-text:        #fffdf8;
+  --color-text-body:   #f7f7f2;
+  --color-text-muted:  rgba(246, 246, 246, 0.65);
+  --color-text-subtle: rgba(246, 246, 246, 0.42);
+
+  // Borders
+  --color-border:      rgba(255, 255, 255, 0.10);
+  --color-border-md:   rgba(255, 255, 255, 0.18);
+  --color-border-gold: rgba(214, 180, 141, 0.72);
+
+  // Ink (text on light/white backgrounds)
+  --color-ink:         #1b1a18;
+  --color-ink-body:    #252525;
+
+  // Light surface
+  --color-surface:     #f6f6f6;
+
+  // Status
+  --color-danger:      #b42318;
+
+  // Typography
+  --font-serif:        'Cormorant Garamond', Georgia, serif;
+
+  // Radii
+  --radius-sm:         8px;
+  --radius-md:         14px;
+  --radius-lg:         18px;
+  --radius-xl:         20px;
+  --radius-pill:       999px;
+}

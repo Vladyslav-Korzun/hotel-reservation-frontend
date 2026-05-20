@@ -1,0 +1,125 @@
+/* Service rows: icon left · name+desc center · price right.
+   Matches the mockup composition; tokens drive the colours. */
+
+.services-list {
+  display: grid;
+}
+
+.service-row {
+  align-items: center;
+  border-bottom: 1px solid var(--color-border);
+  display: grid;
+  gap: 1.1rem;
+  grid-template-columns: 48px 1fr auto;
+  padding: 1.4rem 0;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.service-row__icon {
+  align-items: center;
+  background: rgba(196, 156, 116, 0.08);
+  border-radius: 14px;
+  color: var(--color-gold);
+  display: inline-flex;
+  height: 48px;
+  justify-content: center;
+  width: 48px;
+
+  svg {
+    height: 24px;
+    width: 24px;
+  }
+}
+
+.service-row__body {
+  min-width: 0;
+}
+
+.service-row__name {
+  color: var(--color-text);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1.15;
+  margin: 0 0 0.25rem;
+}
+
+.service-row__desc {
+  color: var(--color-text-muted);
+  font-size: 0.86rem;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 58ch;
+}
+
+.service-row__rule {
+  color: var(--color-text-subtle);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  margin: 0.35rem 0 0;
+  text-transform: uppercase;
+}
+
+.service-row__price {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.service-row__price b {
+  color: var(--color-gold-hover);
+  display: block;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.service-row__price small {
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.services-list__empty {
+  margin: 0;
+  padding: 1rem 0;
+}
+
+@media (max-width: 720px) {
+  .service-row {
+    gap: 0.9rem;
+    grid-template-columns: 40px 1fr;
+    padding: 1.2rem 0;
+  }
+
+  .service-row__icon {
+    height: 40px;
+    width: 40px;
+
+    svg {
+      height: 20px;
+      width: 20px;
+    }
+  }
+
+  .service-row__name {
+    font-size: 1.1rem;
+  }
+
+  .service-row__price {
+    grid-column: 2;
+    padding-top: 0.2rem;
+    text-align: left;
+  }
+
+  .service-row__price b {
+    display: inline;
+    font-size: 1.15rem;
+    margin-right: 0.4rem;
+  }
+}

@@ -1,57 +1,159 @@
-<section class="summary">
-  <div class="summary-header">
-    <div>
-      <p class="eyebrow">Reservation</p>
-      <h2>Reservation overview</h2>
-      <p class="summary-subtitle">{{ reservation().reservationId }}</p>
+<section class="card summary">
+  <div class="card-body d-flex flex-column gap-4">
+    <div class="d-flex justify-content-between align-items-start gap-3">
+      <div>
+        <p class="eyebrow mb-1">Reservation</p>
+        <h2 class="summary-title mb-1">Reservation overview</h2>
+        <p class="summary-subtitle mb-0">{{ reservation().reservationId }}</p>
+      </div>
+      <app-status-badge [status]="reservation().status" />
     </div>
-    <app-status-badge [status]="reservation().status" />
-  </div>
 
-  <dl>
-    <div>
-      <dt>Property reference</dt>
-      <dd>{{ reservation().hotelId }}</dd>
+    <div class="row g-3">
+      <div class="col-12 col-sm-6">
+        <div class="summary-field p-3">
+          <dt class="summary-dt">Property reference</dt>
+          <dd class="summary-dd mb-0">{{ reservation().hotelId }}</dd>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6">
+        <div class="summary-field p-3">
+          <dt class="summary-dt">Room reference</dt>
+          <dd class="summary-dd mb-0">{{ reservation().roomTypeId }}</dd>
+        </div>
+      </div>
+      @if (reservation().roomId) {
+        <div class="col-12 col-sm-6">
+          <div class="summary-field p-3">
+            <dt class="summary-dt">Assigned room</dt>
+            <dd class="summary-dd mb-0">{{ reservation().roomId }}</dd>
+          </div>
+        </div>
+      }
+      <div class="col-12 col-sm-6">
+        <div class="summary-field p-3">
+          <dt class="summary-dt">Stay dates</dt>
+          <dd class="summary-dd mb-0">{{ reservation().checkIn }} to {{ reservation().checkOut }}</dd>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6">
+        <div class="summary-field p-3">
+          <dt class="summary-dt">Party</dt>
+          <dd class="summary-dd mb-0">{{ partySummary(reservation()) }}</dd>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6">
+        <div class="summary-field p-3">
+          <dt class="summary-dt">Children ages</dt>
+          <dd class="summary-dd mb-0">{{ childrenSummary(reservation()) }}</dd>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6">
+        <div class="summary-field p-3">
+          <dt class="summary-dt">Pets</dt>
+          <dd class="summary-dd mb-0">{{ petsSummary(reservation()) }}</dd>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6">
+        <div class="summary-field p-3">
+          <dt class="summary-dt">Created by</dt>
+          <dd class="summary-dd mb-0">{{ reservation().createdBy }}</dd>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6">
+        <div class="summary-field p-3">
+          <dt class="summary-dt">Created at</dt>
+          <dd class="summary-dd mb-0">{{ reservation().createdAt | date: 'medium' }}</dd>
+        </div>
+      </div>
+      @if (reservation().cancelledAt) {
+        <div class="col-12 col-sm-6">
+          <div class="summary-field p-3">
+            <dt class="summary-dt">Cancelled at</dt>
+            <dd class="summary-dd mb-0">{{ reservation().cancelledAt | date: 'medium' }}</dd>
+          </div>
+        </div>
+      }
+      @if (reservation().contactEmail) {
+        <div class="col-12 col-sm-6">
+          <div class="summary-field p-3">
+            <dt class="summary-dt">Contact email</dt>
+            <dd class="summary-dd mb-0">{{ reservation().contactEmail }}</dd>
+          </div>
+        </div>
+      }
+      @if (reservation().contactPhone) {
+        <div class="col-12 col-sm-6">
+          <div class="summary-field p-3">
+            <dt class="summary-dt">Contact phone</dt>
+            <dd class="summary-dd mb-0">{{ reservation().contactPhone }}</dd>
+          </div>
+        </div>
+      }
     </div>
-    <div>
-      <dt>Room reference</dt>
-      <dd>{{ reservation().roomTypeId }}</dd>
-    </div>
-    @if (reservation().roomId) {
-      <div>
-        <dt>Assigned room</dt>
-        <dd>{{ reservation().roomId }}</dd>
+
+    @if (reservation().specialRequests) {
+      <div class="summary-section">
+        <p class="eyebrow mb-2">Special requests</p>
+        <p class="summary-special-requests mb-0">{{ reservation().specialRequests }}</p>
       </div>
     }
-    <div>
-      <dt>Stay dates</dt>
-      <dd>{{ reservation().checkIn }} to {{ reservation().checkOut }}</dd>
-    </div>
-    <div>
-      <dt>Party</dt>
-      <dd>{{ partySummary(reservation()) }}</dd>
-    </div>
-    <div>
-      <dt>Children ages</dt>
-      <dd>{{ childrenSummary(reservation()) }}</dd>
-    </div>
-    <div>
-      <dt>Pets</dt>
-      <dd>{{ petsSummary(reservation()) }}</dd>
-    </div>
-    <div>
-      <dt>Created by</dt>
-      <dd>{{ reservation().createdBy }}</dd>
-    </div>
-    <div>
-      <dt>Created at</dt>
-      <dd>{{ reservation().createdAt | date: 'medium' }}</dd>
-    </div>
-    @if (reservation().cancelledAt) {
-      <div>
-        <dt>Cancelled at</dt>
-        <dd>{{ reservation().cancelledAt | date: 'medium' }}</dd>
+
+    @if (hasPriceSnapshot(reservation())) {
+      <div class="summary-section">
+        <p class="eyebrow mb-3">Price snapshot</p>
+        <div class="row g-3">
+          @if (reservation().basePriceAmount !== null && reservation().basePriceCurrency) {
+            <div class="col-12 col-sm-6">
+              <div class="summary-field p-3">
+                <dt class="summary-dt">Base price</dt>
+                <dd class="summary-dd mb-0">{{ money(reservation().basePriceAmount, reservation().basePriceCurrency) }}</dd>
+              </div>
+            </div>
+          }
+          @if (reservation().servicesPriceAmount !== null && reservation().servicesPriceCurrency) {
+            <div class="col-12 col-sm-6">
+              <div class="summary-field p-3">
+                <dt class="summary-dt">Services</dt>
+                <dd class="summary-dd mb-0">{{ money(reservation().servicesPriceAmount, reservation().servicesPriceCurrency) }}</dd>
+              </div>
+            </div>
+          }
+          @if (reservation().discountAmount !== null && reservation().discountCurrency) {
+            <div class="col-12 col-sm-6">
+              <div class="summary-field p-3">
+                <dt class="summary-dt">Discount</dt>
+                <dd class="summary-dd mb-0">{{ money(reservation().discountAmount, reservation().discountCurrency) }}</dd>
+              </div>
+            </div>
+          }
+          @if (reservation().finalPriceAmount !== null && reservation().finalPriceCurrency) {
+            <div class="col-12 col-sm-6">
+              <div class="summary-field p-3">
+                <dt class="summary-dt">Final price</dt>
+                <dd class="summary-dd mb-0">{{ money(reservation().finalPriceAmount, reservation().finalPriceCurrency) }}</dd>
+              </div>
+            </div>
+          }
+        </div>
       </div>
     }
-  </dl>
+
+    @if (reservation().serviceItems.length) {
+      <div class="summary-section">
+        <p class="eyebrow mb-3">Selected services</p>
+        <div class="d-flex flex-column gap-3">
+          @for (item of reservation().serviceItems; track item.serviceOfferingId) {
+            <article class="summary-service d-flex justify-content-between align-items-start gap-3 p-3">
+              <div>
+                <h3 class="summary-service__title mb-1">{{ item.serviceName }}</h3>
+                <p class="summary-service__qty mb-0">Quantity: {{ item.quantity }}</p>
+              </div>
+              <strong class="summary-service__price">{{ money(item.totalPriceAmount, item.totalPriceCurrency) }}</strong>
+            </article>
+          }
+        </div>
+      </div>
+    }
+  </div>
 </section>

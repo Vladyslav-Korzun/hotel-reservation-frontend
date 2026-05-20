@@ -1,50 +1,58 @@
-<main class="find-reservation-page">
-  <div class="find-reservation-page__backdrop" aria-hidden="true"></div>
+<main class="find-reservation-page feature-page">
+  <div class="find-reservation-page__backdrop feature-page__backdrop" aria-hidden="true"></div>
 
-  <section class="find-reservation-hero">
-    <p class="eyebrow">Reservation</p>
-    <h1>Open an existing booking</h1>
-    <p class="find-reservation-hero__copy">
-      Paste your reservation ID to open booking details. Staff and admin users can also load all reservations here.
-    </p>
-  </section>
-
-  @if (problem(); as problemDetail) {
-    <div class="find-reservation-page__feedback">
-      <app-error-message [problem]="problemDetail" />
-    </div>
-  }
-
-  <section class="find-reservation-layout">
-    <app-find-reservation-form
-      [form]="form"
-      [canViewAllReservations]="canViewAllReservations()"
-      (submitted)="openReservation()"
-      (showAllRequested)="showAllReservations()"
-    />
-
-    <aside class="find-reservation-card find-reservation-help">
-      <p class="eyebrow">How to use</p>
-      <h2>Find your reservation</h2>
-      <ul class="find-reservation-help__list">
-        <li>Use the ID from the create response or reservation detail page.</li>
-        <li>Expected format: UUID with dashes.</li>
-        <li>If access is denied, check the current user and ownership rules.</li>
-        <li>If not found, verify that the reservation exists in backend data.</li>
-        @if (canViewAllReservations()) {
-          <li>Staff and admin can leave the field empty or use the extra button to load all reservations.</li>
-        }
-      </ul>
-    </aside>
-  </section>
-
-  @if (loading()) {
-    <section class="find-reservation-results">
-      <app-loading-state label="Loading reservations..." />
+  <div class="container find-reservation-page__content">
+    <section class="find-reservation-hero">
+      <p class="eyebrow">Reservation</p>
+      <h1>Open an existing booking</h1>
+      <p class="find-reservation-hero__copy">
+        Paste your reservation ID to open booking details. Staff and admin users can also load all reservations here.
+      </p>
     </section>
-  } @else if (canViewAllReservations() && hasRequestedList() && !problem()) {
-    <section class="find-reservation-results">
-      <app-reservation-list [reservations]="reservations()" />
+
+    @if (problem(); as problemDetail) {
+      <div class="find-reservation-page__feedback">
+        <app-error-message [problem]="problemDetail" />
+      </div>
+    }
+
+    <section class="row g-4 find-reservation-layout">
+      <div class="col-12 col-lg-8">
+        <app-find-reservation-form
+          [form]="form"
+          [canViewAllReservations]="canViewAllReservations()"
+          (submitted)="openReservation()"
+          (showAllRequested)="showAllReservations()"
+        />
+      </div>
+
+      <aside class="col-12 col-lg-4">
+        <div class="card dark-card find-reservation-card find-reservation-help">
+          <div class="card-body">
+            <p class="eyebrow">How to use</p>
+            <h2 class="h4">Find your reservation</h2>
+            <ul class="list-group list-group-flush find-reservation-help__list">
+              <li class="list-group-item">Use the ID from the create response or reservation detail page.</li>
+              <li class="list-group-item">Expected format: UUID with dashes.</li>
+              <li class="list-group-item">If access is denied, check the current user and ownership rules.</li>
+              <li class="list-group-item">If not found, verify that the reservation exists in backend data.</li>
+              @if (canViewAllReservations()) {
+                <li class="list-group-item">Staff and admin can leave the field empty or use the extra button to load all reservations.</li>
+              }
+            </ul>
+          </div>
+        </div>
+      </aside>
     </section>
-  }
+
+    @if (loading()) {
+      <section class="find-reservation-results">
+        <app-loading-state label="Loading reservations..." />
+      </section>
+    } @else if (canViewAllReservations() && hasRequestedList() && !problem()) {
+      <section class="find-reservation-results">
+        <app-reservation-list [reservations]="reservations()" />
+      </section>
+    }
+  </div>
 </main>

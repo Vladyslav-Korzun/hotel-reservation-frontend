@@ -1,9 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { ReservationsApi } from '../api/reservations.api';
-import { ReservationResponseDto } from '../api/reservation.dto';
 import { CreateReservationRequest, Reservation } from '../model/reservation.model';
-import { ReservationStatus } from '../model/reservation-status';
+import { toCreateReservationRequestDto, toReservation } from '../model/reservation.mapper';
 
 @Injectable({ providedIn: 'root' })
 export class ReservationsFacade {
@@ -13,8 +12,12 @@ export class ReservationsFacade {
     return this.api.listReservations().pipe(map((items) => items.map(toReservation)));
   }
 
+  listMyReservations(): Observable<Reservation[]> {
+    return this.api.listMyReservations().pipe(map((items) => items.map(toReservation)));
+  }
+
   createReservation(request: CreateReservationRequest): Observable<Reservation> {
-    return this.api.createReservation(request).pipe(map(toReservation));
+    return this.api.createReservation(toCreateReservationRequestDto(request)).pipe(map(toReservation));
   }
 
   getReservation(reservationId: string): Observable<Reservation> {
@@ -32,37 +35,8 @@ export class ReservationsFacade {
   checkOutReservation(reservationId: string): Observable<Reservation> {
     return this.api.checkOutReservation(reservationId).pipe(map(toReservation));
   }
-}
 
-function toReservation(dto: ReservationResponseDto): Reservation {
-  return {
-    reservationId: dto.reservationId,
-    hotelId: dto.hotelId,
-    roomId: dto.roomId ?? null,
-    roomTypeId: dto.roomTypeId,
-    checkIn: dto.checkIn,
-    checkOut: dto.checkOut,
-    adults: dto.adults,
-    childrenAges: dto.childrenAges,
-    pets: dto.pets,
-    status: toReservationStatus(dto.status),
-    createdAt: dto.createdAt,
-    cancelledAt: dto.cancelledAt ?? null,
-    createdBy: dto.createdBy,
-  };
-}
-
-function toReservationStatus(status: string): ReservationStatus {
-  if (
-    status === 'PENDING' ||
-    status === 'CONFIRMED' ||
-    status === 'CANCELLED' ||
-    status === 'CHECKED_IN' ||
-    status === 'CHECKED_OUT' ||
-    status === 'NO_SHOW'
-  ) {
-    return status;
+  markNoShowReservation(reservationId: string): Observable<Reservation> {
+    return this.api.markNoShowReservation(reservationId).pipe(map(toReservation));
   }
-
-  throw new Error(`Unsupported reservation status: ${status}`);
 }

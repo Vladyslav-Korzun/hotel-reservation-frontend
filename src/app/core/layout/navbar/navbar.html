@@ -1,33 +1,54 @@
-<header class="site-header">
-  <nav
-    class="site-nav"
-    aria-label="Main navigation"
-    [style.--indicator-left.px]="indicatorLeft()"
-    [style.--indicator-width.px]="indicatorWidth()"
-  >
-    <span class="site-nav__indicator" aria-hidden="true"></span>
-
-    @for (item of visibleItems(); track item.label) {
-      @if (item.path) {
-        <a
-          #navLink
-          class="site-nav__link"
-          [class.site-nav__link--active]="activeLabel() === item.label"
-          [routerLink]="item.path"
-        >
-          {{ item.label }}
-        </a>
-      } @else {
-        <button
-          #navLink
-          type="button"
-          class="site-nav__link site-nav__button"
-          [class.site-nav__link--active]="activeLabel() === item.label"
-          (click)="runAction(item)"
-        >
-          {{ item.label }}
-        </button>
+<header class="site-header" [class.site-header--open]="menuOpen()">
+  <nav class="navbar navbar-expand-lg site-nav" aria-label="Main navigation">
+    <div class="container-fluid site-nav__inner">
+      @if (username()) {
+        <span class="navbar-text site-nav__user">{{ username() }}</span>
       }
-    }
+
+      <button
+        type="button"
+        class="site-nav__toggle"
+        aria-controls="main-navigation"
+        [attr.aria-expanded]="menuOpen()"
+        aria-label="Toggle navigation"
+        (click)="toggleMenu()"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div
+        id="main-navigation"
+        #navLinksRoot
+        class="navbar-nav nav nav-pills site-nav__links"
+        [class.site-nav__links--open]="menuOpen()"
+      >
+        <span class="site-nav__indicator" aria-hidden="true"></span>
+
+        @for (item of visibleItems(); track item.label) {
+          @if (item.path) {
+            <a
+              #navItem
+              class="nav-link site-nav__link"
+              [class.active]="activeLabel() === item.label"
+              [routerLink]="item.path"
+              (click)="closeMenu()"
+            >
+              {{ item.label }}
+            </a>
+          } @else {
+            <button
+              #navItem
+              type="button"
+              class="nav-link site-nav__link site-nav__button"
+              (click)="runAction(item)"
+            >
+              {{ item.label }}
+            </button>
+          }
+        }
+      </div>
+    </div>
   </nav>
 </header>

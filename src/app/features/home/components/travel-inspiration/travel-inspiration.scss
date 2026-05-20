@@ -1,0 +1,83 @@
+﻿:host {
+  display: block;
+}
+
+.travel-inspiration {
+  background: var(--color-bg);
+}
+
+.travel-inspiration__title {
+  color: #fffdf8;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+// ─── Tile ─────────────────────────────────────────────────────────────────────
+
+.inspiration-tile {
+  background-color: #1a1c1b;
+  background-position: center;
+  background-size: cover;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 320px;
+  overflow: hidden;
+  transition: transform 280ms ease, box-shadow 280ms ease;
+
+  &:hover {
+    box-shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.9);
+    transform: translateY(-3px);
+
+    .inspiration-tile__btn {
+      background: #f4d2a4;
+      border-color: #f4d2a4;
+    }
+  }
+}
+
+// First tile is taller since it spans wider
+.col-lg-8 .inspiration-tile {
+  min-height: 420px;
+}
+
+.inspiration-tile__body {
+  background: linear-gradient(0deg, rgba(10, 11, 10, 0.88) 0%, transparent 100%);
+}
+
+.inspiration-tile__title {
+  color: #fffdf8;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.inspiration-tile__text {
+  color: rgba(246, 246, 246, 0.72);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  max-width: 420px;
+}
+
+.inspiration-tile__btn {
+  background: #c49c74;
+  border: 1px solid #c49c74;
+  border-radius: 999px;
+  color: var(--color-ink);
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 0.45rem 1rem;
+  transition: background 200ms ease, border-color 200ms ease;
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+
+@media (max-width: 575px) {
+  .inspiration-tile {
+    min-height: 260px;
+  }
+}

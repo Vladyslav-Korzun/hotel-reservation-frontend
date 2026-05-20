@@ -1,13 +1,29 @@
 import { CurrencyPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Params, RouterLink } from '@angular/router';
+import { Observable, catchError, map, of } from 'rxjs';
 import { AccommodationParty } from '../../../../shared/accommodation/accommodation-party.model';
-import { formatAccommodationPartySummary } from '../../../../shared/accommodation/accommodation-party-presenter.util';
 import {
   accommodationPartyToQueryParams,
   readAccommodationPartyFromQuery,
 } from '../../../../shared/accommodation/accommodation-party-query.util';
-import { toDisplayDate } from '../../../../shared/date/display-date.util';
+import { HOTEL_PHOTO_IDS, STAY_PHOTO_IDS, unsplashUrl } from '../../../../shared/assets/placeholder-images';
+import {
+  groupAmenities,
+  ROOM_AMENITY_META,
+} from '../../../../shared/accommodation/room-amenities';
+import { RoomAmenityCodeDto } from '../../../hotels/api/hotel.dto';
+import { Hotel, HotelServiceOffering } from '../../../hotels/model/hotel.model';
+import { HotelsFacade } from '../../../hotels/services/hotels.facade';
+import { RoomBookingCard } from '../../components/room-booking-card/room-booking-card';
+import { RoomGallery } from '../../components/room-gallery/room-gallery';
+import { RoomSimilarCard } from '../../components/room-similar-card/room-similar-card';
+import { RoomStatsStrip } from '../../components/room-stats-strip/room-stats-strip';
+import { StayOption } from '../../model/stay-search.model';
+import { StaysFacade } from '../../services/stays.facade';
+
+const SIMILAR_ROOMS_LIMIT = 4;
 
 interface StayDetailViewModel extends AccommodationParty {
   hotelId: number;
@@ -26,28 +42,53 @@ interface StayDetailViewModel extends AccommodationParty {
   availableCount: number;
   nightlyPrice: number;
   currency: string;
+  /** Carried from search via query params; `null`/empty hide their tiles/section. */
+  bedSetup: string | null;
+  roomSizeSqm: number | null;
+  amenities: RoomAmenityCodeDto[];
 }
 
 @Component({
   selector: 'app-stay-detail-page',
-  imports: [RouterLink, CurrencyPipe],
+  imports: [RouterLink, CurrencyPipe, RoomGallery, RoomStatsStrip, RoomBookingCard, RoomSimilarCard],
   templateUrl: './stay-detail-page.html',
   styleUrl: './stay-detail-page.scss',
 })
 export class StayDetailPage {
   private readonly route = inject(ActivatedRoute);
+  private readonly hotelsFacade = inject(HotelsFacade);
+  private readonly staysFacade = inject(StaysFacade);
+
   protected readonly stay = readStayDetail(this.route);
-  protected readonly reserveQueryParams = {
-    hotelId: this.stay.hotelId,
-    hotelName: this.stay.hotelName,
-    roomTypeId: this.stay.roomTypeId,
-    roomName: this.stay.roomName,
-    location: this.stay.location,
-    checkIn: this.stay.checkIn,
-    checkOut: this.stay.checkOut,
-    ...accommodationPartyToQueryParams(this.stay),
-  };
-  protected readonly searchQueryParams = {
+
+  protected readonly services = toSignal(
+    this.hotelsFacade.getHotelServices(this.stay.hotelId),
+    { initialValue: [] as HotelServiceOffering[] },
+  );
+
+  /** Hotel age policy (infantMaxAge / childMaxAge / childrenAllowed) — null until loaded. */
+  protected readonly hotel = toSignal(
+    this.hotelsFacade.getHotelDetails(this.stay.hotelId).pipe(catchError(() => of<Hotel | null>(null))),
+    { initialValue: null as Hotel | null },
+  );
+
+  protected readonly similarRooms = toSignal(this.loadSimilarRooms(), {
+    initialValue: [] as StayOption[],
+  });
+
+  protected readonly mainImage = unsplashUrl(
+    STAY_PHOTO_IDS[(this.stay.hotelId + this.stay.roomTypeId) % STAY_PHOTO_IDS.length],
+    1600,
+  );
+
+  protected readonly thumbImages = [...STAY_PHOTO_IDS].map((id) => unsplashUrl(id, 800));
+
+  protected readonly hotelImage = unsplashUrl(
+    HOTEL_PHOTO_IDS[this.stay.hotelId % HOTEL_PHOTO_IDS.length],
+    600,
+  );
+
+  protected readonly searchQueryParams: Params = {
     hotelId: this.stay.hotelId,
     destination: this.stay.location || null,
     checkIn: this.stay.checkIn,
@@ -55,34 +96,35 @@ export class StayDetailPage {
     ...accommodationPartyToQueryParams(this.stay),
   };
 
-  protected displayDate(value: string): string {
-    return toDisplayDate(value) || value;
-  }
+  /** Categorised amenity sections for the "What this room offers" grid. */
+  protected readonly amenitySections = groupAmenities(this.stay.amenities);
 
-  protected stayImage(): string {
-    return STAY_IMAGES[(this.stay.hotelId + this.stay.roomTypeId) % STAY_IMAGES.length];
-  }
+  /**
+   * Load other available rooms in the same city for the same dates.
+   * Excludes the current room and caps to SIMILAR_ROOMS_LIMIT results.
+   */
+  private loadSimilarRooms(): Observable<StayOption[]> {
+    if (!this.stay.location || !this.stay.checkIn || !this.stay.checkOut) {
+      return of([]);
+    }
 
-  protected partySummary(): string {
-    return formatAccommodationPartySummary(this.stay);
-  }
-
-  protected highlights(): string[] {
-    return [
-      `Up to ${this.stay.maxAdults} adults and ${this.stay.maxChildren} children`,
-      `Supports ${this.stay.maxInfants} infant${this.stay.maxInfants === 1 ? '' : 's'} and ${this.stay.maxTotalGuests} total guests`,
-      `${this.stay.availableCount} room${this.stay.availableCount === 1 ? '' : 's'} available for these dates`,
-      this.stay.petsAllowed ? `Pets allowed up to ${this.stay.maxPets}` : 'Pets are not allowed for this room type',
-      this.stay.location || 'Available across the current hotel catalog',
-    ];
-  }
-
-  protected travelNotes(): string[] {
-    return [
-      `Stay period: ${this.displayDate(this.stay.checkIn)} to ${this.displayDate(this.stay.checkOut)}`,
-      `Selected party: ${this.partySummary()}`,
-      'Reservation form will open with this room already selected',
-    ];
+    return this.staysFacade
+      .search({
+        destination: this.stay.location,
+        hotelId: null,
+        checkIn: this.stay.checkIn,
+        checkOut: this.stay.checkOut,
+        adults: this.stay.adults,
+        childrenAges: this.stay.childrenAges,
+        pets: this.stay.pets,
+      })
+      .pipe(
+        map((rooms) =>
+          rooms
+            .filter((r) => r.roomTypeId !== this.stay.roomTypeId)
+            .slice(0, SIMILAR_ROOMS_LIMIT),
+        ),
+      );
   }
 }
 
@@ -98,15 +140,6 @@ function readStayDetail(route: ActivatedRoute): StayDetailViewModel {
   const checkIn = query.get('checkIn') ?? '';
   const checkOut = query.get('checkOut') ?? '';
   const party = readAccommodationPartyFromQuery(query, 1);
-  const maxAdults = normalizePositiveNumber(query.get('maxAdults'), party.adults);
-  const maxChildren = normalizeNonNegativeNumber(query.get('maxChildren'), 0);
-  const maxInfants = normalizeNonNegativeNumber(query.get('maxInfants'), 0);
-  const maxTotalGuests = normalizePositiveNumber(query.get('maxTotalGuests'), party.adults + party.childrenAges.length);
-  const petsAllowed = query.get('petsAllowed') === 'true';
-  const maxPets = normalizeNonNegativeNumber(query.get('maxPets'), 0);
-  const availableCount = normalizePositiveNumber(query.get('availableCount'), 0);
-  const nightlyPrice = normalizePositiveNumber(query.get('nightlyPrice'), 0);
-  const currency = query.get('currency')?.trim() || 'EUR';
 
   return {
     hotelId,
@@ -119,16 +152,37 @@ function readStayDetail(route: ActivatedRoute): StayDetailViewModel {
     adults: party.adults,
     childrenAges: party.childrenAges,
     pets: party.pets,
-    maxAdults,
-    maxChildren,
-    maxInfants,
-    maxTotalGuests,
-    petsAllowed,
-    maxPets,
-    availableCount,
-    nightlyPrice,
-    currency,
+    maxAdults: normalizePositiveNumber(query.get('maxAdults'), party.adults),
+    maxChildren: normalizeNonNegativeNumber(query.get('maxChildren'), 0),
+    maxInfants: normalizeNonNegativeNumber(query.get('maxInfants'), 0),
+    maxTotalGuests: normalizePositiveNumber(
+      query.get('maxTotalGuests'),
+      party.adults + party.childrenAges.length,
+    ),
+    petsAllowed: query.get('petsAllowed') === 'true',
+    maxPets: normalizeNonNegativeNumber(query.get('maxPets'), 0),
+    availableCount: normalizePositiveNumber(query.get('availableCount'), 0),
+    nightlyPrice: normalizePositiveNumber(query.get('nightlyPrice'), 0),
+    currency: query.get('currency')?.trim() || 'EUR',
+    bedSetup: query.get('bedSetup')?.trim() || null,
+    roomSizeSqm: normalizeOptionalPositiveNumber(query.get('roomSizeSqm')),
+    amenities: parseAmenitiesParam(query.get('amenities')),
   };
+}
+
+/** CSV `WIFI,SAFE,SEA_VIEW` → typed enum array, dropping unknown codes. */
+function parseAmenitiesParam(value: string | null): RoomAmenityCodeDto[] {
+  if (!value) return [];
+  return value
+    .split(',')
+    .map((s) => s.trim().toUpperCase())
+    .filter((s): s is RoomAmenityCodeDto => s in ROOM_AMENITY_META);
+}
+
+function normalizeOptionalPositiveNumber(value: string | null): number | null {
+  if (value === null || value === '') return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 }
 
 function normalizePositiveNumber(value: string | null, fallback: number): number {
@@ -140,10 +194,3 @@ function normalizeNonNegativeNumber(value: string | null, fallback: number): num
   const parsed = Number(value);
   return Number.isFinite(parsed) && parsed >= 0 ? parsed : fallback;
 }
-
-const STAY_IMAGES = [
-  'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=2000&q=80',
-  'https://images.unsplash.com/photo-1522798514-97ceb8c4f1c8?auto=format&fit=crop&w=2000&q=80',
-  'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=2000&q=80',
-  'https://images.unsplash.com/photo-1505693537228-2a1f1c3b1d5c?auto=format&fit=crop&w=2000&q=80',
-] as const;

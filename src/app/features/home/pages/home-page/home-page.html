@@ -1,4 +1,12 @@
 <main class="home-page">
   <app-home-hero (searchSubmitted)="searchStays($event)" />
+  <app-hotel-network-carousel
+    [hotels]="hotels()"
+    [loading]="hotelsLoading()"
+    [problem]="hotelsProblem()"
+  />
+  <app-services-preview />
+<app-travel-inspiration />
+  <app-home-final-cta />
   <app-home-actions />
 </main>

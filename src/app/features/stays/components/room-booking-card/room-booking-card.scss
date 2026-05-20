@@ -1,0 +1,343 @@
+.rbc {
+  position: sticky;
+  top: 100px;
+  background: rgba(34, 30, 26, 0.96);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  box-shadow: 0 24px 60px -32px rgba(0, 0, 0, 0.7);
+  /* overflow: visible to let date/guests popovers escape the card */
+  overflow: visible;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 28px;
+    right: 28px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-border-gold), transparent);
+    opacity: 0.5;
+  }
+}
+
+.rbc-urgency {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: rgba(217, 119, 87, 0.12);
+  color: #e89478;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #e89478;
+    animation: rbc-pulse 1.8s infinite;
+  }
+}
+
+@keyframes rbc-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(232, 148, 120, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(232, 148, 120, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(232, 148, 120, 0);
+  }
+}
+
+.rbc-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.rbc-price {
+  font-family: var(--font-serif);
+  font-size: 44px;
+  font-weight: 500;
+  color: var(--color-text);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.rbc-price-per {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.rbc-price-from {
+  color: var(--color-text-subtle);
+  font-size: 12px;
+  margin-bottom: 20px;
+  font-style: italic;
+  font-family: var(--font-serif);
+}
+
+.rbc-hairline {
+  height: 1px;
+  background: var(--color-border);
+  margin: 18px 0;
+
+  &--gold {
+    background: linear-gradient(90deg, transparent, var(--color-border-gold), transparent);
+  }
+}
+
+/* Quick-edit container — visuals for the inner cells live in date-range-picker.scss and guests-picker.scss */
+.rbc-qe {
+  background: rgba(18, 16, 13, 0.6);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  position: relative;
+}
+
+/* Hotel services preview (read-only — selection happens on reservation page) */
+.rbc-svc__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.rbc-svc__title {
+  color: var(--color-text-muted);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.rbc-svc__hint {
+  color: var(--color-text-subtle);
+  font-size: 12px;
+  font-style: italic;
+  font-family: var(--font-serif);
+}
+
+.rbc-svc__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0;
+}
+
+.rbc-svc__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 13.5px;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.rbc-svc__name {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.rbc-svc__price {
+  color: var(--color-gold-hover);
+  font-weight: 700;
+  flex-shrink: 0;
+
+  small {
+    color: var(--color-text-subtle);
+    font-weight: 500;
+    font-size: 11px;
+    margin-left: 2px;
+  }
+}
+
+.rbc-svc__more {
+  padding: 8px 0 0;
+  color: var(--color-text-subtle);
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* Breakdown */
+.rbc-breakdown {
+  display: grid;
+  gap: 8px;
+  font-size: 13.5px;
+}
+
+.rbc-breakdown__row {
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-text-muted);
+
+  b {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  &--dim {
+    color: var(--color-text-subtle);
+    font-size: 12px;
+  }
+}
+
+.rbc-breakdown__total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 4px;
+}
+
+.rbc-breakdown__total-label {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.rbc-breakdown__total-amount {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  color: var(--color-gold-hover);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* Times */
+.rbc-times {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.rbc-time {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rbc-time__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(196, 156, 116, 0.08);
+  color: var(--color-gold);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.rbc-time__label {
+  color: var(--color-text-subtle);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.rbc-time__val {
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Reserve button */
+.rbc-btn-reserve {
+  display: block;
+  width: 100%;
+  margin-top: 22px;
+  padding: 16px 24px;
+  background: linear-gradient(180deg, var(--color-gold-hover), var(--color-gold));
+  border: 0;
+  border-radius: 12px;
+  color: #1a1311;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 10px 30px -14px rgba(196, 156, 116, 0.5);
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
+  text-align: center;
+  text-decoration: none;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 34px -14px rgba(196, 156, 116, 0.7);
+    color: #1a1311;
+  }
+}
+
+.rbc-reserve-note {
+  text-align: center;
+  color: var(--color-text-subtle);
+  font-size: 11.5px;
+  margin-top: 12px;
+  line-height: 1.5;
+
+  b {
+    color: var(--color-gold-hover);
+    font-weight: 600;
+  }
+}
+
+.rbc-back-link {
+  display: block;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 12.5px;
+  text-decoration: none;
+  padding: 6px 0;
+  transition: color 0.15s;
+
+  &:hover {
+    color: var(--color-gold-hover);
+  }
+}
+
+@media (max-width: 1100px) {
+  .rbc {
+    position: static;
+  }
+}
+
+@media (max-width: 720px) {
+  .rbc {
+    padding: 22px;
+    border-radius: var(--radius-md);
+  }
+
+  .rbc-price {
+    font-size: 38px;
+  }
+
+  .rbc-times {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}

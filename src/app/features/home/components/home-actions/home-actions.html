@@ -5,13 +5,15 @@
   </div>
 
   <div class="home-actions__buttons">
-    <a class="primary-button" href="#stay-search">Search stays</a>
+    <a class="btn home-actions__primary" href="#stay-search">Search stays</a>
 
     @if (auth.isAuthenticated()) {
-      <a class="secondary-button" routerLink="/reservations/new">Create reservation</a>
-      <a class="secondary-button" routerLink="/reservations/find">Find reservation</a>
+      @if (canSelfBook()) {
+        <a class="btn home-actions__secondary" routerLink="/reservations/new">Create reservation</a>
+      }
+      <a class="btn home-actions__secondary" routerLink="/reservations/find">Find reservation</a>
     } @else {
-      <button type="button" class="secondary-button" (click)="login()">Sign in to reserve</button>
+      <button type="button" class="btn home-actions__secondary" (click)="login()">Sign in to reserve</button>
     }
   </div>
 </section>

@@ -14,6 +14,18 @@ export const routes: Routes = [
       import('./features/stays/pages/stay-search-page/stay-search-page').then((m) => m.StaySearchPage),
   },
   {
+    path: 'hotels',
+    canActivate: [roleGuard(['GUEST', 'STAFF', 'ADMIN'])],
+    loadComponent: () =>
+      import('./features/hotels/pages/hotel-list-page/hotel-list-page').then((m) => m.HotelListPage),
+  },
+  {
+    path: 'hotels/:hotelId',
+    canActivate: [roleGuard(['GUEST', 'STAFF', 'ADMIN'])],
+    loadComponent: () =>
+      import('./features/hotels/pages/hotel-detail-page/hotel-detail-page').then((m) => m.HotelDetailPage),
+  },
+  {
     path: 'stays/:hotelId/rooms/:roomTypeId',
     canActivate: [roleGuard(['GUEST', 'STAFF', 'ADMIN'])],
     loadComponent: () =>
@@ -21,10 +33,18 @@ export const routes: Routes = [
   },
   {
     path: 'reservations/new',
-    canActivate: [roleGuard(['GUEST', 'ADMIN'])],
+    canActivate: [roleGuard(['GUEST'])],
     loadComponent: () =>
       import('./features/reservations/pages/create-reservation-page/create-reservation-page').then(
         (m) => m.CreateReservationPage,
+      ),
+  },
+  {
+    path: 'reservations/my',
+    canActivate: [roleGuard(['GUEST', 'STAFF', 'ADMIN'])],
+    loadComponent: () =>
+      import('./features/reservations/pages/my-reservations-page/my-reservations-page').then(
+        (m) => m.MyReservationsPage,
       ),
   },
   {
@@ -42,6 +62,18 @@ export const routes: Routes = [
       import('./features/reservations/pages/reservation-detail-page/reservation-detail-page').then(
         (m) => m.ReservationDetailPage,
       ),
+  },
+  {
+    path: 'staff',
+    canActivate: [roleGuard(['STAFF', 'ADMIN'])],
+    loadComponent: () =>
+      import('./features/staff/pages/staff-dashboard-page/staff-dashboard-page').then((m) => m.StaffDashboardPage),
+  },
+  {
+    path: 'admin',
+    canActivate: [roleGuard(['ADMIN'])],
+    loadComponent: () =>
+      import('./features/admin/pages/admin-dashboard-page/admin-dashboard-page').then((m) => m.AdminDashboardPage),
   },
   {
     path: 'auth/unavailable',

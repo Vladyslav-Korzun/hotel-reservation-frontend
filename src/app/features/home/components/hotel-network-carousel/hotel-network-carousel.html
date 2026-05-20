@@ -1,0 +1,128 @@
+<section class="hotel-network" aria-label="Hotel network">
+
+  <div class="container-xxl px-4 px-md-5">
+    <div class="row justify-content-center mb-4 mb-md-5">
+      <div class="col-12 col-lg-8 text-center text-md-start text-lg-center">
+        <p class="eyebrow mb-2">Hotel Network</p>
+        <h2 class="hotel-network__title mb-3">Explore our hotel network</h2>
+        <p class="hotel-network__subtitle mb-0">
+          Discover selected stays across our destinations, from city hotels to mountain resorts.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  @if (problem(); as problemDetail) {
+    <div class="container-xxl px-4 px-md-5">
+      <app-error-message [problem]="problemDetail" />
+    </div>
+  } @else if (loading()) {
+    <div class="container-xxl px-4 px-md-5">
+      <app-loading-state label="Loading hotel network..." />
+    </div>
+  } @else if (hotels().length) {
+    <div class="hotel-carousel">
+      <div class="hotel-carousel__viewport" aria-live="polite">
+        @for (hotel of hotels(); track trackHotel($index, hotel); let index = $index) {
+          <article
+            class="card hotel-slide"
+            [class.hotel-slide--active]="slidePosition(index) === 'active'"
+            [class.hotel-slide--previous]="slidePosition(index) === 'previous'"
+            [class.hotel-slide--next]="slidePosition(index) === 'next'"
+            [class.hotel-slide--hidden]="slidePosition(index) === 'hidden'"
+            [attr.aria-hidden]="slidePosition(index) === 'hidden'"
+          >
+            <div class="hotel-slide__media">
+              @if (hasImage(hotel)) {
+                <img
+                  class="hotel-slide__img"
+                  [src]="imageUrl(hotel)"
+                  [alt]="imageAlt(hotel)"
+                  loading="lazy"
+                  (error)="markImageFailed(hotel)"
+                />
+              } @else {
+                <div class="hotel-slide__placeholder" aria-hidden="true"></div>
+              }
+            </div>
+
+            <div class="card-body p-3 p-md-4">
+              <p class="hotel-slide__location text-uppercase fw-bold mb-1">
+                {{ locationLabel(hotel) }}
+              </p>
+              <h3 class="hotel-slide__name mb-2">{{ hotel.name }}</h3>
+              <p class="hotel-slide__description mb-3">{{ description(hotel) }}</p>
+
+              <div class="d-flex flex-wrap gap-2 mb-3" aria-label="Hotel details">
+                <span class="badge hotel-badge">{{ starsLabel(hotel) }}</span>
+                <span class="badge hotel-badge">{{ childrenPolicyLabel(hotel) }}</span>
+                <span class="badge hotel-badge">{{ petsPolicyLabel(hotel) }}</span>
+                <span class="badge hotel-badge">{{ statusLabel(hotel) }}</span>
+              </div>
+
+              <div class="d-flex flex-column flex-sm-row flex-wrap gap-2 mt-auto">
+                <a
+                  class="btn btn-brand flex-grow-1"
+                  routerLink="/stays/search"
+                  [queryParams]="searchParams(hotel)"
+                >
+                  Check availability
+                </a>
+                <a class="btn btn-brand-outline" [routerLink]="['/hotels', hotel.hotelId]">
+                  Discover more
+                </a>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+
+      @if (hasMultipleHotels()) {
+        <button
+          type="button"
+          class="btn hotel-carousel__control hotel-carousel__control--previous"
+          aria-label="Show previous hotel"
+          (click)="showPreviousHotel()"
+        >
+          <span aria-hidden="true"></span>
+        </button>
+        <button
+          type="button"
+          class="btn hotel-carousel__control hotel-carousel__control--next"
+          aria-label="Show next hotel"
+          (click)="showNextHotel()"
+        >
+          <span aria-hidden="true"></span>
+        </button>
+
+        <div class="d-flex justify-content-center gap-2 hotel-carousel__dots" aria-label="Hotel carousel pagination">
+          @for (hotel of hotels(); track hotel.hotelId; let index = $index) {
+            <button
+              type="button"
+              class="hotel-carousel__dot"
+              [class.active]="activeIndex() === index"
+              [attr.aria-label]="'Show ' + hotel.name"
+              [attr.aria-current]="activeIndex() === index ? 'true' : null"
+              (click)="selectHotel(index)"
+            ></button>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="container-xxl px-4 px-md-5">
+      <div class="hotel-network__empty text-center p-4 p-md-5">
+        <h3 class="mb-2">No hotels are available</h3>
+        <p class="mb-0 text-muted">The hotel network is being prepared. Please check again later.</p>
+      </div>
+    </div>
+  }
+
+  <div class="container-xxl px-4 px-md-5">
+    <div class="d-flex flex-column flex-sm-row align-items-center justify-content-center flex-wrap gap-3 py-4 text-center text-sm-start">
+      <p class="hotel-network__cta-text mb-0 fw-bold">Find the stay that fits your trip.</p>
+      <a class="btn btn-brand" routerLink="/stays/search">Search available rooms</a>
+    </div>
+  </div>
+
+</section>

@@ -1,7 +1,10 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
+import { STAY_PHOTO_IDS, unsplashUrl } from '../../../../shared/assets/placeholder-images';
+import { AuthService } from '../../../../core/auth/auth.service';
 import { formatAccommodationPartySummary } from '../../../../shared/accommodation/accommodation-party-presenter.util';
 import {
   accommodationPartyToQueryParams,
@@ -12,6 +15,8 @@ import { ProblemDetail } from '../../../../core/http/problem-detail.model';
 import { toDisplayDate } from '../../../../shared/date/display-date.util';
 import { ErrorMessage } from '../../../../shared/ui/error-message/error-message';
 import { LoadingState } from '../../../../shared/ui/loading-state/loading-state';
+import { Hotel } from '../../../hotels/model/hotel.model';
+import { HotelsFacade } from '../../../hotels/services/hotels.facade';
 import { StaySearchForm } from '../../components/stay-search-form/stay-search-form';
 import { StayOption, StaySearchCriteria } from '../../model/stay-search.model';
 import { StaysFacade } from '../../services/stays.facade';
@@ -23,21 +28,58 @@ import { StaysFacade } from '../../services/stays.facade';
   styleUrl: './stay-search-page.scss',
 })
 export class StaySearchPage {
+  private readonly auth = inject(AuthService);
   private readonly stays = inject(StaysFacade);
+  private readonly hotelsFacade = inject(HotelsFacade);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  protected readonly criteria = signal<StaySearchCriteria | null>(null);
+  protected readonly criteria = signal<StaySearchCriteria>(readCriteria(this.route));
   protected readonly loading = signal(false);
   protected readonly problem = signal<ProblemDetail | null>(null);
   protected readonly results = signal<StayOption[]>([]);
+  /**
+   * hotelId → Hotel lookup, fed by `GET /hotels`. Lets each result card show
+   * its own city instead of the search criterion ("All cities").
+   * TODO(backend): once `AvailableRoomResponse` exposes `hotelCity` + `hotelCountry`,
+   *                drop this lookup and read directly from `StayOption`.
+   */
+  private readonly hotelsById = signal<ReadonlyMap<number, Hotel>>(new Map());
+  protected readonly sortMode = signal<'price-asc' | 'price-desc' | 'availability'>('price-asc');
+  protected readonly petsOnly = signal(false);
+  protected readonly canSelfBook = computed(() => this.auth.hasAnyRole(['GUEST']));
+  protected readonly displayResults = computed(() => {
+    let items = this.results();
+    if (this.petsOnly()) items = items.filter((r) => r.petsAllowed);
+    const sort = this.sortMode();
+    if (sort === 'price-asc') return [...items].sort((a, b) => a.nightlyPrice - b.nightlyPrice);
+    if (sort === 'price-desc') return [...items].sort((a, b) => b.nightlyPrice - a.nightlyPrice);
+    return [...items].sort((a, b) => b.availableCount - a.availableCount);
+  });
 
   constructor() {
-    const criteria = readCriteria(this.route);
-    this.criteria.set(criteria);
+    this.loadResults(this.criteria());
+    this.loadHotelsLookup();
+  }
 
-    if (criteria) {
-      this.loadResults(criteria);
-    }
+  /** Show the actual hotel city for this room (not the search criterion). */
+  protected hotelCityLabel(option: StayOption): string {
+    const hotel = this.hotelsById().get(option.hotelId);
+    if (!hotel) return option.hotelName; // graceful fallback while lookup is loading
+    return `${hotel.city}, ${hotel.country}`;
+  }
+
+  private loadHotelsLookup(): void {
+    this.hotelsFacade
+      .listHotels()
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (hotels) => {
+          const map = new Map<number, Hotel>();
+          for (const h of hotels) map.set(h.hotelId, h);
+          this.hotelsById.set(map);
+        },
+        error: () => this.hotelsById.set(new Map()),
+      });
   }
 
   protected search(criteria: StaySearchCriteria): void {
@@ -70,6 +112,14 @@ export class StaySearchPage {
       location: criteria?.destination ?? '',
       checkIn: criteria?.checkIn ?? '',
       checkOut: criteria?.checkOut ?? '',
+      nightlyPrice: option.nightlyPrice,
+      currency: option.currency,
+      maxAdults: option.maxAdults,
+      maxChildren: option.maxChildren,
+      maxInfants: option.maxInfants,
+      maxTotalGuests: option.maxTotalGuests,
+      petsAllowed: String(option.petsAllowed),
+      maxPets: option.maxPets,
       ...(criteria ? accommodationPartyToQueryParams(criteria) : accommodationPartyToQueryParams({ adults: 1, childrenAges: [], pets: [] })),
     };
   }
@@ -80,8 +130,7 @@ export class StaySearchPage {
 
   protected roomDetailsQueryParams(option: StayOption): Record<string, string | number> {
     const criteria = this.criteria();
-
-    return {
+    const base: Record<string, string | number> = {
       hotelName: option.hotelName,
       roomName: option.roomName,
       location: criteria?.destination ?? '',
@@ -98,10 +147,18 @@ export class StaySearchPage {
       nightlyPrice: option.nightlyPrice,
       currency: option.currency,
     };
+
+    // New backend fields — only include when present, so the URL stays short
+    // when older room types have no extras configured.
+    if (option.bedSetup) base['bedSetup'] = option.bedSetup;
+    if (option.roomSizeSqm !== null) base['roomSizeSqm'] = option.roomSizeSqm;
+    if (option.amenities.length > 0) base['amenities'] = option.amenities.join(',');
+
+    return base;
   }
 
   protected stayImage(index: number): string {
-    return STAY_IMAGES[index % STAY_IMAGES.length];
+    return unsplashUrl(STAY_PHOTO_IDS[index % STAY_PHOTO_IDS.length], 1200);
   }
 
   protected displayDate(value: string): string {
@@ -125,21 +182,18 @@ export class StaySearchPage {
   }
 }
 
-function readCriteria(route: ActivatedRoute): StaySearchCriteria | null {
+function readCriteria(route: ActivatedRoute): StaySearchCriteria {
   const params = route.snapshot.queryParamMap;
   const destination = params.get('destination') ?? '';
   const hotelId = Number(params.get('hotelId'));
-  const checkIn = params.get('checkIn') ?? '';
-  const checkOut = params.get('checkOut') ?? '';
-  const party = readAccommodationPartyFromQuery(params, 1);
-
-  if (!checkIn || !checkOut) {
-    return null;
-  }
+  const hasHotelId = Number.isFinite(hotelId) && hotelId > 0;
+  const checkIn = params.get('checkIn') || isoDateFromToday(0);
+  const checkOut = params.get('checkOut') || isoDateFromToday(1);
+  const party = readAccommodationPartyFromQuery(params, 2);
 
   return {
     destination: destination.trim(),
-    hotelId: Number.isFinite(hotelId) && hotelId > 0 ? hotelId : null,
+    hotelId: hasHotelId ? hotelId : null,
     checkIn,
     checkOut,
     adults: party.adults,
@@ -148,9 +202,8 @@ function readCriteria(route: ActivatedRoute): StaySearchCriteria | null {
   };
 }
 
-const STAY_IMAGES = [
-  'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1522798514-97ceb8c4f1c8?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1505693537228-2a1f1c3b1d5c?auto=format&fit=crop&w=1200&q=80',
-] as const;
+function isoDateFromToday(dayOffset: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + dayOffset);
+  return date.toISOString().slice(0, 10);
+}

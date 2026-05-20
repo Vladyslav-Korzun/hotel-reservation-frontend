@@ -1,0 +1,131 @@
+<aside class="lrs">
+
+  <!-- Room -->
+  <div class="lrs__room">
+    <div class="lrs__img" [style.background-image]="'url(' + displayDetails().photoUrl + ')'"></div>
+    <div class="lrs__room-body">
+      <div class="lrs__hotel">{{ displayDetails().hotelName }}</div>
+      <div class="lrs__room-name">{{ displayDetails().roomName }}</div>
+      @if (displayDetails().location) {
+        <div class="lrs__location">{{ displayDetails().location }}</div>
+      }
+    </div>
+  </div>
+
+  <!-- Dates -->
+  <div class="lrs__section">
+    <div class="lrs__section-label">Your stay</div>
+    <div class="lrs__dates">
+      <div class="lrs__date">
+        <small>Check-in</small>
+        <strong>{{ formatDay(checkInDate(), 'day-month') }}</strong>
+        <span>{{ formatDay(checkInDate(), 'weekday-year') }}</span>
+      </div>
+      <span class="lrs__arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </span>
+      <div class="lrs__date">
+        <small>Check-out</small>
+        <strong>{{ formatDay(checkOutDate(), 'day-month') }}</strong>
+        <span>{{ formatDay(checkOutDate(), 'weekday-year') }}</span>
+      </div>
+    </div>
+    @if (nights() > 0) {
+      <div class="lrs__nights">{{ nights() }} {{ nights() === 1 ? 'night' : 'nights' }} stay</div>
+    }
+  </div>
+
+  <!-- Guests -->
+  <div class="lrs__section">
+    <div class="lrs__section-label">Guests</div>
+    <div class="lrs__guests">
+      <div class="lrs__guests-line">
+        <span>Adults</span><b>{{ party().adults }}</b>
+      </div>
+      <div class="lrs__guests-line">
+        <span>Children</span>
+        <b>
+          {{ party().childrenAges.length }}
+          @if (party().childrenAges.length > 0) {
+            <span class="lrs__dim">(ages {{ party().childrenAges.join(', ') }})</span>
+          }
+        </b>
+      </div>
+      <div class="lrs__guests-line">
+        <span>Pets</span>
+        <b>{{ party().pets.length || 'None' }}</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- Price summary — Room / Services / Total (reactive) -->
+  <div class="lrs__section">
+    <div class="lrs__section-label">Price summary</div>
+    <div class="lrs__breakdown">
+
+      <!-- 1) Room rate (always shown) -->
+      <div class="lrs__row" [class.lrs__row--dim]="nightlyPrice() === 0">
+        <span>
+          Room
+          <small class="lrs__row-sub">
+            @if (nightlyPrice() > 0) {
+              {{ nights() }} {{ nights() === 1 ? 'night' : 'nights' }} &times; {{ nightlyPrice() | currency: currency() : 'symbol' : '1.0-0' }}
+            } @else {
+              {{ nights() }} {{ nights() === 1 ? 'night' : 'nights' }}
+            }
+          </small>
+        </span>
+        @if (nightlyPrice() > 0) {
+          <span>{{ roomTotal() | currency: currency() : 'symbol' : '1.2-2' }}</span>
+        } @else {
+          <span class="lrs__row-pending">Set at booking</span>
+        }
+      </div>
+
+      <!-- 2) Services (always shown, sum) -->
+      <div class="lrs__row" [class.lrs__row--dim]="serviceLines().length === 0">
+        <span>
+          Services
+          @if (serviceLines().length > 0) {
+            <small class="lrs__row-sub">
+              {{ serviceLines().length }} {{ serviceLines().length === 1 ? 'item' : 'items' }}
+            </small>
+          }
+        </span>
+        @if (serviceLines().length > 0) {
+          <span>{{ servicesTotal() | currency: currency() : 'symbol' : '1.2-2' }}</span>
+        } @else {
+          <span>—</span>
+        }
+      </div>
+
+      <div class="lrs__row lrs__row--dim">
+        <span>Taxes &amp; city fee</span><span>included</span>
+      </div>
+
+      <!-- 3) Total — everything together -->
+      <div class="lrs__total">
+        <span class="lrs__total-label">Total</span>
+        @if (nightlyPrice() > 0 || servicesTotal() > 0) {
+          <span class="lrs__total-amount">{{ grandTotal() | currency: currency() : 'symbol' : '1.2-2' }}</span>
+        } @else {
+          <span class="lrs__total-amount lrs__total-amount--pending">—</span>
+        }
+      </div>
+
+      @if (nightlyPrice() === 0) {
+        <div class="lrs__total-note">Room rate will be added at confirmation</div>
+      }
+
+    </div>
+  </div>
+
+  <!-- Free-cancellation pill -->
+  <div class="lrs__pill">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+    </svg>
+    Free cancellation
+  </div>
+
+</aside>

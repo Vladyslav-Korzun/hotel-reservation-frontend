@@ -1,79 +1,82 @@
-<main class="stay-search-page">
-  <div class="stay-search-page__backdrop" aria-hidden="true"></div>
+<main class="stay-search-page feature-page">
+  <div class="stay-search-page__backdrop feature-page__backdrop" aria-hidden="true"></div>
 
-  <section class="page-header stays-header">
-    <p class="eyebrow">Available stays</p>
-    <h1>Choose a hotel for your trip</h1>
-    <p class="muted stays-header__copy">
-      Pick a room from the results and continue to reservation with your selected travel party and dates.
-    </p>
-  </section>
-
-  <section class="stay-search-page__form-shell">
-    <app-stay-search-form [initialCriteria]="criteria()" (submitted)="search($event)" />
-  </section>
-
-  @if (criteria(); as activeCriteria) {
-    <section class="search-summary">
-      <span>{{ activeCriteria.destination || 'All cities' }}</span>
-      <span>{{ activeCriteria.hotelId ? 'Hotel #' + activeCriteria.hotelId : 'Any hotel' }}</span>
-      <span>{{ displayDate(activeCriteria.checkIn) }} to {{ displayDate(activeCriteria.checkOut) }}</span>
-      <span>{{ partySummary(activeCriteria) }}</span>
+  <div class="container stay-search-page__content">
+    <section class="stays-header">
+      <p class="eyebrow">Available stays</p>
+      <h1>Choose a hotel for your trip</h1>
+      <p class="muted stays-header__copy">
+        Pick a room from the results and continue to reservation with your selected travel party and dates.
+      </p>
     </section>
+
+    <section class="stay-search-page__form-shell">
+      <app-stay-search-form [initialCriteria]="criteria()" (submitted)="search($event)" />
+    </section>
+
+    <div class="d-flex flex-wrap gap-2 mt-3">
+      <span class="badge rounded-pill search-badge">{{ criteria().destination || 'All cities' }}</span>
+      <span class="badge rounded-pill search-badge">{{ criteria().hotelId ? 'Hotel #' + criteria().hotelId : 'Any hotel' }}</span>
+      <span class="badge rounded-pill search-badge">{{ displayDate(criteria().checkIn) }} to {{ displayDate(criteria().checkOut) }}</span>
+      <span class="badge rounded-pill search-badge">{{ partySummary(criteria()) }}</span>
+    </div>
 
     @if (problem(); as problemDetail) {
       <app-error-message [problem]="problemDetail" />
     }
 
+    @if (!loading() && results().length) {
+      <div class="filter-bar d-flex flex-wrap align-items-center gap-2 mt-3">
+        <button class="filter-pill" [class.filter-pill--active]="sortMode() === 'price-asc'" (click)="sortMode.set('price-asc')">Price ↑</button>
+        <button class="filter-pill" [class.filter-pill--active]="sortMode() === 'price-desc'" (click)="sortMode.set('price-desc')">Price ↓</button>
+        <button class="filter-pill" [class.filter-pill--active]="sortMode() === 'availability'" (click)="sortMode.set('availability')">Most available</button>
+        <span class="filter-bar__divider" aria-hidden="true"></span>
+        <button class="filter-pill" [class.filter-pill--active]="petsOnly()" (click)="petsOnly.update(v => !v)">Pets only</button>
+      </div>
+    }
+
     @if (loading()) {
       <app-loading-state label="Loading available rooms..." />
-    } @else if (results().length) {
-      <section class="stay-results">
-        @for (option of results(); track option.hotelId + '-' + option.roomTypeId; let index = $index) {
-          <article class="stay-card">
-            <div class="stay-visual" [style.background-image]="'url(' + stayImage(index) + ')'">
-              <span>{{ option.availableCount }} left</span>
-            </div>
-
-            <div class="stay-copy">
-              <p class="eyebrow">{{ activeCriteria.destination || 'All cities' }}</p>
-              <h2>{{ option.hotelName }}</h2>
-              <p class="room-name">{{ option.roomName }}</p>
-
-              <div class="tag-row">
-                <span>{{ option.maxAdults }} adults · {{ option.maxChildren }} children</span>
-                <span>{{ option.maxTotalGuests }} total guests</span>
-                <span>{{ option.petsAllowed ? 'Pets allowed' : 'No pets' }}</span>
-                <span>{{ option.availableCount }} available</span>
-                <span>{{ displayDate(activeCriteria.checkIn) }} to {{ displayDate(activeCriteria.checkOut) }}</span>
+    } @else if (displayResults().length) {
+      <div class="row g-4 mt-2">
+        @for (option of displayResults(); track option.hotelId + '-' + option.roomTypeId; let index = $index) {
+          <div class="col-12 col-md-6 col-xl-4">
+            <article class="card stay-card h-100">
+              <div class="stay-card__media">
+                <div class="ratio ratio-16x9">
+                  <img class="stay-card__img" [src]="stayImage(index)" [alt]="option.roomName" loading="lazy" />
+                </div>
+                <span class="stay-card__count">{{ option.availableCount }} left</span>
               </div>
-            </div>
-
-            <div class="stay-action">
-              <strong>{{ option.nightlyPrice | currency: option.currency : 'symbol' : '1.2-2' }}</strong>
-              <small>per night</small>
-              <a
-                class="primary-button"
-                [routerLink]="roomDetailsLink(option)"
-                [queryParams]="roomDetailsQueryParams(option)"
-              >
-                View room
-              </a>
-            </div>
-          </article>
+              <div class="card-body d-flex flex-column p-3 p-md-4">
+                <p class="stay-card__location mb-2">{{ hotelCityLabel(option) }}</p>
+                <h2 class="stay-card__title mb-1">{{ option.hotelName }}</h2>
+                <p class="room-name mb-3">{{ option.roomName }}</p>
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                  <span class="badge hotel-badge">{{ option.maxAdults }} adults / {{ option.maxChildren }} children</span>
+                  <span class="badge hotel-badge">{{ option.petsAllowed ? 'Pets allowed' : 'No pets' }}</span>
+                  <span class="badge hotel-badge">{{ displayDate(criteria().checkIn) }} → {{ displayDate(criteria().checkOut) }}</span>
+                </div>
+                <div class="d-flex align-items-baseline gap-2 mt-auto mb-3 stay-price-row">
+                  <strong class="stay-price">{{ option.nightlyPrice | currency: option.currency : 'symbol' : '1.2-2' }}</strong>
+                  <small class="stay-price-label">per night</small>
+                </div>
+                <div class="d-flex flex-column flex-sm-row gap-2">
+                  @if (canSelfBook()) {
+                    <a class="btn btn-brand flex-grow-1" routerLink="/reservations/new" [queryParams]="reservationParams(option)">Reserve</a>
+                  }
+                  <a class="btn btn-brand-outline flex-grow-1" [routerLink]="roomDetailsLink(option)" [queryParams]="roomDetailsQueryParams(option)">View room</a>
+                </div>
+              </div>
+            </article>
+          </div>
         }
-      </section>
+      </div>
     } @else {
-      <section class="empty-results">
-        <h2>No matching rooms</h2>
-        <p class="muted">Try another destination, adjust guest ages, or remove pets.</p>
-      </section>
+      <div class="alert empty-results mt-3">
+        <h2 class="h5">No matching rooms</h2>
+        <p class="muted mb-0">Try another destination, adjust dates or guest count.</p>
+      </div>
     }
-  } @else {
-      <section class="empty-results">
-        <h2>Start from the home page</h2>
-      <p class="muted">Enter your destination or hotel ID, dates and accommodation party to load available hotels.</p>
-      <a class="primary-button" routerLink="/">Search stays</a>
-    </section>
-  }
+  </div>
 </main>

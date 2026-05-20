@@ -1,0 +1,31 @@
+<section class="services-preview py-5" aria-label="Network services">
+  <div class="container py-2 py-md-4">
+
+    <div class="row justify-content-center mb-4 mb-md-5">
+      <div class="col-12 col-lg-8 text-center">
+        <p class="eyebrow mb-2">Network Services</p>
+        <h2 class="services-preview__title mb-3">Services across our network</h2>
+        <p class="services-preview__subtitle mb-0">
+          Selected services may vary by hotel, room type, and availability.
+        </p>
+      </div>
+    </div>
+
+    <div class="row g-3 row-cols-2 row-cols-sm-3 row-cols-md-4">
+      @for (service of services; track service.title) {
+        <div class="col">
+          <div class="service-card h-100 p-3 p-md-4">
+            <div class="service-card__marker mb-3" aria-hidden="true">{{ service.marker }}</div>
+            <h3 class="service-card__title mb-1">{{ service.title }}</h3>
+            <p class="service-card__desc mb-0">{{ service.description }}</p>
+          </div>
+        </div>
+      }
+    </div>
+
+    <p class="services-preview__note text-center mt-4 mb-0">
+      Services depend on the selected hotel and may be confirmed during reservation.
+    </p>
+
+  </div>
+</section>

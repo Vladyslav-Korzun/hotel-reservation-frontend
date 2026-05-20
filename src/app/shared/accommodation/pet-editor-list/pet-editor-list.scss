@@ -1,0 +1,163 @@
+/* Pet editor list — shared between search guests-picker and reservation wizard step.
+ * The card/field/seg classes come from global `_wizard-panel.scss`; everything here
+ * is local to the pet-card chrome. */
+
+.wp-pet-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.wp-pet-empty {
+  align-items: center;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  display: flex;
+  font-size: 0.82rem;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0.9rem 1rem;
+}
+
+.wp-pet-empty--with-add {
+  gap: 0.75rem;
+}
+
+.wp-pet-add {
+  align-items: center;
+  background: var(--color-gold);
+  border: 0;
+  border-radius: var(--radius-pill);
+  color: #1b1a18;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 700;
+  gap: 0.35rem;
+  padding: 0.45rem 0.95rem;
+  transition: background 0.15s ease, opacity 0.15s ease;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background: var(--color-gold-hover);
+    outline: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  span {
+    font-size: 1rem;
+    line-height: 1;
+  }
+}
+
+.wp-pet-add--inline {
+  background: transparent;
+  border: 1px dashed var(--color-border-gold);
+  color: var(--color-gold-hover);
+  justify-self: start;
+  margin-top: 0.25rem;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background: rgba(196, 156, 116, 0.1);
+    color: var(--color-gold-hover);
+  }
+}
+
+.wp-pet-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.9rem 1rem;
+}
+
+.wp-pet-card__head {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  strong {
+    color: var(--color-text);
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+}
+
+.wp-pet-card__remove {
+  background: transparent;
+  border: 0;
+  color: var(--color-text-subtle);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.2rem 0.4rem;
+  transition: color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    color: #ffc9c4;
+    outline: none;
+  }
+}
+
+.wp-pet-card__grid {
+  align-items: stretch;
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Each field stretches to match its sibling. Label sits on top, control
+   below grows to fill the remaining height so Type matches Weight. */
+.wp-pet-card .wp-field {
+  display: grid;
+  gap: 0.4rem;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+}
+
+/* Local overrides of the global .wp-seg: equal-width buttons + fills the
+   column height so Type and the 2x2 Weight grid line up visually. */
+.wp-pet-card .wp-seg {
+  grid-auto-columns: 1fr;
+  height: 100%;
+}
+
+.wp-pet-card .wp-seg button {
+  text-align: center;
+}
+
+/* Weight chip grid: 4 buttons in a 2x2 square sitting next to Type. */
+.wp-pet-card__weight-grid {
+  display: grid;
+  gap: 0.35rem;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  height: 100%;
+}
+
+.wp-pet-card__error {
+  color: #ffd1cc;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.wp-pet-cap {
+  color: var(--color-gold-hover);
+  font-size: 0.74rem;
+  font-weight: 700;
+  margin: 0.25rem 0 0;
+}
+
+@media (max-width: 720px) {
+  .wp-pet-card__grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,32 @@
+@let h = hotel();
+
+<header class="hotel-hero">
+  <div class="hotel-hero__bg" [style.background-image]="'url(' + backgroundUrl() + ')'" aria-hidden="true"></div>
+  <div class="hotel-hero__overlay" aria-hidden="true"></div>
+
+  <div class="container hotel-hero__inner">
+    <div class="hotel-hero__top d-flex align-items-center justify-content-between gap-3 flex-wrap">
+      <nav class="hotel-hero__crumb" aria-label="Breadcrumb">
+        <a routerLink="/hotels">Hotels</a>
+        <span class="hotel-hero__sep" aria-hidden="true">/</span>
+        <a routerLink="/hotels" [queryParams]="{ city: h.city }">{{ h.city }}</a>
+        <span class="hotel-hero__sep" aria-hidden="true">/</span>
+        <span class="hotel-hero__current">{{ h.name }}</span>
+      </nav>
+    </div>
+
+    <div class="hotel-hero__title-wrap">
+      <p class="hotel-hero__eyebrow">{{ eyebrow() }}</p>
+      <h1 class="hotel-hero__title">{{ h.name }}</h1>
+      <div class="hotel-hero__meta d-flex flex-wrap align-items-center gap-2 gap-md-3">
+        @if (h.stars > 0) {
+          <span class="hotel-hero__stars" [attr.aria-label]="h.stars + ' stars'">{{ starsLabel() }}</span>
+          <span class="hotel-hero__dot" aria-hidden="true"></span>
+        }
+        <span class="hotel-hero__addr">{{ h.address }}, {{ h.country }}</span>
+        <span class="hotel-hero__dot" aria-hidden="true"></span>
+        <app-status-badge [status]="h.status" />
+      </div>
+    </div>
+  </div>
+</header>

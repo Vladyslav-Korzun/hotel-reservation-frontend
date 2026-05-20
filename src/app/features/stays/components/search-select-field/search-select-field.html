@@ -1,0 +1,34 @@
+<div
+  class="search-field search-select-field"
+  [class.search-select-field--open]="isOpen()"
+  role="button"
+  tabindex="0"
+  [attr.aria-label]="ariaLabel()"
+  [attr.aria-expanded]="isOpen()"
+  aria-haspopup="listbox"
+  (click)="toggle()"
+  (keydown.enter)="toggle()"
+  (keydown.space)="toggle()"
+>
+  <span class="field-icon {{ iconClass() }}" aria-hidden="true"></span>
+  <span class="search-field__display">{{ displayLabel() }}</span>
+
+  @if (isOpen()) {
+    <ul
+      class="search-select-dropdown"
+      role="listbox"
+      [attr.aria-label]="ariaLabel()"
+      (click)="$event.stopPropagation()"
+    >
+      @for (opt of options(); track $index) {
+        <li
+          class="search-select-dropdown__item"
+          [class.search-select-dropdown__item--active]="isSelected(opt.value)"
+          role="option"
+          [attr.aria-selected]="isSelected(opt.value)"
+          (click)="select(opt.value)"
+        >{{ opt.label }}</li>
+      }
+    </ul>
+  }
+</div>

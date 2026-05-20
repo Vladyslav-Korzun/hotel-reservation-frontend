@@ -1,0 +1,53 @@
+<aside class="hotel-isc">
+
+  <header class="hotel-isc__head">
+    <p class="hotel-isc__eyebrow">Find your stay</p>
+    <h2 class="hotel-isc__title">Choose your dates</h2>
+
+    @if (showPriceHint()) {
+      <p class="hotel-isc__price-hint">
+        Rooms from
+        <b>{{ minPriceAmount() | currency: minPriceCurrency() : 'symbol' : '1.0-0' }}</b>
+        / night
+      </p>
+    }
+  </header>
+
+  <div class="hotel-isc__form">
+    <app-stay-search-form
+      [compact]="true"
+      [showLocationFields]="false"
+      [initialCriteria]="initialCriteria()"
+      submitLabel="Show available rooms"
+      (submitted)="onSubmitted($event)"
+    />
+  </div>
+
+  <ul class="hotel-isc__trust list-unstyled">
+    <li class="hotel-isc__trust-item">
+      <span class="hotel-isc__trust-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+      </span>
+      <span><b>Free cancellation</b> until 24h before check-in</span>
+    </li>
+    <li class="hotel-isc__trust-item">
+      <span class="hotel-isc__trust-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+      </span>
+      <span><b>No charge yet</b> · card guarantee only</span>
+    </li>
+    <li class="hotel-isc__trust-item">
+      <span class="hotel-isc__trust-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+      </span>
+      <span><b>Best rate</b> guaranteed on this site</span>
+    </li>
+  </ul>
+
+</aside>

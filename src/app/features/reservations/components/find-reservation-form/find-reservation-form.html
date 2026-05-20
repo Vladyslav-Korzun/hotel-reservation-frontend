@@ -1,7 +1,8 @@
-<form class="find-reservation-card find-reservation-form" [formGroup]="form()" (ngSubmit)="submitted.emit()">
+<form class="card find-reservation-card find-reservation-form dark-form" [formGroup]="form()" (ngSubmit)="submitted.emit()">
   <div class="form-row">
-    <label for="reservationId">Reservation ID</label>
+    <label class="form-label" for="reservationId">Reservation ID</label>
     <input
+      class="form-control"
       id="reservationId"
       type="text"
       autocomplete="off"
@@ -9,16 +10,16 @@
       placeholder="af884cad-7b10-4e17-ad82-551a23020ffe"
     />
     @if (canViewAllReservations()) {
-      <span class="field-hint">Leave this field empty to load all reservations.</span>
+      <span class="form-text field-hint">Leave this field empty to load all reservations.</span>
     } @else {
-      <span class="field-hint">Use the reservation ID from create response or detail page.</span>
+      <span class="form-text field-hint">Use the reservation ID from create response or detail page.</span>
     }
   </div>
 
-  <div class="actions find-reservation-form__actions">
-    <button type="submit" class="primary-button">Open reservation</button>
+  <div class="d-flex flex-wrap gap-2 find-reservation-form__actions">
+    <button type="submit" class="btn btn-brand-light">Open reservation</button>
     @if (canViewAllReservations()) {
-      <button type="button" class="secondary-button" (click)="showAllRequested.emit()">Show all reservations</button>
+      <button type="button" class="btn btn-brand-outline" (click)="showAllRequested.emit()">Show all reservations</button>
     }
   </div>
 </form>

@@ -1,0 +1,34 @@
+<div class="sos">
+  @for (service of services(); track service.serviceOfferingId) {
+    <article class="sos__item" [class.sos__item--selected]="isSelected(service.serviceOfferingId)">
+      <div class="sos__info">
+        <div class="sos__name">{{ service.name }}</div>
+        <div class="sos__meta">
+          <b>
+            {{ service.priceAmount | currency: service.priceCurrency : 'symbol' : '1.0-0' }}
+            <span class="sos__per">{{ pricingLabel(service) }}</span>
+          </b>
+          @if (service.description) {
+            &middot; {{ service.description }}
+          }
+        </div>
+      </div>
+      <div class="sos__qty" role="group" [attr.aria-label]="service.name + ' quantity'">
+        <button
+          type="button"
+          aria-label="Decrease"
+          [disabled]="quantity(service.serviceOfferingId) === 0"
+          (click)="decrease(service.serviceOfferingId)"
+        >−</button>
+        <span>{{ quantity(service.serviceOfferingId) }}</span>
+        <button
+          type="button"
+          aria-label="Increase"
+          (click)="increase(service.serviceOfferingId)"
+        >+</button>
+      </div>
+    </article>
+  } @empty {
+    <div class="sos__empty">No services available at this hotel.</div>
+  }
+</div>

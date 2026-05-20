@@ -1,0 +1,19 @@
+<div class="hotel-gallery">
+  @for (cell of cells(); track cell.id; let i = $index) {
+    <button
+      type="button"
+      class="hotel-gallery__cell"
+      [class.hotel-gallery__cell--big]="i === 0"
+      [style.background-image]="'url(' + cell.thumbUrl + ')'"
+      [attr.aria-label]="'Open photo ' + (i + 1)"
+      (click)="open(i)"
+    ></button>
+  }
+</div>
+
+<app-photo-lightbox
+  [images]="lightboxImages()"
+  [openAtIndex]="openIndex()"
+  altPrefix="Hotel photo"
+  (closed)="onClosed()"
+/>

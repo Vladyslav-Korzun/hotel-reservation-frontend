@@ -1,0 +1,141 @@
+<div class="rbc">
+  @if (showUrgency()) {
+    <span class="rbc-urgency">
+      Only {{ availableCount() }} {{ availableCount() === 1 ? 'room' : 'rooms' }} left
+    </span>
+  }
+
+  <div class="rbc-price-row">
+    <span class="rbc-price">{{ nightlyPrice() | currency: currency() : 'symbol' : '1.0-0' }}</span>
+    <span class="rbc-price-per">/ night</span>
+  </div>
+  <div class="rbc-price-from">starting rate, taxes included</div>
+
+  @if (maxAdults() > 0 || maxTotalGuests() > 0) {
+    <div class="rbc-capacity d-flex flex-wrap gap-2 mt-3" aria-label="Room capacity">
+      @if (maxTotalGuests() > 0) {
+        <span class="hotel-badge">Sleeps up to {{ maxTotalGuests() }}</span>
+      }
+      @if (maxAdults() > 0) {
+        <span class="hotel-badge">
+          {{ maxAdults() }} {{ maxAdults() === 1 ? 'adult' : 'adults' }}
+        </span>
+      }
+      @if (maxChildren() > 0) {
+        <span class="hotel-badge">
+          {{ maxChildren() }} {{ maxChildren() === 1 ? 'child' : 'children' }}
+        </span>
+      }
+      @if (maxInfants() > 0) {
+        <span class="hotel-badge">
+          {{ maxInfants() }} {{ maxInfants() === 1 ? 'infant' : 'infants' }}
+        </span>
+      }
+      @if (petsAllowed()) {
+        <span class="hotel-badge">
+          Pets allowed{{ maxPets() > 0 ? ' · max ' + maxPets() : '' }}
+        </span>
+      }
+    </div>
+  }
+
+  <div class="rbc-hairline rbc-hairline--gold"></div>
+
+  <!-- Quick-edit trip details: dates only. Guests are chosen in search and validated on the reservation page. -->
+  <div class="rbc-qe" role="group" aria-label="Trip details">
+    <app-date-range-picker
+      [compact]="true"
+      [checkInControl]="form.controls.checkIn"
+      [checkOutControl]="form.controls.checkOut"
+      [availabilityByDate]="availabilityByDate()"
+      (visibleRangeChange)="onPickerRangeChange($event)"
+    />
+  </div>
+
+  <div class="rbc-hairline"></div>
+
+  <!-- Hotel services preview (selection happens on the reservation page) -->
+  @if (services().length > 0) {
+    <section class="rbc-svc">
+      <div class="rbc-svc__head">
+        <span class="rbc-svc__title">Available hotel services</span>
+        <span class="rbc-svc__hint">add at checkout</span>
+      </div>
+      <ul class="rbc-svc__list">
+        @for (svc of previewServices(); track svc.serviceOfferingId) {
+          <li class="rbc-svc__item">
+            <span class="rbc-svc__name">{{ svc.name }}</span>
+            <span class="rbc-svc__price">
+              from {{ svc.priceAmount | currency: svc.priceCurrency : 'symbol' : '1.0-0' }}
+              <small>{{ svc.perNight ? '/ night' : '/ stay' }}</small>
+            </span>
+          </li>
+        }
+        @if (extraServicesCount() > 0) {
+          <li class="rbc-svc__more">
+            +{{ extraServicesCount() }} more {{ extraServicesCount() === 1 ? 'service' : 'services' }}
+          </li>
+        }
+      </ul>
+    </section>
+
+    <div class="rbc-hairline rbc-hairline--gold"></div>
+  }
+
+  <!-- Price breakdown (room only — services priced at reservation step) -->
+  <div class="rbc-breakdown">
+    <div class="rbc-breakdown__row">
+      <span>{{ nights() }} {{ nights() === 1 ? 'night' : 'nights' }} &times; {{ nightlyPrice() | currency: currency() : 'symbol' : '1.2-2' }}</span>
+      <span><b>{{ roomTotal() | currency: currency() : 'symbol' : '1.2-2' }}</b></span>
+    </div>
+    <div class="rbc-breakdown__row rbc-breakdown__row--dim">
+      <span>Taxes &amp; city fee</span>
+      <span>included</span>
+    </div>
+    <div class="rbc-hairline" style="margin: 10px 0"></div>
+    <div class="rbc-breakdown__total">
+      <span class="rbc-breakdown__total-label">Total</span>
+      <span class="rbc-breakdown__total-amount">{{ roomTotal() | currency: currency() : 'symbol' : '1.2-2' }}</span>
+    </div>
+  </div>
+
+  <div class="rbc-hairline"></div>
+
+  <!-- Check-in / check-out times -->
+  <div class="rbc-times">
+    <div class="rbc-time">
+      <div class="rbc-time__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <div>
+        <div class="rbc-time__label">Check-in</div>
+        <div class="rbc-time__val">from 15:00</div>
+      </div>
+    </div>
+    <div class="rbc-time">
+      <div class="rbc-time__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      </div>
+      <div>
+        <div class="rbc-time__label">Check-out</div>
+        <div class="rbc-time__val">until 11:00</div>
+      </div>
+    </div>
+  </div>
+
+  @if (canSelfBook()) {
+    <a class="rbc-btn-reserve" routerLink="/reservations/new" [queryParams]="reserveQueryParams()">
+      Reserve now
+    </a>
+
+    <p class="rbc-reserve-note">
+      You won't be charged yet &middot; <b>Free cancellation</b> available
+    </p>
+  }
+
+  <div class="rbc-hairline" style="margin-top: 20px"></div>
+
+  <a class="rbc-back-link" routerLink="/stays/search" [queryParams]="searchQueryParams()">
+    ← Back to search results
+  </a>
+</div>

@@ -1,0 +1,68 @@
+<main class="staff-page">
+  <div class="staff-page__backdrop" aria-hidden="true"></div>
+
+  <div class="container staff-page__content">
+    <section class="staff-hero">
+      <div>
+        <p class="eyebrow">Staff operations</p>
+        <h1>Reservation desk</h1>
+        <p class="staff-hero__copy">Handle arrivals, departures, no-shows and room operational status updates.</p>
+      </div>
+
+      <button type="button" class="btn staff-hero__refresh" [disabled]="loadingReservations()" (click)="reload()">Refresh</button>
+    </section>
+
+    @if (problem(); as problemDetail) {
+      <section class="staff-feedback">
+        <app-error-message [problem]="problemDetail" />
+      </section>
+    }
+
+    <section class="row g-4 staff-layout">
+      <div class="col-12 col-xl-8">
+        @if (loadingReservations()) {
+          <app-loading-state label="Loading reservations..." />
+        } @else {
+          <app-reservation-operations-table
+            [reservations]="reservations()"
+            [busyReservationId]="busyReservationId()"
+            (checkInRequested)="checkIn($event)"
+            (checkOutRequested)="checkOut($event)"
+            (noShowRequested)="markNoShow($event)"
+          />
+        }
+      </div>
+
+      <aside class="col-12 col-xl-4 staff-layout__side">
+        <app-room-status-form [submitting]="updatingRoom()" (submitted)="updateRoomStatus($event)" />
+
+        @if (latestRoomOperation(); as room) {
+          <section class="card room-operation-result">
+            <div class="card-body">
+              <p class="eyebrow">Updated room</p>
+              <h2 class="h4">Room {{ room.roomNumber }}</h2>
+              <dl class="mb-0">
+                <div>
+                  <dt>Room id</dt>
+                  <dd>#{{ room.roomId }}</dd>
+                </div>
+                <div>
+                  <dt>Hotel</dt>
+                  <dd>#{{ room.hotelId }}</dd>
+                </div>
+                <div>
+                  <dt>Capacity</dt>
+                  <dd>{{ room.capacity }}</dd>
+                </div>
+                <div>
+                  <dt>Status</dt>
+                  <dd><app-status-badge [status]="room.status" /></dd>
+                </div>
+              </dl>
+            </div>
+          </section>
+        }
+      </aside>
+    </section>
+  </div>
+</main>

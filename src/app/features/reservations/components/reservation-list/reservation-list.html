@@ -1,54 +1,58 @@
 @if (reservations().length) {
   <section class="reservation-list">
     <div class="reservation-list__summary">
-      <span>{{ reservations().length }} reservations</span>
+      <span class="badge rounded-pill reservation-list__count">{{ reservations().length }} reservations</span>
     </div>
 
-    <div class="reservation-list__grid">
+    <div class="row g-4">
       @for (reservation of reservations(); track reservation.reservationId) {
-        <article class="reservation-card">
-          <div class="reservation-card__header">
-            <div>
-              <p class="eyebrow">Reservation</p>
-              <h2>{{ reservation.reservationId }}</h2>
-            </div>
-            <app-status-badge [status]="reservation.status" />
-          </div>
+        <div class="col-12 col-xl-6">
+          <article class="card dark-card reservation-card h-100">
+            <div class="card-body d-flex flex-column gap-3">
+              <div class="reservation-card__header">
+                <div>
+                  <p class="eyebrow">Reservation</p>
+                  <h2>{{ reservation.reservationId }}</h2>
+                </div>
+                <app-status-badge [status]="reservation.status" />
+              </div>
 
-          <dl class="reservation-card__meta">
-            <div>
-              <dt>Stay</dt>
-              <dd>{{ displayDate(reservation.checkIn) }} to {{ displayDate(reservation.checkOut) }}</dd>
-            </div>
-            <div>
-              <dt>Party</dt>
-              <dd>{{ partySummary(reservation) }}</dd>
-            </div>
-            <div>
-              <dt>Created by</dt>
-              <dd>{{ reservation.createdBy }}</dd>
-            </div>
-            <div>
-              <dt>Created at</dt>
-              <dd>{{ displayDateTime(reservation.createdAt) }}</dd>
-            </div>
-          </dl>
+              <dl class="row g-3 reservation-card__meta">
+                <div class="col-12 col-md-6">
+                  <dt>Stay</dt>
+                  <dd>{{ displayDate(reservation.checkIn) }} to {{ displayDate(reservation.checkOut) }}</dd>
+                </div>
+                <div class="col-12 col-md-6">
+                  <dt>Party</dt>
+                  <dd>{{ partySummary(reservation) }}</dd>
+                </div>
+                <div class="col-12 col-md-6">
+                  <dt>Created by</dt>
+                  <dd>{{ reservation.createdBy }}</dd>
+                </div>
+                <div class="col-12 col-md-6">
+                  <dt>Created at</dt>
+                  <dd>{{ displayDateTime(reservation.createdAt) }}</dd>
+                </div>
+              </dl>
 
-          <div class="reservation-card__footer">
-            <div class="reservation-card__references">
-              <span>Property #{{ reservation.hotelId }}</span>
-              <span>Room #{{ reservation.roomTypeId }}</span>
-            </div>
+              <div class="reservation-card__footer mt-auto">
+                <div class="reservation-card__references">
+                  <span class="badge rounded-pill">Property #{{ reservation.hotelId }}</span>
+                  <span class="badge rounded-pill">Room #{{ reservation.roomTypeId }}</span>
+                </div>
 
-            <a class="primary-button" [routerLink]="['/reservations', reservation.reservationId]">Open</a>
-          </div>
-        </article>
+                <a class="btn btn-brand-light" [routerLink]="['/reservations', reservation.reservationId]">Open</a>
+              </div>
+            </div>
+          </article>
+        </div>
       }
     </div>
   </section>
 } @else {
-  <section class="reservation-list__empty">
-    <h2>No reservations found</h2>
-    <p>No bookings match the current reservation view.</p>
+  <section class="dark-card reservation-list__empty p-4 mb-0">
+    <h2 class="h5">No reservations found</h2>
+    <p class="mb-0">No bookings match the current reservation view.</p>
   </section>
 }

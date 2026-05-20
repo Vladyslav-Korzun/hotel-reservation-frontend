@@ -1,0 +1,94 @@
+/* Page-level layout for the hotel detail page.
+   Hero is full-bleed, so the page does NOT use the global `.feature-page` class
+   (which pads top by 7.5rem). Hero owns its own navbar clearance. */
+
+.hotel-detail-page {
+  background: var(--color-bg);
+  color: var(--color-text-body);
+  min-height: 100vh;
+}
+
+/* Used when the page shows an error or loading state without a hero. */
+.hotel-detail-page__pad-top {
+  padding-bottom: 4rem;
+  padding-top: 7.5rem;
+}
+
+/* Main two-column area below the sticky section nav. */
+.hotel-detail-page__main {
+  padding-bottom: 6rem;
+  padding-top: 3.5rem;
+}
+
+/* Each section gets `scroll-margin-top` so anchor jumps clear the global navbar pill. */
+.hotel-detail-page__section {
+  margin-bottom: 4rem;
+  scroll-margin-top: 110px;
+}
+
+.hotel-detail-page__section:last-child {
+  margin-bottom: 0;
+}
+
+/* Section heads (eyebrow + serif title) shared across the page. */
+.hotel-detail-page__head {
+  margin-bottom: 1.4rem;
+}
+
+.hotel-detail-page__head--with-aside {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.hotel-detail-page__head-aside {
+  color: var(--color-text-subtle);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.hotel-detail-page__eyebrow {
+  color: var(--color-gold);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.82rem;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.25rem;
+}
+
+.hotel-detail-page__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.8rem, 3.4vw, 2.4rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.hotel-detail-page__copy {
+  color: var(--color-text-muted);
+  font-size: 0.98rem;
+  line-height: 1.75;
+  margin: 0;
+  max-width: 65ch;
+}
+
+/* Right column: sticky search card lives here from Phase C. */
+.hotel-detail-page__right {
+  position: relative;
+}
+
+@media (max-width: 991.98px) {
+  .hotel-detail-page__main {
+    padding-top: 2.5rem;
+  }
+
+  .hotel-detail-page__section {
+    margin-bottom: 3rem;
+    scroll-margin-top: 100px;
+  }
+}

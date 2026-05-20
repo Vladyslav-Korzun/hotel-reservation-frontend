@@ -1,0 +1,121 @@
+/* ── Gallery grid ─────────────────────────────────────────────────────────── */
+
+.room-gallery {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: 10px;
+  height: 480px;
+  margin-bottom: 28px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.room-gallery__main,
+.room-gallery__thumb {
+  background-size: cover;
+  background-position: center;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+  transition:
+    filter 0.25s,
+    transform 0.4s;
+
+  &:hover {
+    filter: brightness(1.12);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: -2px;
+  }
+}
+
+.room-gallery__main {
+  background-color: rgba(0, 0, 0, 0.4);
+
+  &:hover {
+    transform: scale(1.01);
+  }
+}
+
+.room-gallery__thumbs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
+}
+
+.room-gallery__thumb {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* "View all photos" button overlay */
+.room-gallery__view-all {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  background: rgba(20, 18, 15, 0.85);
+  color: var(--color-text);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-pill);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition:
+    background 0.2s,
+    transform 0.15s,
+    border-color 0.2s;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    color: var(--color-gold);
+  }
+
+  &:hover {
+    background: rgba(28, 24, 20, 0.95);
+    border-color: var(--color-border-gold);
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+}
+
+@media (max-width: 720px) {
+  .room-gallery {
+    height: auto;
+    grid-template-columns: 1fr;
+    border-radius: var(--radius-md);
+    gap: 6px;
+  }
+
+  .room-gallery__main {
+    aspect-ratio: 4/3;
+  }
+
+  .room-gallery__thumbs {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 1fr;
+    height: 90px;
+  }
+
+  .room-gallery__view-all {
+    right: 10px;
+    bottom: 10px;
+    padding: 7px 11px;
+    font-size: 11px;
+  }
+}
+
+/* Lightbox styles moved to shared/ui/photo-lightbox/photo-lightbox.scss */

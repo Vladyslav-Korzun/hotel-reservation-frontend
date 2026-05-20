@@ -1,0 +1,69 @@
+﻿:host {
+  display: block;
+}
+
+.services-preview {
+  background: var(--color-bg);
+}
+
+.services-preview__title {
+  color: #fffdf8;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.services-preview__subtitle {
+  color: rgba(246, 246, 246, 0.68);
+  font-size: 0.98rem;
+}
+
+// ─── Service card ─────────────────────────────────────────────────────────────
+
+.service-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  transition: background 220ms ease, border-color 220ms ease;
+
+  &:hover {
+    background: rgba(196, 156, 116, 0.06);
+    border-color: rgba(196, 156, 116, 0.28);
+  }
+}
+
+.service-card__marker {
+  align-items: center;
+  background: rgba(196, 156, 116, 0.12);
+  border: 1px solid rgba(196, 156, 116, 0.28);
+  border-radius: 8px;
+  color: #c49c74;
+  display: inline-flex;
+  font-size: 0.75rem;
+  font-weight: 900;
+  height: 2.4rem;
+  justify-content: center;
+  letter-spacing: 0.04em;
+  width: 2.4rem;
+}
+
+.service-card__title {
+  color: #fffdf8;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.service-card__desc {
+  color: rgba(246, 246, 246, 0.58);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+// ─── Note ────────────────────────────────────────────────────────────────────
+
+.services-preview__note {
+  color: rgba(246, 246, 246, 0.42);
+  font-size: 0.8rem;
+  font-style: italic;
+}

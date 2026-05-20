@@ -1,0 +1,53 @@
+<div class="hotel-stats">
+
+  <div class="hotel-stat">
+    <span class="hotel-stat__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.8 5.8 21 7 14 2 9.3 9 8.5 12 2"/>
+      </svg>
+    </span>
+    <div class="hotel-stat__label">Class</div>
+    <div class="hotel-stat__value">{{ starsValue() }}</div>
+    <div class="hotel-stat__sub">guest rating tier</div>
+  </div>
+
+  <div class="hotel-stat">
+    <span class="hotel-stat__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="12" cy="7" r="3"/>
+        <path d="M5 21v-1a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v1"/>
+      </svg>
+    </span>
+    <div class="hotel-stat__label">Children</div>
+    <div class="hotel-stat__value">{{ childrenValue() }}</div>
+    <div class="hotel-stat__sub">{{ childrenSub() }}</div>
+  </div>
+
+  <div class="hotel-stat">
+    <span class="hotel-stat__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="6.5" cy="9.5" r="1.5"/>
+        <circle cx="17.5" cy="9.5" r="1.5"/>
+        <circle cx="9.5" cy="6.5" r="1.5"/>
+        <circle cx="14.5" cy="6.5" r="1.5"/>
+        <path d="M12 12c-3 0-5 2.5-5 5 0 1.5 1 2 2.5 2s2-1 2.5-1 1 1 2.5 1 2.5-.5 2.5-2c0-2.5-2-5-5-5z"/>
+      </svg>
+    </span>
+    <div class="hotel-stat__label">Pets</div>
+    <div class="hotel-stat__value">{{ petsValue() }}</div>
+    <div class="hotel-stat__sub">{{ petsSub() }}</div>
+  </div>
+
+  <div class="hotel-stat">
+    <span class="hotel-stat__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M9 12l2 2 4-4"/>
+      </svg>
+    </span>
+    <div class="hotel-stat__label">Status</div>
+    <div class="hotel-stat__value" [class]="statusToneClass()">{{ statusValue() }}</div>
+    <div class="hotel-stat__sub">{{ statusSub() }}</div>
+  </div>
+
+</div>

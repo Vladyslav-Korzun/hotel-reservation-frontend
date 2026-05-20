@@ -1,0 +1,67 @@
+@if (reservations().length) {
+  <div class="table-responsive operations-table">
+    <table class="table table-dark table-hover align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Reservation</th>
+          <th>Stay</th>
+          <th>Guest</th>
+          <th>Room</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (reservation of reservations(); track reservation.reservationId) {
+          <tr>
+            <td>
+              <a [routerLink]="['/reservations', reservation.reservationId]">{{ reservation.reservationId }}</a>
+            </td>
+            <td>{{ displayDate(reservation.checkIn) }} to {{ displayDate(reservation.checkOut) }}</td>
+            <td>#{{ reservation.guestId }}</td>
+            <td>
+              <span>Type #{{ reservation.roomTypeId }}</span>
+              @if (reservation.roomId) {
+                <small>Room #{{ reservation.roomId }}</small>
+              }
+            </td>
+            <td><app-status-badge [status]="reservation.status" /></td>
+            <td>
+              <div class="operations-table__actions">
+                <button
+                  type="button"
+                  class="btn btn-sm operations-table__btn"
+                  [disabled]="isBusy(reservation)"
+                  (click)="checkInRequested.emit(reservation.reservationId)"
+                >
+                  Check in
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm operations-table__btn"
+                  [disabled]="isBusy(reservation)"
+                  (click)="checkOutRequested.emit(reservation.reservationId)"
+                >
+                  Check out
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm operations-table__btn operations-table__btn--danger"
+                  [disabled]="isBusy(reservation)"
+                  (click)="noShowRequested.emit(reservation.reservationId)"
+                >
+                  No-show
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <section class="alert operations-table__empty mb-0">
+    <h2 class="h5">No reservations</h2>
+    <p class="mb-0">No operational reservations were returned by the backend.</p>
+  </section>
+}

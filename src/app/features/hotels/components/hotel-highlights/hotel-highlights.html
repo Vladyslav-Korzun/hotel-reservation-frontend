@@ -1,0 +1,49 @@
+<div class="hotel-highlights">
+
+  <article class="hotel-highlight">
+    <span class="hotel-highlight__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.8 5.8 21 7 14 2 9.3 9 8.5 12 2"/>
+      </svg>
+    </span>
+    <h3 class="hotel-highlight__title">{{ serviceTitle() }}</h3>
+    <p class="hotel-highlight__sub">{{ serviceSub }}</p>
+  </article>
+
+  <article class="hotel-highlight">
+    <span class="hotel-highlight__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M9 12l2 2 4-4"/>
+      </svg>
+    </span>
+    <h3 class="hotel-highlight__title">{{ bookableTitle() }}</h3>
+    <p class="hotel-highlight__sub">{{ bookableSub() }}</p>
+  </article>
+
+  <article class="hotel-highlight">
+    <span class="hotel-highlight__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="12" cy="7" r="3"/>
+        <path d="M5 21v-1a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v1"/>
+      </svg>
+    </span>
+    <h3 class="hotel-highlight__title">{{ childrenTitle() }}</h3>
+    <p class="hotel-highlight__sub">{{ childrenSub() }}</p>
+  </article>
+
+  <article class="hotel-highlight">
+    <span class="hotel-highlight__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="6.5" cy="9.5" r="1.5"/>
+        <circle cx="17.5" cy="9.5" r="1.5"/>
+        <circle cx="9.5" cy="6.5" r="1.5"/>
+        <circle cx="14.5" cy="6.5" r="1.5"/>
+        <path d="M12 12c-3 0-5 2.5-5 5 0 1.5 1 2 2.5 2s2-1 2.5-1 1 1 2.5 1 2.5-.5 2.5-2c0-2.5-2-5-5-5z"/>
+      </svg>
+    </span>
+    <h3 class="hotel-highlight__title">{{ petsTitle() }}</h3>
+    <p class="hotel-highlight__sub">{{ petsSub() }}</p>
+  </article>
+
+</div>

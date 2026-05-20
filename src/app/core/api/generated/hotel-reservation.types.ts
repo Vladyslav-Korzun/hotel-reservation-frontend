@@ -4,6 +4,194 @@
  */
 
 export interface paths {
+    "/hotels": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List active hotels */
+        get: operations["listHotels"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/hotels/{hotelId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get active hotel details */
+        get: operations["getHotelDetails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/hotels/{hotelId}/services": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List active hotel services */
+        get: operations["listHotelServices"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/hotels": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create hotel */
+        post: operations["createHotel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/hotels/{hotelId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update hotel */
+        put: operations["updateHotel"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/room-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create room type */
+        post: operations["createRoomType"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/room-types/{roomTypeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update room type */
+        put: operations["updateRoomType"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/rooms": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create room */
+        post: operations["createRoom"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/rooms/{roomId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update room */
+        put: operations["updateRoom"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/hotels/{hotelId}/services": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create hotel service offering */
+        post: operations["createServiceOffering"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/hotels/{hotelId}/services/{serviceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update hotel service offering */
+        put: operations["updateServiceOffering"];
+        post?: never;
+        /** Deactivate hotel service offering */
+        delete: operations["deactivateServiceOffering"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/rooms/search": {
         parameters: {
             query?: never;
@@ -24,6 +212,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/hotels/{hotelId}/room-types/{roomTypeId}/availability-calendar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get room type availability calendar
+         * @description Returns one item for every date in the inclusive [from, to] range. Each item describes whether at least one physical room of the requested room type is available for that night. Check-out dates are not counted as occupied nights. The date range cannot exceed 90 days.
+         */
+        get: operations["getRoomTypeAvailabilityCalendar"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/reservations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List current user's reservations
+         * @description Returns reservations belonging to the authenticated guest profile.
+         */
+        get: operations["listMyReservations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/reservations": {
         parameters: {
             query?: never;
@@ -38,10 +266,30 @@ export interface paths {
         get: operations["listReservations"];
         put?: never;
         /**
-         * Create reservation
-         * @description Creates a new reservation for an accommodation party.
+         * Create authenticated guest reservation
+         * @description Creates a reservation for the guest profile linked to the authenticated GUEST JWT. The request body must not contain guestId.
          */
         post: operations["createReservation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/public/reservations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create anonymous guest checkout reservation
+         * @description Creates a reservation without JWT. Backend creates or finds the Guest profile from contact data; guestId must not be supplied by the caller.
+         */
+        post: operations["createPublicReservation"];
         delete?: never;
         options?: never;
         head?: never;
@@ -82,6 +330,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/staff/reservations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create staff reservation
+         * @description Creates an internal staff/admin reservation. Staff may provide an existing guestId or guest contact data for creating/finding a Guest profile.
+         */
+        post: operations["createStaffReservation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/staff/reservations/{reservationId}/check-in": {
         parameters: {
             query?: never;
@@ -116,10 +384,309 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/staff/reservations/{reservationId}/no-show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark reservation as no-show */
+        post: operations["markNoShowReservation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/staff/rooms/{roomId}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update room operational status */
+        patch: operations["updateRoomStatus"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        HotelResponse: {
+            /** Format: int64 */
+            hotelId: number;
+            name: string;
+            city: string;
+            country: string;
+            address: string;
+            stars: number;
+            description?: string;
+            /** @enum {string} */
+            status: "ACTIVE" | "INACTIVE" | "UNDER_MAINTENANCE";
+            /** @description Whether this hotel accepts children and infants. If false, minors are not allowed when searching or creating a reservation. */
+            childrenAllowed: boolean;
+            petsAllowed: boolean;
+            /** @description Inclusive maximum age classified as an infant for this hotel. Infant ages are supplied in childrenAges for search and derived from stayingGuests for reservation creation. */
+            infantMaxAge: number;
+            /** @description Inclusive maximum age that counts as a child for this hotel. Older minors from adultEquivalentAge count against adult occupancy instead. */
+            childMaxAge: number;
+            /** @description Inclusive age from which a minor counts as an adult for occupancy limits. Must be less than 18. */
+            adultEquivalentAge: number;
+        };
+        HotelServiceOfferingResponse: {
+            /** Format: int64 */
+            serviceOfferingId: number;
+            /** Format: int64 */
+            hotelId: number;
+            code: string;
+            name: string;
+            description?: string;
+            priceAmount: number;
+            priceCurrency: string;
+            active: boolean;
+            availabilityRule?: string;
+        };
+        CreateHotelRequest: {
+            /** Format: int64 */
+            hotelId: number;
+            name: string;
+            city: string;
+            country: string;
+            address: string;
+            stars: number;
+            description?: string;
+            /** @enum {string} */
+            status: "ACTIVE" | "INACTIVE" | "UNDER_MAINTENANCE";
+            /** @description Whether this hotel accepts children and infants. If false, minors are not allowed when searching or creating a reservation. */
+            childrenAllowed: boolean;
+            petsAllowed: boolean;
+            /** @description Inclusive maximum age classified as an infant for this hotel. Infant ages are supplied in childrenAges for search and derived from stayingGuests for reservation creation. */
+            infantMaxAge: number;
+            /** @description Inclusive maximum age that counts as a child for this hotel. Older minors from adultEquivalentAge count against adult occupancy instead. */
+            childMaxAge: number;
+            /** @description Inclusive age from which a minor counts as an adult for occupancy limits. Must be greater than infantMaxAge. */
+            adultEquivalentAge: number;
+        };
+        UpdateHotelRequest: {
+            name: string;
+            city: string;
+            country: string;
+            address: string;
+            stars: number;
+            description?: string;
+            /** @enum {string} */
+            status: "ACTIVE" | "INACTIVE" | "UNDER_MAINTENANCE";
+            /** @description Whether this hotel accepts children and infants. If false, minors are not allowed when searching or creating a reservation. */
+            childrenAllowed: boolean;
+            petsAllowed: boolean;
+            /** @description Inclusive maximum age classified as an infant for this hotel. Infant ages are supplied in childrenAges for search and derived from stayingGuests for reservation creation. */
+            infantMaxAge: number;
+            /** @description Inclusive maximum age that counts as a child for this hotel. Older minors from adultEquivalentAge count against adult occupancy instead. */
+            childMaxAge: number;
+            /** @description Inclusive age from which a minor counts as an adult for occupancy limits. Must be greater than infantMaxAge. */
+            adultEquivalentAge: number;
+        };
+        /** @enum {string} */
+        RoomAmenityCode: "WIFI" | "AIR_CONDITIONING" | "HEATING" | "PRIVATE_BATHROOM" | "BATHTUB" | "SHOWER" | "HAIRDRYER" | "SAFE" | "MINIBAR" | "COFFEE_MACHINE" | "SMART_TV" | "SOUNDPROOFING" | "BALCONY" | "SEA_VIEW" | "CITY_VIEW" | "MOUNTAIN_VIEW" | "WORKSPACE" | "WHEELCHAIR_ACCESSIBLE";
+        RoomTypeResponse: {
+            /** Format: int64 */
+            roomTypeId: number;
+            /** Format: int64 */
+            hotelId: number;
+            name: string;
+            maxAdults: number;
+            /** @description Maximum number of non-infant children allowed for this room type. */
+            maxChildren: number;
+            /** @description Maximum number of infants allowed for this room type. Infants are classified from search childrenAges or reservation stayingGuests using the hotel's infantMaxAge. */
+            maxInfants: number;
+            /** @description Maximum occupancy counted as adults, adult-equivalent minors, and non-infant children. Infants are limited separately by maxInfants. */
+            maxTotalGuests: number;
+            petsAllowed: boolean;
+            maxPets: number;
+            allowedPetTypes: ("DOG" | "CAT" | "OTHER")[];
+            maxPetWeightKg?: number;
+            petFeeAmount?: number;
+            petFeeCurrency?: string;
+            basePriceAmount: number;
+            basePriceCurrency: string;
+            description?: string;
+            /**
+             * @description Human-readable bed configuration as a single line. Null when not yet configured.
+             * @example 1 king bed + sofa bed
+             */
+            bedSetup?: string | null;
+            /**
+             * Format: float
+             * @description Room floor area in square metres. Null when unknown.
+             * @example 28.5
+             */
+            roomSizeSqm?: number | null;
+            /**
+             * @description Room amenities as stable enum codes. Frontend maps each code to an icon and a localized label.
+             * @example [
+             *       "WIFI",
+             *       "AIR_CONDITIONING",
+             *       "PRIVATE_BATHROOM",
+             *       "SEA_VIEW"
+             *     ]
+             */
+            amenities?: components["schemas"]["RoomAmenityCode"][];
+        };
+        CreateRoomTypeRequest: {
+            /** Format: int64 */
+            roomTypeId: number;
+            /** Format: int64 */
+            hotelId: number;
+            name: string;
+            maxAdults: number;
+            /** @description Maximum number of non-infant children allowed for this room type. */
+            maxChildren: number;
+            /** @description Maximum number of infants allowed for this room type. Infants are classified from search childrenAges or reservation stayingGuests using the hotel's infantMaxAge. */
+            maxInfants: number;
+            /** @description Maximum occupancy counted as adults, adult-equivalent minors, and non-infant children. Infants are limited separately by maxInfants. */
+            maxTotalGuests: number;
+            petsAllowed: boolean;
+            maxPets: number;
+            allowedPetTypes: ("DOG" | "CAT" | "OTHER")[];
+            maxPetWeightKg?: number;
+            petFeeAmount?: number;
+            petFeeCurrency?: string;
+            basePriceAmount: number;
+            basePriceCurrency: string;
+            description?: string;
+            /**
+             * @description Human-readable bed configuration as a single line. Blank is treated as null.
+             * @example 1 king bed + sofa bed
+             */
+            bedSetup?: string | null;
+            /**
+             * Format: float
+             * @description Room floor area in square metres. Null when unknown.
+             * @example 28.5
+             */
+            roomSizeSqm?: number | null;
+            /**
+             * @description Room amenities as stable enum codes. Empty array allowed.
+             * @example [
+             *       "WIFI",
+             *       "AIR_CONDITIONING",
+             *       "PRIVATE_BATHROOM",
+             *       "SEA_VIEW"
+             *     ]
+             */
+            amenities?: components["schemas"]["RoomAmenityCode"][];
+        };
+        UpdateRoomTypeRequest: {
+            name: string;
+            maxAdults: number;
+            /** @description Maximum number of non-infant children allowed for this room type. */
+            maxChildren: number;
+            /** @description Maximum number of infants allowed for this room type. Infants are classified from search childrenAges or reservation stayingGuests using the hotel's infantMaxAge. */
+            maxInfants: number;
+            /** @description Maximum occupancy counted as adults, adult-equivalent minors, and non-infant children. Infants are limited separately by maxInfants. */
+            maxTotalGuests: number;
+            petsAllowed: boolean;
+            maxPets: number;
+            allowedPetTypes: ("DOG" | "CAT" | "OTHER")[];
+            maxPetWeightKg?: number;
+            petFeeAmount?: number;
+            petFeeCurrency?: string;
+            basePriceAmount: number;
+            basePriceCurrency: string;
+            description?: string;
+            /**
+             * @description Human-readable bed configuration as a single line. Blank is treated as null.
+             * @example 1 king bed + sofa bed
+             */
+            bedSetup?: string | null;
+            /**
+             * Format: float
+             * @description Room floor area in square metres. Null when unknown.
+             * @example 28.5
+             */
+            roomSizeSqm?: number | null;
+            /**
+             * @description Room amenities as stable enum codes. Empty array allowed.
+             * @example [
+             *       "WIFI",
+             *       "AIR_CONDITIONING",
+             *       "PRIVATE_BATHROOM",
+             *       "SEA_VIEW"
+             *     ]
+             */
+            amenities?: components["schemas"]["RoomAmenityCode"][];
+        };
+        RoomResponse: {
+            /** Format: int64 */
+            roomId: number;
+            /** Format: int64 */
+            hotelId: number;
+            roomNumber: string;
+            /** Format: int64 */
+            roomTypeId: number;
+            capacity: number;
+            /** @enum {string} */
+            status: "AVAILABLE" | "CLEANING" | "MAINTENANCE" | "OUT_OF_SERVICE";
+        };
+        CreateRoomRequest: {
+            /** Format: int64 */
+            roomId: number;
+            /** Format: int64 */
+            hotelId: number;
+            roomNumber: string;
+            /** Format: int64 */
+            roomTypeId: number;
+            capacity: number;
+            /** @enum {string} */
+            status: "AVAILABLE" | "CLEANING" | "MAINTENANCE" | "OUT_OF_SERVICE";
+        };
+        UpdateRoomRequest: {
+            /** Format: int64 */
+            hotelId: number;
+            roomNumber: string;
+            /** Format: int64 */
+            roomTypeId: number;
+            capacity: number;
+            /** @enum {string} */
+            status: "AVAILABLE" | "CLEANING" | "MAINTENANCE" | "OUT_OF_SERVICE";
+        };
+        CreateServiceOfferingRequest: {
+            /** Format: int64 */
+            serviceOfferingId: number;
+            code: string;
+            name: string;
+            description?: string;
+            priceAmount: number;
+            priceCurrency: string;
+            active: boolean;
+            availabilityRule?: string;
+        };
+        UpdateServiceOfferingRequest: {
+            code: string;
+            name: string;
+            description?: string;
+            priceAmount: number;
+            priceCurrency: string;
+            active: boolean;
+            availabilityRule?: string;
+        };
+        StayingGuest: {
+            firstName: string;
+            lastName: string;
+            age: number;
+            /** @enum {string} */
+            gender: "MALE" | "FEMALE" | "OTHER";
+        };
         BookingPet: {
             /** @enum {string} */
             type: "DOG" | "CAT" | "OTHER";
@@ -136,6 +703,7 @@ export interface components {
             /** Format: date */
             checkOut: string;
             adults: number;
+            /** @description Ages of all accompanying minors, including infants. The backend classifies each age using the selected hotel's infantMaxAge, childMaxAge, and adultEquivalentAge; infants count against maxInfants, children count against maxChildren, and adult-equivalent minors count against maxAdults/maxTotalGuests. */
             childrenAges?: number[];
             pets?: components["schemas"]["BookingPet"][];
         };
@@ -148,15 +716,83 @@ export interface components {
             checkIn: string;
             /** Format: date */
             checkOut: string;
-            adults: number;
-            childrenAges?: number[];
+            /** @description People staying in this reservation. Backend derives adults and childrenAges from this list. */
+            stayingGuests: components["schemas"]["StayingGuest"][];
             pets?: components["schemas"]["BookingPet"][];
+            /**
+             * Format: email
+             * @description Per-booking contact email. When null, backend uses the Guest profile email.
+             */
+            contactEmail?: string | null;
+            /** @description Per-booking contact phone. When null, backend falls back to the Guest profile phone when available. */
+            contactPhone?: string | null;
+            /** @description Free-form note from the guest to the hotel. Stored with the reservation; not a binding promise. */
+            specialRequests?: string | null;
+            serviceOfferings?: components["schemas"]["ReservationServiceSelection"][];
+        };
+        PublicCreateReservationRequest: {
+            /** Format: int64 */
+            hotelId: number;
+            /** Format: int64 */
+            roomTypeId: number;
+            /** @description Contact/profile first name for creating or finding the Guest profile. Staying people are sent in stayingGuests. */
+            firstName: string;
+            /** @description Contact/profile last name for creating or finding the Guest profile. Staying people are sent in stayingGuests. */
+            lastName: string;
+            /** Format: email */
+            email: string;
+            phone: string;
+            /** Format: date */
+            checkIn: string;
+            /** Format: date */
+            checkOut: string;
+            /** @description People staying in this reservation. Backend derives adults and childrenAges from this list. */
+            stayingGuests: components["schemas"]["StayingGuest"][];
+            pets?: components["schemas"]["BookingPet"][];
+            serviceOfferings?: components["schemas"]["ReservationServiceSelection"][];
+        };
+        StaffCreateReservationRequest: {
+            /** Format: int64 */
+            hotelId: number;
+            /** Format: int64 */
+            roomTypeId: number;
+            /**
+             * Format: int64
+             * @description Existing Guest profile id. Staff/admin only.
+             */
+            guestId?: number;
+            /** @description Required with lastName, email, and phone when guestId is not provided. */
+            firstName?: string;
+            /** @description Required with firstName, email, and phone when guestId is not provided. */
+            lastName?: string;
+            /**
+             * Format: email
+             * @description Required with firstName, lastName, and phone when guestId is not provided.
+             */
+            email?: string;
+            /** @description Required with firstName, lastName, and email when guestId is not provided. */
+            phone?: string;
+            /** Format: date */
+            checkIn: string;
+            /** Format: date */
+            checkOut: string;
+            /** @description People staying in this reservation. Backend derives adults and childrenAges from this list. */
+            stayingGuests: components["schemas"]["StayingGuest"][];
+            pets?: components["schemas"]["BookingPet"][];
+            serviceOfferings?: components["schemas"]["ReservationServiceSelection"][];
+        };
+        ReservationServiceSelection: {
+            /** Format: int64 */
+            serviceOfferingId: number;
+            quantity: number;
         };
         CreateReservationResponse: components["schemas"]["ReservationResponse"];
         ReservationResponse: {
             reservationId: string;
             /** Format: int64 */
             hotelId: number;
+            /** Format: int64 */
+            guestId: number;
             /** Format: int64 */
             roomId?: number | null;
             /** Format: int64 */
@@ -166,14 +802,56 @@ export interface components {
             /** Format: date */
             checkOut: string;
             adults: number;
+            /** @description Derived ages of all accompanying minors, including infants. For new reservations this is derived from stayingGuests. */
             childrenAges: number[];
+            /** @description People staying in this reservation. Empty for legacy reservations created before this field existed. */
+            stayingGuests: components["schemas"]["StayingGuest"][];
             pets: components["schemas"]["BookingPet"][];
+            /** Format: email */
+            contactEmail?: string | null;
+            contactPhone?: string | null;
+            specialRequests?: string | null;
+            basePriceAmount?: number;
+            basePriceCurrency?: string;
+            servicesPriceAmount?: number;
+            servicesPriceCurrency?: string;
+            discountAmount?: number;
+            discountCurrency?: string;
+            finalPriceAmount?: number;
+            finalPriceCurrency?: string;
+            serviceItems?: components["schemas"]["ReservationServiceItemResponse"][];
             status: string;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
             cancelledAt?: string | null;
             createdBy: string;
+        };
+        ReservationServiceItemResponse: {
+            /** Format: int64 */
+            serviceOfferingId: number;
+            serviceName: string;
+            priceAmount: number;
+            priceCurrency: string;
+            quantity: number;
+            totalPriceAmount: number;
+            totalPriceCurrency: string;
+        };
+        UpdateRoomStatusRequest: {
+            /** @enum {string} */
+            status: "AVAILABLE" | "CLEANING" | "MAINTENANCE" | "OUT_OF_SERVICE";
+        };
+        RoomOperationResponse: {
+            /** Format: int64 */
+            roomId: number;
+            /** Format: int64 */
+            hotelId: number;
+            roomNumber: string;
+            /** Format: int64 */
+            roomTypeId: number;
+            capacity: number;
+            /** @enum {string} */
+            status: "AVAILABLE" | "OCCUPIED" | "CLEANING" | "MAINTENANCE" | "OUT_OF_SERVICE";
         };
         AvailableRoomResponse: {
             /** Format: int64 */
@@ -191,6 +869,33 @@ export interface components {
             basePriceAmount: number;
             basePriceCurrency: string;
             availableCount: number;
+            /**
+             * @description Human-readable bed configuration as a single line. Null when not yet configured.
+             * @example 1 king bed + sofa bed
+             */
+            bedSetup?: string | null;
+            /**
+             * Format: float
+             * @description Room floor area in square metres. Null when unknown.
+             * @example 28.5
+             */
+            roomSizeSqm?: number | null;
+            /**
+             * @description Room amenities as stable enum codes. Frontend maps each code to an icon and a localized label.
+             * @example [
+             *       "WIFI",
+             *       "AIR_CONDITIONING",
+             *       "PRIVATE_BATHROOM",
+             *       "SEA_VIEW"
+             *     ]
+             */
+            amenities?: components["schemas"]["RoomAmenityCode"][];
+        };
+        RoomTypeAvailabilityCalendarDayResponse: {
+            /** Format: date */
+            date: string;
+            availableCount: number;
+            available: boolean;
         };
         /** @description RFC 7807 problem details response returned by the REST layer. */
         ErrorResponse: {
@@ -217,6 +922,683 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    listHotels: {
+        parameters: {
+            query?: {
+                city?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Active hotels */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HotelResponse"][];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getHotelDetails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                hotelId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Hotel details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HotelResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Hotel not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    listHotelServices: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                hotelId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Active hotel services */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HotelServiceOfferingResponse"][];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Hotel not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createHotel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateHotelRequest"];
+            };
+        };
+        responses: {
+            /** @description Hotel created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HotelResponse"];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateHotel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                hotelId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateHotelRequest"];
+            };
+        };
+        responses: {
+            /** @description Hotel updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HotelResponse"];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Hotel not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createRoomType: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateRoomTypeRequest"];
+            };
+        };
+        responses: {
+            /** @description Room type created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoomTypeResponse"];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Hotel not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateRoomType: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                roomTypeId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateRoomTypeRequest"];
+            };
+        };
+        responses: {
+            /** @description Room type updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoomTypeResponse"];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Room type not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createRoom: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateRoomRequest"];
+            };
+        };
+        responses: {
+            /** @description Room created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoomResponse"];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Hotel or room type not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateRoom: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                roomId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateRoomRequest"];
+            };
+        };
+        responses: {
+            /** @description Room updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoomResponse"];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Room, hotel, or room type not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createServiceOffering: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                hotelId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateServiceOfferingRequest"];
+            };
+        };
+        responses: {
+            /** @description Service offering created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HotelServiceOfferingResponse"];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Hotel not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateServiceOffering: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                hotelId: number;
+                serviceId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateServiceOfferingRequest"];
+            };
+        };
+        responses: {
+            /** @description Service offering updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HotelServiceOfferingResponse"];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Hotel or service offering not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    deactivateServiceOffering: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                hotelId: number;
+                serviceId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Service offering deactivated */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Hotel or service offering not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     searchAvailableRooms: {
         parameters: {
             query?: never;
@@ -246,6 +1628,90 @@ export interface operations {
                 };
                 content: {
                     "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getRoomTypeAvailabilityCalendar: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+            };
+            header?: never;
+            path: {
+                hotelId: number;
+                roomTypeId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Room type availability calendar */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoomTypeAvailabilityCalendarDayResponse"][];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Hotel or room type not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    listMyReservations: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current user's reservation list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReservationResponse"][];
                 };
             };
             /** @description Unauthorized */
@@ -359,6 +1825,48 @@ export interface operations {
             };
         };
     };
+    createPublicReservation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PublicCreateReservationRequest"];
+            };
+        };
+        responses: {
+            /** @description Reservation created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateReservationResponse"];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Authenticated callers must use POST /reservations */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getReservation: {
         parameters: {
             query?: never;
@@ -446,6 +1954,57 @@ export interface operations {
             };
             /** @description Reservation not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createStaffReservation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StaffCreateReservationRequest"];
+            };
+        };
+        responses: {
+            /** @description Reservation created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateReservationResponse"];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -561,6 +2120,126 @@ export interface operations {
                 };
             };
             /** @description Reservation or room not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    markNoShowReservation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reservationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reservation marked as no-show */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReservationResponse"];
+                };
+            };
+            /** @description Business rule violation */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Reservation not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateRoomStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                roomId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateRoomStatusRequest"];
+            };
+        };
+        responses: {
+            /** @description Room status updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoomOperationResponse"];
+                };
+            };
+            /** @description Business rule violation */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Room not found */
             404: {
                 headers: {
                     [name: string]: unknown;

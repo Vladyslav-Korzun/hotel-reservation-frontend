@@ -12,7 +12,7 @@ import { AuthService } from './auth.service';
       </p>
     </section>
 
-    <section class="panel">
+    <section class="card auth-unavailable-card">
       <p>Expected discovery URL:</p>
       <pre>http://localhost:8081/realms/hotel-reservation/.well-known/openid-configuration</pre>
       @if (auth.error(); as error) {
@@ -23,10 +23,19 @@ import { AuthService } from './auth.service';
   `,
   styles: [
     `
+      .auth-unavailable-card {
+        background: rgba(18, 18, 18, 0.74);
+        border: 1px solid rgba(201, 190, 179, 0.18);
+        border-radius: 18px;
+        color: #f7f7f2;
+        padding: 1.25rem;
+      }
+
       pre {
-        background: #f6f8fa;
-        border: 1px solid #d6dde5;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 8px;
+        color: #f7f7f2;
         overflow-x: auto;
         padding: 1rem;
       }

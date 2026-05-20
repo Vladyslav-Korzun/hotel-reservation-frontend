@@ -1,0 +1,165 @@
+<div class="gsp-wrapper">
+
+  @if (!compact()) {
+
+    <!-- ── Normal (search-form) mode ─────────────────────────── -->
+    <div
+      class="search-field search-field--guests"
+      role="button"
+      tabindex="0"
+      [attr.aria-expanded]="isOpen()"
+      (click)="toggle()"
+      (keydown.enter)="toggle()"
+      (keydown.space)="toggle()"
+    >
+      <button
+        type="button"
+        class="guests-trigger"
+        aria-label="Open guests selector"
+        [attr.aria-expanded]="isOpen()"
+        tabindex="-1"
+      >
+        <span class="field-icon field-icon--guests" aria-hidden="true"></span>
+        <span class="guests-trigger__label">Guests</span>
+        <span class="guests-trigger__value">{{ summary() }}</span>
+        <span class="guests-trigger__caret" [class.open]="isOpen()" aria-hidden="true"></span>
+      </button>
+
+      @if (isOpen()) {
+        <div class="guests-popover" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+          <ng-container *ngTemplateOutlet="popoverContent" />
+        </div>
+      }
+    </div>
+
+    @if (guestsError()) {
+      <span class="search-error gsp-form-error">{{ guestsError() }}</span>
+    }
+
+  } @else {
+
+    <!-- ── Compact mode (self-contained) ─────────────────────── -->
+    <div class="gsp-compact" (click)="toggle()">
+      <div class="gsp-cell">
+        <div class="gsp-cell__label">Guests</div>
+        <div class="gsp-cell__value">
+          {{ summary() }}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </div>
+      </div>
+
+      @if (isOpen()) {
+        <div class="guests-popover guests-popover--compact" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+          <ng-container *ngTemplateOutlet="popoverContent" />
+        </div>
+      }
+    </div>
+
+  }
+
+</div><!-- /gsp-wrapper -->
+
+<!-- ── Shared popover content ──────────────────────────────────────────────── -->
+<ng-template #popoverContent>
+  <div class="guests-popover__header">
+    <div>
+      <h3>Guests</h3>
+      <p class="guests-popover__summary">{{ summary() }}</p>
+    </div>
+    <button type="button" class="guests-popover__done" (click)="close()">Done</button>
+  </div>
+
+  <div class="guests-panel-card">
+    <div class="guests-counter-row">
+      <div class="guests-counter-copy"><strong>Adults</strong></div>
+      <div class="guests-counter">
+        <button
+          type="button"
+          [disabled]="adultsControl().value <= 1"
+          (click)="changeAdults(-1)"
+          aria-label="Remove adult"
+        >-</button>
+        <span>{{ adultsControl().value }}</span>
+        <button
+          type="button"
+          [disabled]="adultsControl().value >= maxAdults"
+          (click)="changeAdults(1)"
+          aria-label="Add adult"
+        >+</button>
+      </div>
+    </div>
+
+    <div class="guests-counter-row">
+      <div class="guests-counter-copy">
+        <strong>Children</strong>
+        @if (!childrenAllowed()) {
+          <em class="guests-counter-hint">Not allowed at this hotel</em>
+        }
+      </div>
+      <div class="guests-counter">
+        <button
+          type="button"
+          [disabled]="!childrenAllowed() || childrenCount() <= 0"
+          (click)="changeChildren(-1)"
+          aria-label="Remove child"
+        >-</button>
+        <span>{{ childrenCount() }}</span>
+        <button
+          type="button"
+          [disabled]="!childrenAllowed() || childrenCount() >= maxChildren"
+          (click)="changeChildren(1)"
+          aria-label="Add child"
+        >+</button>
+      </div>
+    </div>
+  </div>
+
+  @if (showAges() && childrenCount() > 0) {
+    <div class="wp-card wp-age-list">
+      @for (control of childrenAgeControls(); track $index; let i = $index) {
+        <div class="wp-age-row" [class.wp-age-row--open]="isChildExpanded(i)">
+          <button
+            type="button"
+            class="wp-age-row__head"
+            [attr.aria-expanded]="isChildExpanded(i)"
+            (click)="toggleChildExpansion(i)"
+          >
+            <strong>Child {{ i + 1 }}</strong>
+            <span class="wp-age-row__value">{{ childAgeLabel(control.value ?? 0) }}</span>
+            <span class="wp-age-row__caret" aria-hidden="true"></span>
+          </button>
+          @if (isChildExpanded(i)) {
+            <div class="wp-age-chips" role="radiogroup" [attr.aria-label]="'Child ' + (i + 1) + ' age'">
+              @for (age of childAgeOptions; track age) {
+                <button
+                  type="button"
+                  class="wp-age-chip"
+                  [class.wp-age-chip--selected]="control.value === age"
+                  [attr.aria-checked]="control.value === age"
+                  role="radio"
+                  (click)="setChildAge(i, age)"
+                >{{ age }}</button>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <div class="guests-pets">
+    <header class="guests-pets__title">
+      <strong>Pets</strong>
+      <span>Optional. Add each pet so we can match a hotel that accepts the right type and weight.</span>
+    </header>
+
+    <app-pet-editor-list
+      [petsArray]="petsArray()"
+      [maxPets]="maxPets"
+      emptyLabel="No pets selected."
+      addLabel="Add a pet"
+    />
+  </div>
+</ng-template>

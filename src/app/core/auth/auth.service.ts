@@ -6,6 +6,8 @@ import { UserRole, isUserRole } from './user-role';
 export interface AuthenticatedUser {
   username: string;
   roles: UserRole[];
+  /** Standard OIDC `email` claim. Empty string when Keycloak didn't include it. */
+  email: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -26,6 +28,7 @@ export class AuthService {
     return {
       username: this.resolveUsername(claims),
       roles: this.resolveRoles(claims),
+      email: this.resolveEmail(claims),
     };
   });
 
@@ -110,6 +113,11 @@ export class AuthService {
       this.initialized.set(true);
       this.initializePromise = null;
     }
+  }
+
+  private resolveEmail(claims: Record<string, unknown>): string {
+    const email = claims['email'];
+    return typeof email === 'string' ? email.trim() : '';
   }
 
   private resolveUsername(claims: Record<string, unknown>): string {

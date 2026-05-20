@@ -1,0 +1,287 @@
+/* ── Wrapper ──────────────────────────────────────────────────────────────── */
+
+.gsp-wrapper {
+  position: relative;
+  z-index: 120;
+}
+
+/* ── Guests trigger (search-form mode) ──────────────────────────────────── */
+
+.guests-trigger {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: inherit;
+  display: grid;
+  gap: 0.2rem 0.7rem;
+  grid-template-columns: 1.45rem auto minmax(0, 1fr) 0.9rem;
+  height: 100%;
+  padding: 0 0.8rem;
+  text-align: left;
+  width: 100%;
+}
+
+.guests-trigger__label {
+  color: rgba(246, 246, 246, 0.78);
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.guests-trigger__value {
+  color: rgba(246, 246, 246, 0.92);
+  font-size: 0.88rem;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.guests-trigger__caret {
+  border-right: 2px solid rgba(246, 246, 246, 0.6);
+  border-top: 2px solid rgba(246, 246, 246, 0.6);
+  height: 0.45rem;
+  justify-self: end;
+  transform: rotate(135deg);
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease;
+  width: 0.45rem;
+}
+
+.guests-trigger__caret.open {
+  border-color: var(--color-gold);
+  transform: rotate(-45deg);
+}
+
+/* ── Compact mode (self-contained) ───────────────────────────────────────── */
+
+.gsp-compact {
+  cursor: pointer;
+  position: relative;
+}
+
+.gsp-cell {
+  padding: 12px 14px;
+}
+
+.gsp-cell__label {
+  color: var(--color-text-subtle);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.gsp-cell__value {
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  svg {
+    width: 12px;
+    height: 12px;
+    color: var(--color-gold);
+    flex-shrink: 0;
+  }
+}
+
+/* ── Guests popover ──────────────────────────────────────────────────────── */
+
+.guests-popover {
+  background: rgba(22, 22, 22, 0.96);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-body);
+  display: grid;
+  gap: 0.55rem;
+  left: 0;
+  max-height: min(74vh, 560px);
+  min-width: 430px;
+  overflow-y: auto;
+  /* Hide scrollbar chrome but keep scroll behaviour for very tall content */
+  scrollbar-width: none;
+  padding: 0.7rem;
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  width: min(480px, calc(100vw - 2rem));
+  z-index: 1000;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.guests-popover--compact {
+  left: -20px;
+  min-width: 0;
+  right: -20px;
+  width: auto;
+}
+
+.guests-popover__header {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  padding: 0.15rem 0.15rem 0.35rem;
+}
+
+.guests-popover__header h3 {
+  color: var(--color-text-body);
+  font-size: 0.98rem;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.guests-popover__summary {
+  color: rgba(246, 246, 246, 0.62);
+  font-size: 0.78rem;
+  margin: 0.18rem 0 0;
+}
+
+.guests-popover__done {
+  background: rgba(202, 160, 111, 0.95);
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--color-ink);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 800;
+  min-height: 2rem;
+  min-width: 68px;
+  padding: 0 0.75rem;
+  transition: transform 140ms ease;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+/* ── Panel card ──────────────────────────────────────────────────────────── */
+
+.guests-panel-card {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 10px;
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.55rem;
+}
+
+.guests-counter-row {
+  align-items: center;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-height: 2.45rem;
+}
+
+.guests-counter-copy strong,
+.guests-pets strong {
+  display: block;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.guests-counter-hint {
+  display: block;
+  color: rgba(246, 246, 246, 0.45);
+  font-size: 0.72rem;
+  font-style: italic;
+  margin-top: 2px;
+}
+
+/* Per-child age picker visuals live in global _wizard-panel.scss under .wp-age-*
+   so the reservation wizard's Step 1 can render the same UI without depending
+   on this component being loaded. */
+
+.guests-counter {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.24);
+  border-radius: var(--radius-sm);
+  display: grid;
+  grid-template-columns: 2rem 2rem 2rem;
+  height: 2rem;
+  overflow: hidden;
+}
+
+.guests-counter button {
+  background: transparent;
+  border: 0;
+  color: var(--color-gold);
+  cursor: pointer;
+  font-size: 1.05rem;
+  font-weight: 800;
+  height: 100%;
+}
+
+.guests-counter button:disabled {
+  color: rgba(246, 246, 246, 0.24);
+  cursor: default;
+}
+
+.guests-counter > span {
+  color: var(--color-text-body);
+  font-size: 0.86rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+/* ── Pets ────────────────────────────────────────────────────────────────── */
+/* Pet card / add / list visuals live in shared/accommodation/pet-editor-list/.
+ * Here we only add the section title above the shared editor. */
+
+.guests-pets {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.guests-pets__title strong {
+  color: var(--color-text);
+  display: block;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.guests-pets__title span {
+  color: var(--color-text-subtle);
+  display: block;
+  font-size: 0.74rem;
+  margin-top: 0.12rem;
+}
+
+/* ── Errors ──────────────────────────────────────────────────────────────── */
+
+.search-error {
+  color: #ffd1cc;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.gsp-form-error {
+  display: block;
+  left: 0.1rem;
+  position: absolute;
+  top: calc(100% + 0.3rem);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 720px) {
+  .guests-popover {
+    border-radius: var(--radius-md);
+    min-width: 100%;
+    padding: 0.7rem;
+    width: 100%;
+  }
+
+  .guests-counter-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}

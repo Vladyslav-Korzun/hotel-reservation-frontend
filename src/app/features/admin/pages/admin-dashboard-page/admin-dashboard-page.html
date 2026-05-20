@@ -1,0 +1,62 @@
+<main class="admin-page">
+  <div class="admin-page__backdrop" aria-hidden="true"></div>
+
+  <div class="container admin-page__content">
+    <section class="admin-hero">
+      <p class="eyebrow">Admin</p>
+      <h1>Hotel catalog management</h1>
+      <p class="admin-hero__copy">Create and update hotels, room types, rooms and service offerings through backend admin endpoints.</p>
+    </section>
+
+    <section class="nav nav-pills admin-tabs" aria-label="Admin resources">
+      @for (resource of resources; track resource.key) {
+        <button
+          type="button"
+          class="nav-link admin-tabs__button"
+          [class.active]="activeResource() === resource.key"
+          (click)="selectResource(resource.key)"
+        >
+          {{ resource.label }}
+        </button>
+      }
+    </section>
+
+    @if (problem(); as problemDetail) {
+      <section class="admin-feedback">
+        <app-error-message [problem]="problemDetail" />
+      </section>
+    }
+
+    <section class="row g-4 admin-layout">
+      <div class="col-12 col-xl-8">
+        @switch (activeResource()) {
+          @case ('hotels') {
+            <app-hotel-admin-form [submitting]="isBusy('hotels')" (submitted)="submitHotel($event)" />
+          }
+          @case ('roomTypes') {
+            <app-room-type-admin-form [submitting]="isBusy('roomTypes')" (submitted)="submitRoomType($event)" />
+          }
+          @case ('rooms') {
+            <app-room-admin-form [submitting]="isBusy('rooms')" (submitted)="submitRoom($event)" />
+          }
+          @case ('services') {
+            <app-service-offering-admin-form [submitting]="isBusy('services')" (submitted)="submitService($event)" />
+          }
+        }
+      </div>
+
+      <aside class="col-12 col-xl-4">
+        <div class="card admin-result">
+          <div class="card-body">
+            <p class="eyebrow">Last response</p>
+            @if (latestResult(); as result) {
+              <pre>{{ formatResult(result) }}</pre>
+            } @else {
+              <p>No admin operation has completed yet.</p>
+            }
+          </div>
+        </div>
+      </aside>
+    </section>
+  </div>
+</main>

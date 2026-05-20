@@ -1,75 +1,79 @@
-<main class="reservation-detail-page">
-  <div class="reservation-detail-page__backdrop" aria-hidden="true"></div>
+<main class="reservation-detail-page feature-page">
+  <div class="reservation-detail-page__backdrop feature-page__backdrop" aria-hidden="true"></div>
 
-  <section class="reservation-detail-hero">
-    <p class="eyebrow">Reservation</p>
-    <h1>Your booking details</h1>
-    @if (reservation(); as currentReservation) {
-      <p class="reservation-detail-hero__id">{{ currentReservation.reservationId }}</p>
-    }
-  </section>
-
-  @if (problem(); as problemDetail) {
-    <div class="reservation-detail-page__content">
-      <app-error-message [problem]="problemDetail" />
-    </div>
-  }
-
-  @if (loading()) {
-    <div class="reservation-detail-page__content">
-      <app-loading-state label="Loading reservation..." />
-    </div>
-  } @else if (reservation(); as currentReservation) {
-    <section class="reservation-detail-layout">
-      <app-reservation-summary [reservation]="currentReservation" />
-
-      <aside class="reservation-detail-card reservation-detail-actions">
-        <p class="eyebrow">Actions</p>
-        <h2>Manage reservation</h2>
-        <p class="reservation-detail-actions__copy">
-          Guests can cancel pending or confirmed reservations. Staff can also check reservations in and out.
-        </p>
-        <p class="reservation-detail-actions__hint">{{ stayOperationsHint(currentReservation) }}</p>
-
-        <button
-          type="button"
-          class="primary-button"
-          [disabled]="!canCheckIn(currentReservation)"
-          (click)="checkInReservation()"
-        >
-          @if (checkingIn()) {
-            Checking in...
-          } @else {
-            Check in guest
-          }
-        </button>
-
-        <button
-          type="button"
-          class="secondary-button"
-          [disabled]="!canCheckOut(currentReservation)"
-          (click)="checkOutReservation()"
-        >
-          @if (checkingOut()) {
-            Checking out...
-          } @else {
-            Check out guest
-          }
-        </button>
-
-        <button
-          type="button"
-          class="danger-button"
-          [disabled]="!canCancel(currentReservation)"
-          (click)="cancelReservation()"
-        >
-          @if (cancelling()) {
-            Cancelling...
-          } @else {
-            Cancel reservation
-          }
-        </button>
-      </aside>
+  <div class="container reservation-detail-page__content">
+    <section class="reservation-detail-hero">
+      <p class="eyebrow">Reservation</p>
+      <h1>Your booking details</h1>
+      @if (reservation(); as currentReservation) {
+        <p class="reservation-detail-hero__id">{{ currentReservation.reservationId }}</p>
+      }
     </section>
-  }
+
+    @if (problem(); as problemDetail) {
+      <app-error-message [problem]="problemDetail" />
+    }
+
+    @if (loading()) {
+      <app-loading-state label="Loading reservation..." />
+    } @else if (reservation(); as currentReservation) {
+      <section class="row g-4 reservation-detail-layout">
+        <div class="col-12 col-lg-8">
+          <app-reservation-summary [reservation]="currentReservation" />
+        </div>
+
+        <aside class="col-12 col-lg-4">
+          <div class="card dark-card reservation-detail-card reservation-detail-actions">
+            <div class="card-body">
+              <p class="eyebrow">Actions</p>
+              <h2 class="h4">Manage reservation</h2>
+              <p class="reservation-detail-actions__copy">
+                Guests can cancel pending or confirmed reservations. Staff can also check reservations in and out.
+              </p>
+              <p class="reservation-detail-actions__hint">{{ stayOperationsHint(currentReservation) }}</p>
+
+              <button
+                type="button"
+                class="btn btn-brand"
+                [disabled]="!canCheckIn(currentReservation)"
+                (click)="checkInReservation()"
+              >
+                @if (checkingIn()) {
+                  Checking in...
+                } @else {
+                  Check in guest
+                }
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-brand-outline"
+                [disabled]="!canCheckOut(currentReservation)"
+                (click)="checkOutReservation()"
+              >
+                @if (checkingOut()) {
+                  Checking out...
+                } @else {
+                  Check out guest
+                }
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-brand-danger"
+                [disabled]="!canCancel(currentReservation)"
+                (click)="cancelReservation()"
+              >
+                @if (cancelling()) {
+                  Cancelling...
+                } @else {
+                  Cancel reservation
+                }
+              </button>
+            </div>
+          </div>
+        </aside>
+      </section>
+    }
+  </div>
 </main>

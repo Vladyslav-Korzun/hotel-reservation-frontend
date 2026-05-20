@@ -1,0 +1,206 @@
+/* Step-guest-details — only the bits unique to this step.
+   Shared primitives (.wp-field, .wp-seg) live in _wizard-panel.scss */
+
+.sgd__list {
+  display: grid;
+  gap: 14px;
+}
+
+.sgd__card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+
+  &--primary {
+    border-color: var(--color-border-gold);
+    background: rgba(196, 156, 116, 0.04);
+  }
+}
+
+.sgd__card-head {
+  display: grid;
+  grid-template-columns: 38px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.sgd__avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(196, 156, 116, 0.1);
+  color: var(--color-gold);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.sgd__title {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sgd__role {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-text);
+  line-height: 1.1;
+}
+
+.sgd__sub {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.sgd__badge {
+  background: linear-gradient(180deg, var(--color-gold-hover), var(--color-gold));
+  color: var(--color-ink);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+
+  &--infant {
+    background: rgba(143, 185, 110, 0.18);
+    color: #afd089;
+  }
+
+  &--child {
+    background: rgba(196, 156, 116, 0.18);
+    color: var(--color-gold-hover);
+  }
+
+  &--minor {
+    background: rgba(110, 165, 220, 0.16);
+    color: #9ac4f0;
+  }
+
+  &--invalid {
+    background: rgba(232, 148, 120, 0.18);
+    color: #f0a98c;
+  }
+}
+
+.sgd__fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Special requests */
+.sgd__textarea {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+.sgd__textarea-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.sgd__textarea-label {
+  color: var(--color-text-muted);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.sgd__textarea-counter {
+  color: var(--color-text-subtle);
+  font-family: var(--font-serif);
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* Per-booking contact section (sits above the per-guest cards). */
+.sgd__contact {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: 0.9rem;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+}
+
+.sgd__contact-head {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.sgd__contact-head strong {
+  color: var(--color-text);
+  font-size: 13.5px;
+  font-weight: 800;
+}
+
+.sgd__contact-head span {
+  color: var(--color-text-muted);
+  font-size: 12.5px;
+}
+
+.sgd__contact-grid {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: 1fr 1fr;
+}
+
+.sgd__field-hint {
+  font-size: 11.5px;
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+
+@media (max-width: 720px) {
+  .sgd__contact-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sgd__textarea textarea {
+  width: 100%;
+  background: var(--color-bg-field);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-gold);
+  }
+}
+
+@media (max-width: 720px) {
+  .sgd__fields {
+    grid-template-columns: 1fr;
+  }
+
+  .sgd__card-head {
+    grid-template-columns: 38px 1fr;
+  }
+
+  .sgd__badge {
+    grid-column: 2;
+    justify-self: start;
+  }
+}

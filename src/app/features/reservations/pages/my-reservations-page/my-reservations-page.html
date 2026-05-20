@@ -1,0 +1,31 @@
+<main class="my-reservations-page">
+  <div class="my-reservations-page__backdrop" aria-hidden="true"></div>
+
+  <div class="container my-reservations-page__content">
+    <section class="my-reservations-hero">
+      <div>
+        <p class="eyebrow">My reservations</p>
+        <h1>Your current bookings</h1>
+        <p class="my-reservations-hero__copy">
+          Review reservations connected to the signed-in user and open details for cancellation or status checks.
+        </p>
+      </div>
+
+      <button type="button" class="btn btn-brand-outline" [disabled]="loading()" (click)="reload()">Refresh</button>
+    </section>
+
+    @if (problem(); as problemDetail) {
+      <section class="my-reservations-feedback">
+        <app-error-message [problem]="problemDetail" />
+      </section>
+    }
+
+    <section class="my-reservations-results">
+      @if (loading()) {
+        <app-loading-state label="Loading your reservations..." />
+      } @else {
+        <app-reservation-list [reservations]="reservations()" />
+      }
+    </section>
+  </div>
+</main>

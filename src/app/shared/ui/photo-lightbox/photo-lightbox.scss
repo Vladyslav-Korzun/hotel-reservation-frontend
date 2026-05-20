@@ -1,0 +1,157 @@
+/* Fullscreen photo viewer. Lifted from the original RoomGallery lightbox so
+   it can be reused by HotelGallery and any future image grid. */
+
+.photo-lightbox {
+  align-items: center;
+  animation: photo-lightbox-fade 0.18s ease-out;
+  backdrop-filter: blur(8px);
+  background: rgba(8, 6, 4, 0.94);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  inset: 0;
+  position: fixed;
+  z-index: 2000;
+}
+
+@keyframes photo-lightbox-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.photo-lightbox__stage {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+  max-height: 100vh;
+  min-width: 0;
+  padding: 24px;
+}
+
+.photo-lightbox__image {
+  animation: photo-lightbox-pop 0.22s ease-out;
+  border-radius: var(--radius-md);
+  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8);
+  max-height: calc(100vh - 100px);
+  max-width: min(1200px, calc(100vw - 200px));
+  object-fit: contain;
+}
+
+@keyframes photo-lightbox-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.photo-lightbox__counter {
+  color: var(--color-text-muted);
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-style: italic;
+  letter-spacing: 0.04em;
+}
+
+.photo-lightbox__nav,
+.photo-lightbox__close {
+  align-items: center;
+  background: rgba(28, 24, 20, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-text);
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+
+  &:hover {
+    background: rgba(40, 34, 28, 0.95);
+    border-color: var(--color-border-gold);
+    color: var(--color-gold-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+
+  svg {
+    height: 24px;
+    width: 24px;
+  }
+}
+
+.photo-lightbox__nav {
+  border-radius: 50%;
+  height: 52px;
+  margin: 0 22px;
+  width: 52px;
+
+  &:hover {
+    transform: scale(1.06);
+  }
+
+  &--prev { justify-self: start; }
+  &--next { justify-self: end; }
+}
+
+.photo-lightbox__close {
+  border-radius: 50%;
+  height: 44px;
+  position: absolute;
+  right: 22px;
+  top: 22px;
+  width: 44px;
+
+  svg {
+    height: 20px;
+    width: 20px;
+  }
+}
+
+@media (max-width: 720px) {
+  .photo-lightbox {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+  }
+
+  .photo-lightbox__image {
+    max-height: calc(100vh - 180px);
+    max-width: calc(100vw - 24px);
+  }
+
+  .photo-lightbox__nav {
+    grid-row: 2;
+    height: 44px;
+    margin: 0;
+    width: 44px;
+
+    &--prev {
+      justify-self: end;
+      margin-bottom: 18px;
+      margin-right: 12px;
+    }
+
+    &--next {
+      justify-self: start;
+      margin-bottom: 18px;
+      margin-left: 12px;
+    }
+
+    svg {
+      height: 20px;
+      width: 20px;
+    }
+  }
+
+  .photo-lightbox__close {
+    height: 38px;
+    right: 14px;
+    top: 14px;
+    width: 38px;
+  }
+}

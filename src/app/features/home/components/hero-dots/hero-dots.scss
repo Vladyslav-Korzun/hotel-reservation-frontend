@@ -33,7 +33,7 @@
 
 .hero-dots__dot--active {
   animation: hero-dot-pulse 420ms ease;
-  background: #252525;
+  background: var(--color-ink-body);
   width: 1.65rem;
 }
 

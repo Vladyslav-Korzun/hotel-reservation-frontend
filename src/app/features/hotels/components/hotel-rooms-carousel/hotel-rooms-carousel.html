@@ -1,0 +1,42 @@
+<div class="hotel-rooms-carousel">
+
+  @if (hasArrows()) {
+    <div class="hotel-rooms-carousel__nav d-none d-md-flex" aria-hidden="true">
+      <button
+        type="button"
+        class="hotel-rooms-carousel__btn"
+        aria-label="Previous rooms"
+        (click)="scrollBy(-1)"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="hotel-rooms-carousel__btn"
+        aria-label="Next rooms"
+        (click)="scrollBy(1)"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 6l6 6-6 6"/>
+        </svg>
+      </button>
+    </div>
+  }
+
+  <div #track class="hotel-rooms-carousel__track">
+    @for (room of rooms(); track room.hotelId + '-' + room.roomTypeId) {
+      <div class="hotel-rooms-carousel__cell">
+        <app-room-similar-card
+          [option]="room"
+          [currentHotelId]="currentHotelId()"
+          [checkIn]="checkIn()"
+          [checkOut]="checkOut()"
+          [location]="location()"
+        />
+      </div>
+    }
+  </div>
+
+</div>

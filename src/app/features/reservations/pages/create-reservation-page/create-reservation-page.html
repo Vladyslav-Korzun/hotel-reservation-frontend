@@ -1,48 +1,135 @@
-<main class="create-reservation-page">
-  <div class="create-reservation-page__backdrop" aria-hidden="true"></div>
+<main class="crp">
+  <div class="container">
 
-  <section class="reservation-hero">
-    <p class="eyebrow">Reservation</p>
-    <h1>Confirm your stay</h1>
-    <p class="muted reservation-hero__copy">
-      Review your selected property, dates and guests before creating the reservation.
-    </p>
-  </section>
+    <!-- Title -->
+    <header class="crp__head">
+      <div class="crp__eyebrow">Reservation</div>
+      <h1 class="crp__title">Confirm your stay</h1>
+      <p class="crp__copy">
+        A few details and your room is held in your name. Free cancellation until check-in.
+      </p>
+    </header>
 
-  <section class="reservation-layout">
-    <div class="reservation-layout__main">
-      @if (problem(); as problemDetail) {
-        <app-error-message [problem]="problemDetail" />
-      }
+    <!-- Stepper -->
+    <app-reservation-stepper
+      [currentStep]="currentStep()"
+      [maxReachableStep]="maxReachableStep()"
+      (stepClick)="goTo($event)"
+    />
 
-      <app-reservation-form
-        [displayDetails]="displayDetails"
-        [initialValue]="initialRequest"
-        [submitting]="saving()"
-        (submitted)="createReservation($event)"
-      />
+    <!-- Errors -->
+    @if (stepError(); as issues) {
+      <div class="crp__step-error" role="alert">
+        <div class="crp__step-error-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 8v5M12 16v.5"/>
+          </svg>
+          <strong>Please fix the following before continuing:</strong>
+        </div>
+        <ul class="crp__step-error-list">
+          @for (msg of issues; track msg) {
+            <li>{{ msg }}</li>
+          }
+        </ul>
+      </div>
+    }
+    @if (capacityError(); as msg) {
+      <app-error-message [problem]="{ title: 'Cannot book this room', detail: msg, status: 400 }" />
+    }
+    @if (problem(); as p) {
+      <app-error-message [problem]="p" />
+    }
+    @if (servicesProblem(); as p) {
+      <app-error-message [problem]="p" />
+    }
+
+    <!-- Main grid: wizard + summary -->
+    <div class="row g-4 crp__grid">
+
+      <div class="col-12 col-xl-8">
+        @switch (currentStep()) {
+          @case (steps.Trip) {
+            <app-step-trip-details
+              [checkInControl]="form.controls.checkIn"
+              [checkOutControl]="form.controls.checkOut"
+              [adultsControl]="form.controls.adults"
+              [childrenAgesArray]="form.controls.childrenAges"
+              [petsArray]="form.controls.pets"
+              [rangeError]="rangeError()"
+              [policy]="policy()"
+              [availabilityByDate]="availabilityByDate()"
+              (visibleRangeChange)="onPickerRangeChange($event)"
+              (next)="goNext(steps.Trip)"
+            />
+          }
+          @case (steps.Guests) {
+            <app-step-guest-details
+              [guestsArray]="form.controls.guests"
+              [contactEmailControl]="form.controls.contactEmail"
+              [contactPhoneControl]="form.controls.contactPhone"
+              [specialRequestsControl]="form.controls.specialRequests"
+              [profileEmailHint]="profileEmail()"
+              [childrenAges]="party().childrenAges"
+              [policy]="policy()"
+              (back)="goBack(steps.Guests)"
+              (next)="goNext(steps.Guests)"
+            />
+          }
+          @case (steps.Services) {
+            <app-step-services
+              [services]="serviceOfferings()"
+              [loading]="loadingServices()"
+              (selectionsChanged)="onServiceSelectionsChange($event)"
+              (back)="goBack(steps.Services)"
+              (next)="goNext(steps.Services)"
+            />
+          }
+          @case (steps.Review) {
+            <app-step-review
+              [checkIn]="form.controls.checkIn.value"
+              [checkOut]="form.controls.checkOut.value"
+              [party]="party()"
+              [guests]="form.controls.guests.controls"
+              [specialRequests]="form.controls.specialRequests.value"
+              [services]="serviceOfferings()"
+              [serviceSelections]="selectedServices()"
+              [submitting]="saving()"
+              [policy]="policy()"
+              (editStep)="goTo($event)"
+              (confirm)="submit()"
+            />
+          }
+        }
+      </div>
+
+      <div class="col-12 col-xl-4">
+        <app-live-reservation-summary
+          [displayDetails]="summaryDisplay()"
+          [checkIn]="form.controls.checkIn.value"
+          [checkOut]="form.controls.checkOut.value"
+          [party]="party()"
+          [services]="serviceOfferings()"
+          [serviceSelections]="selectedServices()"
+          [nightlyPrice]="nightlyPrice"
+          [currency]="currency"
+        />
+      </div>
+
     </div>
 
-    <aside class="reservation-aside">
-      <section class="reservation-card">
-        <p class="eyebrow">What happens next</p>
-        <h2>After confirmation</h2>
-        <ul class="reservation-list">
-          <li>Your booking will be created in pending status.</li>
-          <li>You will be redirected straight to the reservation detail.</li>
-          <li>The selected room and dates stay attached to this reservation.</li>
-        </ul>
-      </section>
+  </div>
 
-      <section class="reservation-card">
-        <p class="eyebrow">Reminder</p>
-        <h2>Before you submit</h2>
-        <ul class="reservation-list">
-          <li>Check-out must be later than check-in.</li>
-          <li>Guest count must be at least 1.</li>
-          <li>Property and room are taken from the selected stay card.</li>
-        </ul>
-      </section>
-    </aside>
-  </section>
+  <!-- Success modal -->
+  @if (successId(); as id) {
+    <app-confirm-success-modal
+      [entityId]="id"
+      title="All set! Your reservation is confirmed."
+      subtitle="We sent confirmation to your registered email."
+      primaryLabel="View reservation"
+      secondaryLabel="Back to my reservations"
+      (primaryAction)="onSuccessPrimary()"
+      (secondaryAction)="onSuccessSecondary()"
+    />
+  }
 </main>

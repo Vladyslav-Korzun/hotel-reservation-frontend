@@ -1,0 +1,300 @@
+/* ── Wrapper ──────────────────────────────────────────────────────────────── */
+
+.drp-wrapper {
+  position: relative;
+  z-index: 140;
+}
+
+/* ── Date-range trigger (search-form mode) ───────────────────────────────── */
+
+.date-range-group,
+.date-field-group {
+  position: relative;
+}
+
+.date-range {
+  align-items: center;
+  background: var(--color-bg-field);
+  border: 1px solid rgba(0, 0, 0, 0.62);
+  border-radius: 8px;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  height: 70px;
+  overflow: visible;
+  padding: 0 0.8rem;
+  transition: border-color 150ms ease;
+}
+
+.date-range:hover {
+  border-color: var(--color-gold);
+}
+
+.date-range--open {
+  border-color: var(--color-gold);
+}
+
+.date-range .search-field {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  height: 68px;
+  padding: 0;
+  pointer-events: none;
+}
+
+.date-range .search-field--check-out {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.date-range .search-field--check-out .calendar-trigger {
+  display: none;
+}
+
+.date-range__separator {
+  color: rgba(246, 246, 246, 0.8);
+  font-weight: 800;
+  padding: 0 0.65rem;
+}
+
+.date-range .date-text-input {
+  color: rgba(246, 246, 246, 0.92);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.date-range .date-text-input::placeholder {
+  color: rgba(246, 246, 246, 0.58);
+}
+
+.date-range .field-icon--calendar {
+  border-color: rgba(246, 246, 246, 0.78);
+}
+
+.date-range .field-icon--calendar::before,
+.date-range .field-icon--calendar::after {
+  background: rgba(246, 246, 246, 0.78);
+}
+
+/* ── Calendar trigger button ─────────────────────────────────────────────── */
+
+.calendar-trigger {
+  align-items: center;
+  align-self: stretch;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  display: inline-flex;
+  grid-column: 1;
+  justify-content: center;
+  margin-left: -0.15rem;
+  padding: 0;
+  width: 1.5rem;
+}
+
+.calendar-trigger:focus-visible {
+  outline: none;
+}
+
+/* ── Date proxy input ────────────────────────────────────────────────────── */
+
+.date-picker-proxy {
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 1px;
+}
+
+/* ── Date popover ────────────────────────────────────────────────────────── */
+
+.date-popover {
+  background: rgba(18, 18, 18, 0.98);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-body);
+  display: grid;
+  gap: 1rem;
+  left: 0;
+  padding: 1rem;
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  width: min(650px, calc(100vw - 2rem));
+  z-index: 1001;
+}
+
+.date-popover--compact {
+  left: -20px;
+  right: -20px;
+  width: auto;
+}
+
+.date-popover__navigation {
+  display: flex;
+  justify-content: space-between;
+}
+
+.date-popover__navigation button {
+  background: rgba(255, 255, 255, 0.06);
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-body);
+  cursor: pointer;
+  font-size: 1.55rem;
+  height: 2.25rem;
+  width: 2.25rem;
+}
+
+.date-popover__navigation button:disabled {
+  color: rgba(246, 246, 246, 0.24);
+  cursor: default;
+}
+
+.date-popover__months {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.date-month h3 {
+  font-size: 0.95rem;
+  margin: 0 0 0.8rem;
+  text-align: center;
+}
+
+.date-month__weekdays,
+.date-month__days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  text-align: center;
+}
+
+.date-month__weekdays {
+  color: rgba(246, 246, 246, 0.52);
+  font-size: 0.72rem;
+  margin-bottom: 0.45rem;
+}
+
+.date-month__day {
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: rgba(246, 246, 246, 0.86);
+  cursor: pointer;
+  font: inherit;
+  min-height: 2rem;
+}
+
+.date-month__day:hover,
+.date-month__day--selected {
+  background: var(--color-gold);
+  color: var(--color-ink);
+  font-weight: 800;
+}
+
+.date-month__day--in-range {
+  background: var(--color-gold-focus);
+  color: var(--color-text-body);
+}
+
+.date-month__day--disabled {
+  color: rgba(246, 246, 246, 0.24);
+  cursor: not-allowed;
+}
+
+.date-month__day--disabled:hover {
+  background: transparent;
+  color: rgba(246, 246, 246, 0.24);
+  font-weight: inherit;
+}
+
+/* Externally marked as unavailable — keep base look, just strike through */
+.date-month__day--unavailable,
+.date-month__day--unavailable:hover {
+  background: transparent;
+  color: rgba(246, 246, 246, 0.32);
+  text-decoration: line-through;
+  font-weight: inherit;
+}
+
+/* Inline error under the month-nav row */
+.date-popover__error {
+  background: rgba(232, 148, 120, 0.12);
+  border: 1px solid rgba(232, 148, 120, 0.4);
+  border-radius: var(--radius-sm);
+  color: #f6d2bd;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.5rem 0.75rem;
+}
+
+/* ── Compact mode (self-contained) ───────────────────────────────────────── */
+
+.drp-compact {
+  position: relative;
+}
+
+.drp-compact__trigger {
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Cell visuals — used by compact mode; safe to reuse elsewhere */
+.drp-cell {
+  padding: 12px 14px;
+  border-right: 1px solid var(--color-border);
+
+  &:last-child {
+    border-right: 0;
+  }
+}
+
+.drp-cell__label {
+  color: var(--color-text-subtle);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.drp-cell__value {
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+
+  svg {
+    width: 12px;
+    height: 12px;
+    color: var(--color-gold);
+    flex-shrink: 0;
+  }
+}
+
+/* ── Validation errors ───────────────────────────────────────────────────── */
+
+.date-range-error,
+.date-field-error {
+  color: #ffd1cc;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.date-range-error {
+  left: 0.1rem;
+  position: absolute;
+  top: calc(100% + 0.45rem);
+}
+
+.date-field-error {
+  left: 0.8rem;
+  position: absolute;
+  top: calc(100% + 0.3rem);
+}

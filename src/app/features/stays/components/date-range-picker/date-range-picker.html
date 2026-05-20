@@ -1,0 +1,201 @@
+<div class="drp-wrapper">
+
+  @if (!compact()) {
+
+    <!-- ── Normal (search-form) mode ─────────────────────────── -->
+    <div class="date-range-group">
+      <div class="date-range" [class.date-range--open]="isOpen()" (click)="open()">
+
+        <div class="date-field-group">
+          <div class="search-field search-field--check-in">
+            <button
+              type="button"
+              class="calendar-trigger"
+              aria-label="Open check-in date picker"
+              (click)="open()"
+            >
+              <span class="field-icon field-icon--calendar" aria-hidden="true"></span>
+            </button>
+            <input
+              id="drp-checkIn"
+              class="date-text-input"
+              type="text"
+              [formControl]="checkInControl()"
+              inputmode="numeric"
+              placeholder="DD.MM.YYYY"
+              autocomplete="off"
+              (input)="formatDateInput('checkIn')"
+              (blur)="normalizeDate('checkIn')"
+            />
+            <input
+              #checkInPicker
+              class="date-picker-proxy"
+              type="date"
+              [value]="nativeDateValue(checkInControl().value)"
+              (change)="onNativePickerChange('checkIn', checkInPicker.value)"
+              tabindex="-1"
+              aria-hidden="true"
+            />
+          </div>
+
+          @if (checkInControl().touched && checkInControl().hasError('invalidDate')) {
+            <span class="date-field-error">Use format DD.MM.YYYY.</span>
+          } @else if (checkInControl().touched && checkInControl().hasError('dateInPast')) {
+            <span class="date-field-error">Date cannot be in the past.</span>
+          }
+        </div>
+
+        <span class="date-range__separator" aria-hidden="true">&mdash;</span>
+
+        <div class="date-field-group">
+          <div class="search-field search-field--check-out">
+            <button
+              type="button"
+              class="calendar-trigger"
+              aria-label="Open check-out date picker"
+              (click)="open()"
+            >
+              <span class="field-icon field-icon--calendar" aria-hidden="true"></span>
+            </button>
+            <input
+              id="drp-checkOut"
+              class="date-text-input"
+              type="text"
+              [formControl]="checkOutControl()"
+              inputmode="numeric"
+              placeholder="DD.MM.YYYY"
+              autocomplete="off"
+              (input)="formatDateInput('checkOut')"
+              (blur)="normalizeDate('checkOut')"
+            />
+            <input
+              #checkOutPicker
+              class="date-picker-proxy"
+              type="date"
+              [value]="nativeDateValue(checkOutControl().value)"
+              (change)="onNativePickerChange('checkOut', checkOutPicker.value)"
+              tabindex="-1"
+              aria-hidden="true"
+            />
+          </div>
+
+          @if (checkOutControl().touched && checkOutControl().hasError('invalidDate')) {
+            <span class="date-field-error">Use format DD.MM.YYYY.</span>
+          } @else if (checkOutControl().touched && checkOutControl().hasError('dateInPast')) {
+            <span class="date-field-error">Date cannot be in the past.</span>
+          }
+        </div>
+
+      </div>
+
+      @if (rangeError()) {
+        <span class="date-range-error">{{ rangeError() }}</span>
+      }
+
+      @if (isOpen()) {
+        <div class="date-popover" (click)="$event.stopPropagation()">
+          <div class="date-popover__navigation">
+            <button type="button" aria-label="Previous month" [disabled]="!canShowPreviousMonths()" (click)="showPreviousMonths()">‹</button>
+            <button type="button" aria-label="Next month" (click)="showNextMonths()">›</button>
+          </div>
+          @if (availabilityError()) {
+            <div class="date-popover__error" role="alert">{{ availabilityError() }}</div>
+          }
+          <div class="date-popover__months">
+            @for (month of calendarMonths(); track month.label) {
+              <section class="date-month">
+                <h3>{{ month.label }}</h3>
+                <div class="date-month__weekdays">
+                  @for (wd of weekdayLabels; track wd) { <span>{{ wd }}</span> }
+                </div>
+                <div class="date-month__days">
+                  @for (blank of month.leadingBlanks; track blank) { <span aria-hidden="true"></span> }
+                  @for (day of month.days; track day.date) {
+                    <button
+                      type="button"
+                      class="date-month__day"
+                      [class.date-month__day--selected]="isSelectedDate(day.date)"
+                      [class.date-month__day--in-range]="isDateInSelectedRange(day.date)"
+                      [class.date-month__day--disabled]="day.disabled"
+                      [class.date-month__day--unavailable]="day.unavailable"
+                      [disabled]="day.disabled"
+                      [attr.aria-label]="day.unavailable ? day.label + ' (unavailable)' : null"
+                      (click)="selectCalendarDate(day.date)"
+                    >{{ day.label }}</button>
+                  }
+                </div>
+              </section>
+            }
+          </div>
+        </div>
+      }
+
+    </div>
+
+  } @else {
+
+    <!-- ── Compact mode (booking card / wizard step) ─────────── -->
+    <div class="drp-compact">
+      <div class="drp-compact__trigger" (click)="open()">
+        <div class="drp-cell">
+          <div class="drp-cell__label">Check-in</div>
+          <div class="drp-cell__value">
+            {{ checkInControl().value || '—' }}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+          </div>
+        </div>
+        <div class="drp-cell">
+          <div class="drp-cell__label">Check-out</div>
+          <div class="drp-cell__value">
+            {{ checkOutControl().value || '—' }}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      @if (isOpen()) {
+        <div class="date-popover date-popover--compact" (click)="$event.stopPropagation()">
+          <div class="date-popover__navigation">
+            <button type="button" aria-label="Previous month" [disabled]="!canShowPreviousMonths()" (click)="showPreviousMonths()">‹</button>
+            <button type="button" aria-label="Next month" (click)="showNextMonths()">›</button>
+          </div>
+          @if (availabilityError()) {
+            <div class="date-popover__error" role="alert">{{ availabilityError() }}</div>
+          }
+          <div class="date-popover__months">
+            @for (month of calendarMonths(); track month.label) {
+              <section class="date-month">
+                <h3>{{ month.label }}</h3>
+                <div class="date-month__weekdays">
+                  @for (wd of weekdayLabels; track wd) { <span>{{ wd }}</span> }
+                </div>
+                <div class="date-month__days">
+                  @for (blank of month.leadingBlanks; track blank) { <span aria-hidden="true"></span> }
+                  @for (day of month.days; track day.date) {
+                    <button
+                      type="button"
+                      class="date-month__day"
+                      [class.date-month__day--selected]="isSelectedDate(day.date)"
+                      [class.date-month__day--in-range]="isDateInSelectedRange(day.date)"
+                      [class.date-month__day--disabled]="day.disabled"
+                      [class.date-month__day--unavailable]="day.unavailable"
+                      [disabled]="day.disabled"
+                      [attr.aria-label]="day.unavailable ? day.label + ' (unavailable)' : null"
+                      (click)="selectCalendarDate(day.date)"
+                    >{{ day.label }}</button>
+                  }
+                </div>
+              </section>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+  }
+
+</div>

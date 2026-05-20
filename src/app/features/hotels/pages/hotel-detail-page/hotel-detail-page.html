@@ -1,0 +1,112 @@
+<main class="hotel-detail-page">
+
+  @if (problem(); as problemDetail) {
+    <div class="container hotel-detail-page__pad-top">
+      <app-error-message [problem]="problemDetail" />
+    </div>
+  } @else if (loading()) {
+    <div class="container hotel-detail-page__pad-top">
+      <app-loading-state label="Loading hotel..." />
+    </div>
+  } @else if (hotel(); as selectedHotel) {
+
+    <!-- Full-bleed hero -->
+    <app-hotel-hero [hotel]="selectedHotel" />
+
+    <!-- Main content grid: content + sticky search card -->
+    <div class="container hotel-detail-page__main">
+      <div class="row g-4 g-lg-5">
+
+        <!-- LEFT COLUMN — sections -->
+        <div class="col-12 col-lg-8 hotel-detail-page__left">
+
+          <!-- Stats strip lives above the first anchored section, no anchor of its own -->
+          <app-hotel-stats class="d-block mb-5" [hotel]="selectedHotel" />
+
+          <section id="overview" class="hotel-detail-page__section">
+            <header class="hotel-detail-page__head">
+              <p class="hotel-detail-page__eyebrow">About this hotel</p>
+              <h2 class="hotel-detail-page__title">A retreat in {{ selectedHotel.city }}</h2>
+            </header>
+
+            @if (selectedHotel.description) {
+              <p class="hotel-detail-page__copy">{{ selectedHotel.description }}</p>
+            } @else {
+              <p class="muted">No description provided by the hotel yet.</p>
+            }
+
+            <app-hotel-highlights class="d-block mt-4" [hotel]="selectedHotel" />
+          </section>
+
+          @if (rooms().length > 0) {
+            <section id="rooms" class="hotel-detail-page__section">
+              <header class="hotel-detail-page__head hotel-detail-page__head--with-aside">
+                <div>
+                  <p class="hotel-detail-page__eyebrow">Stay options</p>
+                  <h2 class="hotel-detail-page__title">Rooms at this hotel</h2>
+                </div>
+              </header>
+              <app-hotel-rooms-carousel
+                [rooms]="rooms()"
+                [currentHotelId]="selectedHotel.hotelId"
+                [location]="selectedHotel.city"
+              />
+            </section>
+          }
+
+          <section id="gallery" class="hotel-detail-page__section">
+            <header class="hotel-detail-page__head">
+              <p class="hotel-detail-page__eyebrow">Inside the hotel</p>
+              <h2 class="hotel-detail-page__title">Gallery</h2>
+            </header>
+            <app-hotel-gallery [hotelId]="selectedHotel.hotelId" />
+          </section>
+
+          <section id="services" class="hotel-detail-page__section">
+            <header class="hotel-detail-page__head hotel-detail-page__head--with-aside">
+              <div>
+                <p class="hotel-detail-page__eyebrow">On-site services</p>
+                <h2 class="hotel-detail-page__title">Add to any stay</h2>
+              </div>
+              @if (services().length > 0) {
+                <span class="hotel-detail-page__head-aside">
+                  {{ services().length }} active offering{{ services().length === 1 ? '' : 's' }}
+                </span>
+              }
+            </header>
+            <app-hotel-services-list [services]="services()" />
+          </section>
+
+          <section id="location" class="hotel-detail-page__section">
+            <header class="hotel-detail-page__head">
+              <p class="hotel-detail-page__eyebrow">Where you'll stay</p>
+              <h2 class="hotel-detail-page__title">Location</h2>
+            </header>
+            <app-hotel-location [hotel]="selectedHotel" />
+          </section>
+
+          <section id="policies" class="hotel-detail-page__section">
+            <header class="hotel-detail-page__head">
+              <p class="hotel-detail-page__eyebrow">Stay rules</p>
+              <h2 class="hotel-detail-page__title">Policies</h2>
+            </header>
+            <app-hotel-policies [hotel]="selectedHotel" />
+          </section>
+
+        </div>
+
+        <!-- RIGHT COLUMN — sticky search card -->
+        <div class="col-12 col-lg-4 hotel-detail-page__right">
+          <app-hotel-inline-search-card
+            [hotel]="selectedHotel"
+            [minPriceAmount]="minRoomPrice()?.amount ?? null"
+            [minPriceCurrency]="minRoomPrice()?.currency ?? 'EUR'"
+          />
+        </div>
+
+      </div>
+    </div>
+
+  }
+
+</main>

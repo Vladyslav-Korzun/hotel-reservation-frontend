@@ -1,0 +1,58 @@
+/* 2x2 grid of headline tiles. */
+
+.hotel-highlights {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.hotel-highlight {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  overflow: hidden;
+  padding: 1.4rem 1.25rem;
+  position: relative;
+}
+
+.hotel-highlight__icon {
+  align-items: center;
+  background: rgba(196, 156, 116, 0.1);
+  border-radius: 12px;
+  color: var(--color-gold);
+  display: inline-flex;
+  height: 40px;
+  justify-content: center;
+  margin-bottom: 0.3rem;
+  width: 40px;
+
+  svg {
+    height: 20px;
+    width: 20px;
+  }
+}
+
+.hotel-highlight__title {
+  color: var(--color-text);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1.1;
+  margin: 0.1rem 0 0;
+}
+
+.hotel-highlight__sub {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+@media (max-width: 576px) {
+  .hotel-highlights {
+    grid-template-columns: 1fr;
+  }
+}

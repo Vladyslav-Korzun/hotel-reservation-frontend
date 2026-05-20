@@ -1,0 +1,109 @@
+/* Right-column sticky card hosting the StaySearchForm. */
+
+.hotel-isc {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-md);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 24px 60px -32px rgba(0, 0, 0, 0.75);
+  /* overflow stays visible so the date/guests popovers can extend out of the card.
+     The decorative top gradient (::before) is constrained by its own left/right offsets. */
+  padding: 1.6rem;
+  position: sticky;
+  top: 104px; // below sticky section nav (88) + 16 gap
+}
+
+.hotel-isc::before {
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+  content: '';
+  height: 1px;
+  left: 1.6rem;
+  opacity: 0.5;
+  position: absolute;
+  right: 1.6rem;
+  top: 0;
+}
+
+.hotel-isc__head {
+  margin-bottom: 1.1rem;
+}
+
+.hotel-isc__eyebrow {
+  color: var(--color-gold-hover);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.82rem;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.2rem;
+}
+
+.hotel-isc__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.55rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.hotel-isc__price-hint {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  margin: 0.4rem 0 0;
+}
+
+.hotel-isc__price-hint b {
+  color: var(--color-gold-hover);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 0 0.15rem;
+}
+
+.hotel-isc__form {
+  /* StaySearchForm is ViewEncapsulation.None — it owns its own field styles. */
+  margin-bottom: 0.4rem;
+}
+
+.hotel-isc__trust {
+  border-top: 1px solid var(--color-border);
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 1rem 0 0;
+}
+
+.hotel-isc__trust-item {
+  align-items: center;
+  color: var(--color-text-muted);
+  display: flex;
+  font-size: 0.8rem;
+  gap: 0.6rem;
+}
+
+.hotel-isc__trust-icon {
+  align-items: center;
+  background: rgba(143, 185, 110, 0.12);
+  border-radius: 50%;
+  color: #afd089;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 24px;
+  justify-content: center;
+  width: 24px;
+
+  svg {
+    height: 12px;
+    width: 12px;
+  }
+}
+
+.hotel-isc__trust-item b {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+@media (max-width: 991.98px) {
+  .hotel-isc {
+    position: static;
+  }
+}

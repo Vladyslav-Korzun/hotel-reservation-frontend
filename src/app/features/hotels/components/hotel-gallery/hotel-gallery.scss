@@ -1,0 +1,42 @@
+/* Mosaic: 1 large left + 4 small in a 2x2 on the right. */
+
+.hotel-gallery {
+  border-radius: var(--radius-lg);
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: 200px 200px;
+  overflow: hidden;
+}
+
+.hotel-gallery__cell {
+  background-color: var(--color-bg-deep); // fallback when image fails
+  background-position: center;
+  background-size: cover;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+  transition: filter 0.25s, transform 0.25s;
+
+  &:hover,
+  &:focus-visible {
+    filter: brightness(1.1);
+    outline: none;
+  }
+}
+
+.hotel-gallery__cell--big {
+  grid-row: 1 / 3;
+}
+
+@media (max-width: 720px) {
+  .hotel-gallery {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 180px 120px 120px;
+  }
+
+  .hotel-gallery__cell--big {
+    grid-column: 1 / 3;
+    grid-row: 1 / 2;
+  }
+}
