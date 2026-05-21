@@ -11,6 +11,7 @@ describe('ReservationsFacade', () => {
       getReservation: () => of(createReservationDto({ status: 'PENDING', cancelledAt: null })),
       cancelReservation: () => of(void 0),
       listReservations: () => of([]),
+      listMyReservations: () => of([]),
     };
 
     TestBed.configureTestingModule({
@@ -29,6 +30,7 @@ describe('ReservationsFacade', () => {
     expect(reservation.status).toBe('PENDING');
     expect(reservation.roomId).toBeNull();
     expect(reservation.cancelledAt).toBeNull();
+    expect(reservation.stayingGuests).toEqual([]);
   });
 
   it('maps supported backend reservation statuses', async () => {
@@ -37,6 +39,7 @@ describe('ReservationsFacade', () => {
       getReservation: () => of(createReservationDto({ status: 'CONFIRMED', cancelledAt: null })),
       cancelReservation: () => of(void 0),
       listReservations: () => of([]),
+      listMyReservations: () => of([]),
     };
 
     TestBed.configureTestingModule({

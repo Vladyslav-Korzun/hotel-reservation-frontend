@@ -29,6 +29,7 @@ export class FindReservationPage {
   protected readonly loading = signal(false);
   protected readonly problem = signal<ProblemDetail | null>(null);
   protected readonly reservations = signal<Reservation[]>([]);
+  protected readonly expandedReservationId = signal<string | null>(null);
   protected readonly hasRequestedList = signal(false);
   protected readonly canViewAllReservations = computed(
     () => this.auth.hasAnyRole(['STAFF', 'ADMIN']) && this.auth.isAuthenticated(),
@@ -63,6 +64,10 @@ export class FindReservationPage {
     this.loadAllReservations();
   }
 
+  protected toggleDetails(reservationId: string): void {
+    this.expandedReservationId.update((current) => (current === reservationId ? null : reservationId));
+  }
+
   private loadAllReservations(): void {
     this.hasRequestedList.set(true);
     this.problem.set(null);
@@ -72,7 +77,10 @@ export class FindReservationPage {
       .listReservations()
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (reservations) => this.reservations.set(reservations),
+        next: (reservations) => {
+          this.reservations.set(reservations);
+          this.expandedReservationId.set(null);
+        },
         error: (error: unknown) => {
           this.reservations.set([]);
           this.problem.set(toProblemDetail(error));

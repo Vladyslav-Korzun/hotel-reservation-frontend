@@ -27,6 +27,7 @@ export function toReservation(dto: ReservationResponseDto): Reservation {
     checkOut: dto.checkOut,
     adults: dto.adults,
     childrenAges: dto.childrenAges,
+    stayingGuests: dto.stayingGuests ?? [],
     pets: dto.pets,
     status: toReservationStatus(dto.status),
     createdAt: dto.createdAt,

@@ -1,17 +1,56 @@
-<main class="my-reservations-page">
-  <div class="my-reservations-page__backdrop" aria-hidden="true"></div>
+<main class="feature-page my-reservations-page">
+  <div class="feature-page__backdrop my-reservations-page__backdrop" aria-hidden="true"></div>
 
-  <div class="container my-reservations-page__content">
-    <section class="my-reservations-hero">
+  <div class="container-xxl feature-page__content">
+    <header class="page-header my-reservations-page__header">
       <div>
         <p class="eyebrow">My reservations</p>
-        <h1>Your current bookings</h1>
-        <p class="my-reservations-hero__copy">
-          Review reservations connected to the signed-in user and open details for cancellation or status checks.
+        <h1>Your stays, all in one place</h1>
+        <p class="my-reservations-page__copy">
+          Review booking dates, guest details, price snapshots and cancellation options for your account.
         </p>
       </div>
 
-      <button type="button" class="btn btn-brand-outline" [disabled]="loading()" (click)="reload()">Refresh</button>
+      <div class="my-reservations-page__count" aria-label="Total reservations">
+        <span>Total</span>
+        <strong>{{ countFor('all') }}</strong>
+      </div>
+    </header>
+
+    <section class="dark-card my-reservations-toolbar p-3 p-md-4">
+      <div class="my-reservations-tabs" role="tablist" aria-label="Reservation filters">
+        @for (option of filterOptions; track option.value) {
+          <button
+            type="button"
+            class="my-reservations-tabs__button"
+            role="tab"
+            [class.my-reservations-tabs__button--active]="activeFilter() === option.value"
+            [attr.aria-selected]="activeFilter() === option.value"
+            (click)="setFilter(option.value)"
+          >
+            <span>{{ option.label }}</span>
+            <span class="my-reservations-tabs__count">{{ countFor(option.value) }}</span>
+          </button>
+        }
+      </div>
+
+      <div class="dark-form my-reservations-sort">
+        <label class="form-label mb-0" for="reservation-sort">Sort</label>
+        <select
+          id="reservation-sort"
+          class="form-select"
+          [value]="sortMode()"
+          (change)="onSortChange($event)"
+        >
+          <option value="checkInAsc">Check-in soonest</option>
+          <option value="checkInDesc">Check-in latest</option>
+          <option value="createdDesc">Recently created</option>
+        </select>
+      </div>
+
+      <button type="button" class="btn btn-brand-outline" [disabled]="loading()" (click)="reload()">
+        Refresh
+      </button>
     </section>
 
     @if (problem(); as problemDetail) {
@@ -24,8 +63,59 @@
       @if (loading()) {
         <app-loading-state label="Loading your reservations..." />
       } @else {
-        <app-reservation-list [reservations]="reservations()" />
+        <app-reservation-list
+          [reservations]="filteredReservations()"
+          [expandedReservationId]="expandedReservationId()"
+          [cancelingReservationId]="cancelingReservationId()"
+          [allowCancellation]="true"
+          [hotels]="hotels()"
+          [emptyTitle]="emptyTitle()"
+          [emptyMessage]="emptyMessage()"
+          (toggleDetails)="toggleDetails($event)"
+          (cancelReservation)="requestCancel($event)"
+        />
       }
     </section>
   </div>
+
+  @if (pendingCancelReservation(); as reservation) {
+    <section class="cancel-dialog" role="dialog" aria-modal="true" aria-labelledby="cancel-dialog-title">
+      <button
+        type="button"
+        class="cancel-dialog__backdrop"
+        aria-label="Close cancellation dialog"
+        [disabled]="cancelingReservationId()"
+        (click)="closeCancelDialog()"
+      ></button>
+
+      <div class="container cancel-dialog__content">
+        <div class="dark-card cancel-dialog__panel p-4">
+          <p class="eyebrow">Cancel reservation</p>
+          <h2 id="cancel-dialog-title">Cancel booking #{{ reservation.reservationId }}?</h2>
+          <p>
+            This will ask the backend to cancel the reservation connected to your guest account.
+          </p>
+
+          <div class="cancel-dialog__actions">
+            <button
+              type="button"
+              class="btn btn-brand-outline"
+              [disabled]="cancelingReservationId()"
+              (click)="closeCancelDialog()"
+            >
+              Keep reservation
+            </button>
+            <button
+              type="button"
+              class="btn btn-brand-danger"
+              [disabled]="cancelingReservationId()"
+              (click)="confirmCancel()"
+            >
+              {{ cancelingReservationId() ? 'Cancelling...' : 'Cancel reservation' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  }
 </main>

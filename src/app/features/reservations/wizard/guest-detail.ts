@@ -35,7 +35,9 @@ export function createGuestDetailControl(role: GuestRole): GuestDetailGroup {
       nonNullable: true,
       validators: [Validators.required, displayDateValidator, dateNotInFutureValidator],
     }),
-    gender: new FormControl<GuestGender | null>(null),
+    gender: new FormControl<GuestGender | null>(null, {
+      validators: [Validators.required],
+    }),
   });
 }
 

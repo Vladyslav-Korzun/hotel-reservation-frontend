@@ -294,6 +294,7 @@ export class CreateReservationPage {
       g.controls.firstName.markAsTouched();
       g.controls.lastName.markAsTouched();
       g.controls.dateOfBirth.markAsTouched();
+      g.controls.gender.markAsTouched();
     });
 
     const issues: string[] = [];
@@ -301,11 +302,19 @@ export class CreateReservationPage {
     let missingNames = 0;
     let missingDob = 0;
     let badDob = 0;
+    let missingGender = 0;
+    let adultsAtLeastEighteen = 0;
     c.guests.controls.forEach((g) => {
       if (g.controls.firstName.invalid || g.controls.lastName.invalid) missingNames++;
       const dob = g.controls.dateOfBirth;
       if (dob.hasError('required')) missingDob++;
       else if (dob.hasError('invalidDate') || dob.hasError('dateInFuture')) badDob++;
+      if (g.controls.gender.invalid) missingGender++;
+
+      if (g.controls.role.value === 'ADULT') {
+        const age = calcAgeFromDob(parseDisplayDate(dob.value) ?? '');
+        if (age >= 18) adultsAtLeastEighteen++;
+      }
     });
 
     if (missingNames > 0) {
@@ -320,6 +329,14 @@ export class CreateReservationPage {
     }
     if (badDob > 0) {
       issues.push('Some dates of birth are invalid or in the future.');
+    }
+    if (missingGender > 0) {
+      issues.push(
+        `Select gender for ${missingGender} ${missingGender === 1 ? 'guest' : 'guests'}.`,
+      );
+    }
+    if (missingDob === 0 && badDob === 0 && adultsAtLeastEighteen === 0) {
+      issues.push('At least one staying guest must be 18 or older.');
     }
 
     return issues;

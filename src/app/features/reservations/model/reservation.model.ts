@@ -56,6 +56,7 @@ export interface Reservation extends AccommodationParty {
   roomTypeId: number;
   checkIn: string;
   checkOut: string;
+  stayingGuests: StayingGuest[];
   status: ReservationStatus;
   createdAt: string;
   cancelledAt: string | null;

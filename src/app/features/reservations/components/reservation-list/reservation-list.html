@@ -1,49 +1,171 @@
 @if (reservations().length) {
-  <section class="reservation-list">
-    <div class="reservation-list__summary">
-      <span class="badge rounded-pill reservation-list__count">{{ reservations().length }} reservations</span>
-    </div>
-
+  <section class="reservation-list" aria-label="Reservation list">
     <div class="row g-4">
       @for (reservation of reservations(); track reservation.reservationId) {
-        <div class="col-12 col-xl-6">
-          <article class="card dark-card reservation-card h-100">
-            <div class="card-body d-flex flex-column gap-3">
-              <div class="reservation-card__header">
-                <div>
-                  <p class="eyebrow">Reservation</p>
-                  <h2>{{ reservation.reservationId }}</h2>
+        <div class="col-12">
+          <article class="card dark-card reservation-card" [attr.data-status]="reservation.status">
+            <div class="card-body p-3 p-md-4">
+              <div class="row g-3 g-lg-4 align-items-start">
+                <div class="col-12 col-md-auto">
+                  <figure class="reservation-card__photo mb-0">
+                    <img
+                      [src]="photoUrl(reservation.hotelId)"
+                      [alt]="hotelName(reservation) + ' preview'"
+                      loading="lazy"
+                    />
+                    <figcaption>{{ displayNights(reservation) }}</figcaption>
+                  </figure>
                 </div>
-                <app-status-badge [status]="reservation.status" />
+
+                <div class="col-12 col-md">
+                  <div class="reservation-card__heading">
+                    <div>
+                      <p class="eyebrow">{{ hotelLocation(reservation) }}</p>
+                      <h2>{{ hotelName(reservation) }}</h2>
+                    </div>
+                    <app-status-badge [status]="reservation.status" />
+                  </div>
+
+                  <dl class="row g-3 reservation-card__meta">
+                    <div class="col-12 col-sm-6 col-xl-3">
+                      <div class="reservation-card__meta-tile">
+                        <dt>Check-in</dt>
+                        <dd>{{ displayDate(reservation.checkIn) }}</dd>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-3">
+                      <div class="reservation-card__meta-tile">
+                        <dt>Check-out</dt>
+                        <dd>{{ displayDate(reservation.checkOut) }}</dd>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-3">
+                      <div class="reservation-card__meta-tile">
+                        <dt>Guests</dt>
+                        <dd>{{ partySummary(reservation) }}</dd>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-3">
+                      <div class="reservation-card__meta-tile">
+                        <dt>Room</dt>
+                        <dd>{{ roomLabel(reservation) }}</dd>
+                      </div>
+                    </div>
+                  </dl>
+                </div>
+
+                <div class="col-12 col-lg-auto">
+                  <aside class="reservation-card__side">
+                    <span class="reservation-card__price-label">Total price</span>
+                    <strong class="reservation-card__price">{{ displayPrice(reservation) }}</strong>
+                    <div class="reservation-card__actions">
+                      <button
+                        type="button"
+                        class="btn btn-brand-outline"
+                        [attr.aria-expanded]="isExpanded(reservation)"
+                        (click)="toggleDetails.emit(reservation.reservationId)"
+                      >
+                        {{ isExpanded(reservation) ? 'Hide details' : 'Show details' }}
+                      </button>
+                      @if (allowCancellation() && canCancel(reservation)) {
+                        <button
+                          type="button"
+                          class="btn btn-brand-danger"
+                          [disabled]="isCanceling(reservation)"
+                          (click)="cancelReservation.emit(reservation.reservationId)"
+                        >
+                          {{ isCanceling(reservation) ? 'Cancelling...' : 'Cancel' }}
+                        </button>
+                      }
+                    </div>
+                  </aside>
+                </div>
               </div>
 
-              <dl class="row g-3 reservation-card__meta">
-                <div class="col-12 col-md-6">
-                  <dt>Stay</dt>
-                  <dd>{{ displayDate(reservation.checkIn) }} to {{ displayDate(reservation.checkOut) }}</dd>
-                </div>
-                <div class="col-12 col-md-6">
-                  <dt>Party</dt>
-                  <dd>{{ partySummary(reservation) }}</dd>
-                </div>
-                <div class="col-12 col-md-6">
-                  <dt>Created by</dt>
-                  <dd>{{ reservation.createdBy }}</dd>
-                </div>
-                <div class="col-12 col-md-6">
-                  <dt>Created at</dt>
-                  <dd>{{ displayDateTime(reservation.createdAt) }}</dd>
-                </div>
-              </dl>
+              @if (isExpanded(reservation)) {
+                <section class="reservation-card__details" aria-label="Reservation details">
+                  <div class="row g-4">
+                    <div class="col-12 col-lg-5">
+                      <div class="reservation-card__detail-group">
+                        <h3>Stay details</h3>
+                        <dl>
+                          <div>
+                            <dt>Property</dt>
+                            <dd>{{ hotelName(reservation) }}</dd>
+                          </div>
+                          <div>
+                            <dt>Room</dt>
+                            <dd>{{ roomDescription(reservation) }}</dd>
+                          </div>
+                          <div>
+                            <dt>Booking reference</dt>
+                            <dd>{{ bookingReference(reservation) }}</dd>
+                          </div>
+                          <div>
+                            <dt>Created</dt>
+                            <dd>{{ displayDateTime(reservation.createdAt) }}</dd>
+                          </div>
+                          @if (reservation.cancelledAt) {
+                            <div>
+                              <dt>Cancelled</dt>
+                              <dd>{{ displayDateTime(reservation.cancelledAt) }}</dd>
+                            </div>
+                          }
+                        </dl>
+                      </div>
+                    </div>
 
-              <div class="reservation-card__footer mt-auto">
-                <div class="reservation-card__references">
-                  <span class="badge rounded-pill">Property #{{ reservation.hotelId }}</span>
-                  <span class="badge rounded-pill">Room #{{ reservation.roomTypeId }}</span>
-                </div>
+                    <div class="col-12 col-lg-7">
+                      <div class="reservation-card__detail-group">
+                        <h3>Staying guests</h3>
+                        @if (reservation.stayingGuests.length) {
+                          <div class="row g-3">
+                            @for (guest of reservation.stayingGuests; track guest.firstName + guest.lastName + guest.age + guest.gender) {
+                              <div class="col-12 col-sm-6">
+                                <div class="reservation-card__guest">
+                                  <strong>{{ guestName(guest) }}</strong>
+                                  <span>{{ guest.age }} years - {{ genderLabel(guest.gender) }}</span>
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        } @else {
+                          <p class="reservation-card__empty mb-0">
+                            Staying guest information is not available for this older reservation.
+                          </p>
+                        }
+                      </div>
+                    </div>
+                  </div>
 
-                <a class="btn btn-brand-light" [routerLink]="['/reservations', reservation.reservationId]">Open</a>
-              </div>
+                  @if (reservation.serviceItems.length || reservation.specialRequests) {
+                    <div class="reservation-card__extras">
+                      @if (reservation.serviceItems.length) {
+                        <div class="reservation-card__detail-group">
+                          <h3>Selected services</h3>
+                          <ul class="reservation-card__services">
+                            @for (item of reservation.serviceItems; track item.serviceOfferingId) {
+                              <li>
+                                <span>{{ item.serviceName }} x {{ item.quantity }}</span>
+                                <strong>
+                                  {{ servicePrice(item.totalPriceAmount, item.totalPriceCurrency) }}
+                                </strong>
+                              </li>
+                            }
+                          </ul>
+                        </div>
+                      }
+
+                      @if (reservation.specialRequests) {
+                        <div class="reservation-card__detail-group">
+                          <h3>Special requests</h3>
+                          <p class="reservation-card__note mb-0">{{ reservation.specialRequests }}</p>
+                        </div>
+                      }
+                    </div>
+                  }
+                </section>
+              }
             </div>
           </article>
         </div>
@@ -52,7 +174,7 @@
   </section>
 } @else {
   <section class="dark-card reservation-list__empty p-4 mb-0">
-    <h2 class="h5">No reservations found</h2>
-    <p class="mb-0">No bookings match the current reservation view.</p>
+    <h2 class="h5">{{ emptyTitle() }}</h2>
+    <p class="mb-0">{{ emptyMessage() }}</p>
   </section>
 }

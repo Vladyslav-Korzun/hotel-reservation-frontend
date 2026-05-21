@@ -150,7 +150,14 @@
           </label>
           <div class="wp-field">
             <span>Gender</span>
-            <div class="wp-seg" role="group" [attr.aria-label]="view.positionLabel + ' gender'">
+            <div
+              class="wp-seg"
+              role="group"
+              [attr.aria-label]="view.positionLabel + ' gender'"
+              [class.sgd__gender--invalid]="
+                view.control.controls.gender.touched && view.control.controls.gender.invalid
+              "
+            >
               @for (g of genders; track g) {
                 <button
                   type="button"
@@ -159,6 +166,9 @@
                 >{{ g.charAt(0) + g.slice(1).toLowerCase() }}</button>
               }
             </div>
+            @if (view.control.controls.gender.touched && view.control.controls.gender.hasError('required')) {
+              <span class="wp-field__error">Gender is required.</span>
+            }
           </div>
         </div>
 
