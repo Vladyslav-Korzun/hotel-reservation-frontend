@@ -29,7 +29,6 @@ export const routes: Routes = [
   },
   {
     path: 'reservations/new',
-    canActivate: [roleGuard(['GUEST'])],
     loadComponent: () =>
       import('./features/reservations/pages/create-reservation-page/create-reservation-page').then(
         (m) => m.CreateReservationPage,

@@ -1,8 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { ReservationsApi } from '../api/reservations.api';
-import { CreateReservationRequest, Reservation } from '../model/reservation.model';
-import { toCreateReservationRequestDto, toReservation } from '../model/reservation.mapper';
+import {
+  CreateReservationRequest,
+  PublicCreateReservationRequest,
+  Reservation,
+} from '../model/reservation.model';
+import {
+  toCreateReservationRequestDto,
+  toPublicCreateReservationRequestDto,
+  toReservation,
+} from '../model/reservation.mapper';
 
 @Injectable({ providedIn: 'root' })
 export class ReservationsFacade {
@@ -18,6 +26,10 @@ export class ReservationsFacade {
 
   createReservation(request: CreateReservationRequest): Observable<Reservation> {
     return this.api.createReservation(toCreateReservationRequestDto(request)).pipe(map(toReservation));
+  }
+
+  createPublicReservation(request: PublicCreateReservationRequest): Observable<Reservation> {
+    return this.api.createPublicReservation(toPublicCreateReservationRequestDto(request)).pipe(map(toReservation));
   }
 
   getReservation(reservationId: string): Observable<Reservation> {

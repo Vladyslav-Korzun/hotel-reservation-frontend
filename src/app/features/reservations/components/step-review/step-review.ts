@@ -31,6 +31,7 @@ export class StepReview {
   readonly party = input.required<AccommodationParty>();
   readonly guests = input<readonly GuestDetailGroup[]>([]);
   readonly specialRequests = input<string>('');
+  readonly showSpecialRequests = input(true);
   readonly services = input<readonly HotelServiceOffering[]>([]);
   readonly serviceSelections = input<readonly ReservationServiceSelection[]>([]);
   readonly submitting = input(false);

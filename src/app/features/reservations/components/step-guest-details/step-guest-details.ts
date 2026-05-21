@@ -35,6 +35,8 @@ export class StepGuestDetails {
   readonly policy = input<BookingPolicy>(UNKNOWN_BOOKING_POLICY);
   /** Profile email shown as the prefill placeholder hint. */
   readonly profileEmailHint = input<string>('');
+  readonly contactRequired = input(false);
+  readonly showSpecialRequests = input(true);
 
   readonly back = output<void>();
   readonly next = output<void>();

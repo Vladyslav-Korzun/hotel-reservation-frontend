@@ -46,7 +46,7 @@ export class StaySearchPage {
   private readonly hotelsById = signal<ReadonlyMap<number, Hotel>>(new Map());
   protected readonly sortMode = signal<'price-asc' | 'price-desc' | 'availability'>('price-asc');
   protected readonly petsOnly = signal(false);
-  protected readonly canSelfBook = computed(() => this.auth.hasAnyRole(['GUEST']));
+  protected readonly canCustomerBook = computed(() => !this.auth.isAuthenticated() || this.auth.hasAnyRole(['GUEST']));
   protected readonly displayResults = computed(() => {
     let items = this.results();
     if (this.petsOnly()) items = items.filter((r) => r.petsAllowed);

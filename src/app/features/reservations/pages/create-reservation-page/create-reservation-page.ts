@@ -1,7 +1,8 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { finalize } from 'rxjs';
+import { Observable, finalize } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { toProblemDetail } from '../../../../core/http/api-error.util';
 import { ProblemDetail } from '../../../../core/http/problem-detail.model';
@@ -32,6 +33,8 @@ import { StepServices } from '../../components/step-services/step-services';
 import { StepTripDetails } from '../../components/step-trip-details/step-trip-details';
 import {
   CreateReservationRequest,
+  PublicCreateReservationRequest,
+  Reservation,
   ReservationServiceSelection,
   StayingGuest,
 } from '../../model/reservation.model';
@@ -65,6 +68,13 @@ export class CreateReservationPage {
 
   /** Profile email from JWT — placeholder for the contactEmail input. */
   protected readonly profileEmail = computed(() => this.auth.user()?.email ?? '');
+  protected readonly isPublicCheckout = computed(() => !this.auth.isAuthenticated());
+  protected readonly isGuestSelfBooking = computed(
+    () => this.auth.isAuthenticated() && this.auth.hasAnyRole(['GUEST']),
+  );
+  protected readonly isUnsupportedAuthenticatedUser = computed(
+    () => this.auth.isAuthenticated() && !this.auth.hasAnyRole(['GUEST']),
+  );
 
   protected readonly steps = WizardStep;
 
@@ -80,6 +90,7 @@ export class CreateReservationPage {
   protected readonly serviceOfferings = signal<HotelServiceOffering[]>([]);
   protected readonly selectedServices = signal<ReservationServiceSelection[]>([]);
   protected readonly successId = signal<string | null>(null);
+  protected readonly successWasPublic = signal(false);
   /** Capacity / policy mismatch detected on the client before POST. */
   protected readonly capacityError = signal<string | null>(null);
   /** Aggregated list of reasons why the current step can't be left. Null when valid. */
@@ -151,6 +162,25 @@ export class CreateReservationPage {
       });
     }
     applyGuestsParty(this.guestsControls, initial.party);
+
+    // Anonymous checkout needs contact details because backend creates/finds
+    // the Guest profile from this reservation request.
+    effect(() => {
+      const publicCheckout = this.isPublicCheckout();
+      const email = this.form.controls.contactEmail;
+      const phone = this.form.controls.contactPhone;
+
+      email.setValidators(
+        publicCheckout
+          ? [Validators.required, Validators.email, Validators.maxLength(255)]
+          : [Validators.email, Validators.maxLength(255)],
+      );
+      phone.setValidators(
+        publicCheckout ? [Validators.required, Validators.maxLength(32)] : [Validators.maxLength(32)],
+      );
+      email.updateValueAndValidity({ emitEvent: false });
+      phone.updateValueAndValidity({ emitEvent: false });
+    });
 
     // Keep guests roster (Step 2) in sync with party size (adults + children)
     effect(() => {
@@ -290,6 +320,10 @@ export class CreateReservationPage {
 
   private collectGuestsIssues(): string[] {
     const c = this.form.controls;
+    if (this.isPublicCheckout()) {
+      c.contactEmail.markAsTouched();
+      c.contactPhone.markAsTouched();
+    }
     c.guests.controls.forEach((g) => {
       g.controls.firstName.markAsTouched();
       g.controls.lastName.markAsTouched();
@@ -298,6 +332,19 @@ export class CreateReservationPage {
     });
 
     const issues: string[] = [];
+
+    if (this.isPublicCheckout()) {
+      if (c.contactEmail.hasError('required')) {
+        issues.push('Email is required for guest checkout.');
+      } else if (c.contactEmail.hasError('email')) {
+        issues.push('Use a valid email address.');
+      }
+      if (c.contactPhone.hasError('required')) {
+        issues.push('Phone is required for guest checkout.');
+      } else if (c.contactPhone.hasError('maxlength')) {
+        issues.push('Phone is too long.');
+      }
+    }
 
     let missingNames = 0;
     let missingDob = 0;
@@ -402,6 +449,17 @@ export class CreateReservationPage {
 
   protected submit(): void {
     this.form.markAllAsTouched();
+
+    if (this.isUnsupportedAuthenticatedUser() || (!this.isPublicCheckout() && !this.isGuestSelfBooking())) {
+      this.problem.set({
+        title: 'Guest account required',
+        detail:
+          'Signed-in staff and admin accounts must use the staff reservation flow. To reserve as a customer, use a guest account or sign out.',
+        status: 403,
+      });
+      return;
+    }
+
     if (this.form.invalid || this.saving()) return;
 
     const v = this.form.getRawValue();
@@ -423,24 +481,48 @@ export class CreateReservationPage {
     this.stepError.set(null);
     this.capacityError.set(null);
 
-    const request: CreateReservationRequest = {
-      hotelId: v.hotelId,
-      roomTypeId: v.roomTypeId,
-      checkIn,
-      checkOut,
-      stayingGuests: toStayingGuests(v.guests ?? []),
-      pets: party.pets,
-      serviceOfferings: this.selectedServices().length ? this.selectedServices() : undefined,
-      contactEmail: trimToNull(v.contactEmail),
-      contactPhone: trimToNull(v.contactPhone),
-      specialRequests: trimToNull(v.specialRequests),
-    };
+    const stayingGuests = toStayingGuests(v.guests ?? []);
+    const primaryGuest = stayingGuests[0];
+    if (!primaryGuest) {
+      this.stepError.set(['At least one staying guest is required.']);
+      this.currentStep.set(WizardStep.Guests);
+      return;
+    }
+
+    const serviceOfferings = this.selectedServices().length ? this.selectedServices() : undefined;
+    const publicCheckout = this.isPublicCheckout();
+    const request$: Observable<Reservation> = publicCheckout
+      ? this.reservations.createPublicReservation({
+          hotelId: v.hotelId,
+          roomTypeId: v.roomTypeId,
+          firstName: primaryGuest.firstName,
+          lastName: primaryGuest.lastName,
+          email: v.contactEmail.trim(),
+          phone: normalizePhone(v.contactPhone),
+          checkIn,
+          checkOut,
+          stayingGuests,
+          pets: party.pets,
+          serviceOfferings,
+        } satisfies PublicCreateReservationRequest)
+      : this.reservations.createReservation({
+          hotelId: v.hotelId,
+          roomTypeId: v.roomTypeId,
+          checkIn,
+          checkOut,
+          stayingGuests,
+          pets: party.pets,
+          serviceOfferings,
+          contactEmail: trimToNull(v.contactEmail),
+          contactPhone: normalizePhoneToNull(v.contactPhone),
+          specialRequests: trimToNull(v.specialRequests),
+        } satisfies CreateReservationRequest);
 
     this.problem.set(null);
+    this.successWasPublic.set(publicCheckout);
     this.saving.set(true);
 
-    this.reservations
-      .createReservation(request)
+    request$
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
         next: (reservation) => this.successId.set(reservation.reservationId),
@@ -458,13 +540,36 @@ export class CreateReservationPage {
       });
   }
 
+  protected successTitle(): string {
+    return this.successWasPublic() ? 'Reservation request received.' : 'All set! Your reservation is confirmed.';
+  }
+
+  protected successSubtitle(): string {
+    return this.successWasPublic()
+      ? 'We sent confirmation details to the contact email.'
+      : 'We sent confirmation to your registered email.';
+  }
+
+  protected successPrimaryLabel(): string {
+    return this.successWasPublic() ? 'Search another stay' : 'View reservation';
+  }
+
+  protected successSecondaryLabel(): string {
+    return this.successWasPublic() ? 'Back to home' : 'Back to my reservations';
+  }
+
   protected onSuccessPrimary(): void {
+    if (this.successWasPublic()) {
+      void this.router.navigate(['/stays/search']);
+      return;
+    }
+
     const id = this.successId();
     if (id) void this.router.navigate(['/reservations', id]);
   }
 
   protected onSuccessSecondary(): void {
-    void this.router.navigate(['/reservations']);
+    void this.router.navigate([this.successWasPublic() ? '/' : '/reservations/my']);
   }
 
   /* ── Services loader ──────────────────────────────────────────── */
@@ -588,7 +693,16 @@ function scrollToTop(): void {
   }
 }
 
-/** Empty / whitespace-only string → null; otherwise trimmed value. */
+/** Remove visual spacing from the phone mask before sending the payload. */
+function normalizePhone(value: string | null | undefined): string {
+  return (value ?? '').trim().replace(/\s+/g, '');
+}
+
+function normalizePhoneToNull(value: string | null | undefined): string | null {
+  const normalized = normalizePhone(value);
+  return normalized.length > 0 ? normalized : null;
+}
+
 function trimToNull(value: string | null | undefined): string | null {
   const trimmed = (value ?? '').trim();
   return trimmed.length > 0 ? trimmed : null;

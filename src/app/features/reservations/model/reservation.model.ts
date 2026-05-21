@@ -30,6 +30,20 @@ export interface CreateReservationRequest {
   specialRequests?: string | null;
 }
 
+export interface PublicCreateReservationRequest {
+  hotelId: number;
+  roomTypeId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  checkIn: string;
+  checkOut: string;
+  stayingGuests: StayingGuest[];
+  pets?: BookingPet[];
+  serviceOfferings?: ReservationServiceSelection[];
+}
+
 export interface StayingGuest {
   firstName: string;
   lastName: string;

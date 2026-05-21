@@ -1,5 +1,14 @@
-import { CreateReservationRequestDto, ReservationResponseDto } from '../api/reservation.dto';
-import { CreateReservationRequest, Reservation, ReservationStatus } from './reservation.model';
+import {
+  CreateReservationRequestDto,
+  PublicCreateReservationRequestDto,
+  ReservationResponseDto,
+} from '../api/reservation.dto';
+import {
+  CreateReservationRequest,
+  PublicCreateReservationRequest,
+  Reservation,
+  ReservationStatus,
+} from './reservation.model';
 
 export function toCreateReservationRequestDto(request: CreateReservationRequest): CreateReservationRequestDto {
   return {
@@ -13,6 +22,24 @@ export function toCreateReservationRequestDto(request: CreateReservationRequest)
     contactEmail: request.contactEmail,
     contactPhone: request.contactPhone,
     specialRequests: request.specialRequests,
+  };
+}
+
+export function toPublicCreateReservationRequestDto(
+  request: PublicCreateReservationRequest,
+): PublicCreateReservationRequestDto {
+  return {
+    hotelId: request.hotelId,
+    roomTypeId: request.roomTypeId,
+    firstName: request.firstName,
+    lastName: request.lastName,
+    email: request.email,
+    phone: request.phone,
+    checkIn: request.checkIn,
+    checkOut: request.checkOut,
+    stayingGuests: request.stayingGuests,
+    pets: request.pets,
+    serviceOfferings: request.serviceOfferings,
   };
 }
 

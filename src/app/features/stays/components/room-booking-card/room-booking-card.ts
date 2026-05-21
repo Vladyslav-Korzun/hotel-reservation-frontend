@@ -84,7 +84,7 @@ export class RoomBookingCard {
     const c = this.availableCount();
     return c > 0 && c <= 3;
   });
-  protected readonly canSelfBook = computed(() => this.auth.hasAnyRole(['GUEST']));
+  protected readonly canCustomerBook = computed(() => !this.auth.isAuthenticated() || this.auth.hasAnyRole(['GUEST']));
 
   protected readonly nights = computed(() => {
     const v = this.formValue();

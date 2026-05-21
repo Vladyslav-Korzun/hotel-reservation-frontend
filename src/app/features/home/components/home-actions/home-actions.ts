@@ -11,8 +11,4 @@ import { AuthService } from '../../../../core/auth/auth.service';
 export class HomeActions {
   protected readonly auth = inject(AuthService);
   protected readonly canSelfBook = computed(() => this.auth.hasAnyRole(['GUEST']));
-
-  protected login(): void {
-    this.auth.login('/');
-  }
 }

@@ -72,6 +72,8 @@
               [profileEmailHint]="profileEmail()"
               [childrenAges]="party().childrenAges"
               [policy]="policy()"
+              [contactRequired]="isPublicCheckout()"
+              [showSpecialRequests]="!isPublicCheckout()"
               (back)="goBack(steps.Guests)"
               (next)="goNext(steps.Guests)"
             />
@@ -91,7 +93,8 @@
               [checkOut]="form.controls.checkOut.value"
               [party]="party()"
               [guests]="form.controls.guests.controls"
-              [specialRequests]="form.controls.specialRequests.value"
+              [specialRequests]="isPublicCheckout() ? '' : form.controls.specialRequests.value"
+              [showSpecialRequests]="!isPublicCheckout()"
               [services]="serviceOfferings()"
               [serviceSelections]="selectedServices()"
               [submitting]="saving()"
@@ -124,10 +127,10 @@
   @if (successId(); as id) {
     <app-confirm-success-modal
       [entityId]="id"
-      title="All set! Your reservation is confirmed."
-      subtitle="We sent confirmation to your registered email."
-      primaryLabel="View reservation"
-      secondaryLabel="Back to my reservations"
+      [title]="successTitle()"
+      [subtitle]="successSubtitle()"
+      [primaryLabel]="successPrimaryLabel()"
+      [secondaryLabel]="successSecondaryLabel()"
       (primaryAction)="onSuccessPrimary()"
       (secondaryAction)="onSuccessSecondary()"
     />

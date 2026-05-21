@@ -9,12 +9,16 @@
   <section class="sgd__contact">
     <header class="sgd__contact-head">
       <strong>Contact for this booking</strong>
-      <span>We'll send your confirmation here and use it if the hotel needs to reach you.</span>
+      @if (contactRequired()) {
+        <span>Required for guest checkout and confirmation.</span>
+      } @else {
+        <span>We'll send your confirmation here and use it if the hotel needs to reach you.</span>
+      }
     </header>
 
     <div class="sgd__contact-grid">
       <label class="wp-field">
-        <span>Email</span>
+        <span>{{ contactRequired() ? 'Email *' : 'Email' }}</span>
         <input
           type="email"
           autocomplete="email"
@@ -22,15 +26,17 @@
           [placeholder]="profileEmailHint() || 'you@example.com'"
           [class.wp-field__input--invalid]="contactEmailControl().touched && contactEmailControl().invalid"
         />
-        @if (contactEmailControl().touched && contactEmailControl().hasError('email')) {
+        @if (contactEmailControl().touched && contactEmailControl().hasError('required')) {
+          <span class="wp-field__error">Email is required for guest checkout.</span>
+        } @else if (contactEmailControl().touched && contactEmailControl().hasError('email')) {
           <span class="wp-field__error">Use a valid email address.</span>
-        } @else if (!contactEmailControl().value && profileEmailHint()) {
+        } @else if (!contactRequired() && !contactEmailControl().value && profileEmailHint()) {
           <span class="field-hint sgd__field-hint">Leave blank to use your profile email ({{ profileEmailHint() }}).</span>
         }
       </label>
 
       <label class="wp-field">
-        <span>Phone</span>
+        <span>{{ contactRequired() ? 'Phone *' : 'Phone' }}</span>
         <input
           type="tel"
           inputmode="tel"
@@ -42,7 +48,11 @@
           (input)="formatPhoneInput()"
           (blur)="formatPhoneInput()"
         />
-        @if (!contactPhoneControl().value) {
+        @if (contactPhoneControl().touched && contactPhoneControl().hasError('required')) {
+          <span class="wp-field__error">Phone is required for guest checkout.</span>
+        } @else if (contactPhoneControl().touched && contactPhoneControl().hasError('maxlength')) {
+          <span class="wp-field__error">Phone is too long.</span>
+        } @else if (!contactRequired() && !contactPhoneControl().value) {
           <span class="field-hint sgd__field-hint">Optional. Used for SMS and on-site contact.</span>
         }
       </label>
@@ -176,6 +186,7 @@
     }
   </div>
 
+  @if (showSpecialRequests()) {
   <div class="wpanel__divider"></div>
 
   <header class="wpanel__subhead">
@@ -198,6 +209,7 @@
       [class.wp-field__input--invalid]="specialRequestsControl().invalid"
     ></textarea>
   </div>
+  }
 
   <div class="wpanel__nav">
     <button type="button" class="wpanel__btn-back" (click)="back.emit()">

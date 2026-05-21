@@ -123,7 +123,7 @@
     </div>
   </div>
 
-  @if (canSelfBook()) {
+  @if (canCustomerBook()) {
     <a class="rbc-btn-reserve" routerLink="/reservations/new" [queryParams]="reserveQueryParams()">
       Reserve now
     </a>

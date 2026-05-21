@@ -2,7 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { CreateReservationRequestDto, ReservationResponseDto } from './reservation.dto';
+import {
+  CreateReservationRequestDto,
+  PublicCreateReservationRequestDto,
+  ReservationResponseDto,
+} from './reservation.dto';
 
 @Injectable({ providedIn: 'root' })
 export class ReservationsApi {
@@ -19,6 +23,10 @@ export class ReservationsApi {
 
   createReservation(request: CreateReservationRequestDto): Observable<ReservationResponseDto> {
     return this.http.post<ReservationResponseDto>(this.baseUrl, request);
+  }
+
+  createPublicReservation(request: PublicCreateReservationRequestDto): Observable<ReservationResponseDto> {
+    return this.http.post<ReservationResponseDto>(`${environment.apiBaseUrl}/public/reservations`, request);
   }
 
   getReservation(reservationId: string): Observable<ReservationResponseDto> {

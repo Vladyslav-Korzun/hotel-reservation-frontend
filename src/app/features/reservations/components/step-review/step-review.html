@@ -44,10 +44,12 @@
             <dd>{{ row.fullName }} <small>{{ row.meta }}</small></dd>
           </div>
         }
-        <div class="srv__row" [class.srv__row--dim]="!specialRequests()">
-          <dt>Special requests</dt>
-          <dd>{{ specialRequests() || '—' }}</dd>
-        </div>
+        @if (showSpecialRequests()) {
+          <div class="srv__row" [class.srv__row--dim]="!specialRequests()">
+            <dt>Special requests</dt>
+            <dd>{{ specialRequests() || '—' }}</dd>
+          </div>
+        }
       </dl>
     </article>
 
