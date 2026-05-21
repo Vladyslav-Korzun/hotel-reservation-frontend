@@ -2,7 +2,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { HotelResponseDto, HotelServiceOfferingResponseDto } from './hotel.dto';
+import { HotelResponseDto, HotelServiceOfferingResponseDto, RoomTypeResponseDto } from './hotel.dto';
 
 @Injectable({ providedIn: 'root' })
 export class HotelsApi {
@@ -20,6 +20,12 @@ export class HotelsApi {
   listHotelServices(hotelId: number): Observable<HotelServiceOfferingResponseDto[]> {
     return this.http.get<HotelServiceOfferingResponseDto[]>(
       `${this.baseUrl}/${encodeURIComponent(hotelId)}/services`,
+    );
+  }
+
+  listHotelRoomTypes(hotelId: number): Observable<RoomTypeResponseDto[]> {
+    return this.http.get<RoomTypeResponseDto[]>(
+      `${this.baseUrl}/${encodeURIComponent(hotelId)}/room-types`,
     );
   }
 }

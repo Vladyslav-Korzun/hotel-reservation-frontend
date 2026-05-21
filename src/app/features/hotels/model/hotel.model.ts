@@ -39,6 +39,23 @@ export interface HotelServiceOffering {
   pricingType?: ServicePricingType;
 }
 
+export interface HotelRoomType {
+  roomTypeId: number;
+  hotelId: number;
+  name: string;
+  maxAdults: number;
+  maxChildren: number;
+  maxInfants: number;
+  maxTotalGuests: number;
+  petsAllowed: boolean;
+  maxPets: number;
+  basePriceAmount: number;
+  basePriceCurrency: string;
+  description: string;
+  bedSetup: string | null;
+  roomSizeSqm: number | null;
+}
+
 export interface HotelFilters {
   city: string;
 }

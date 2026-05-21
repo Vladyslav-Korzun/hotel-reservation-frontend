@@ -1,5 +1,5 @@
-﻿import { HotelResponseDto, HotelServiceOfferingResponseDto } from '../api/hotel.dto';
-import { Hotel, HotelServiceOffering, HotelStatus } from './hotel.model';
+import { HotelResponseDto, HotelServiceOfferingResponseDto, RoomTypeResponseDto } from '../api/hotel.dto';
+import { Hotel, HotelRoomType, HotelServiceOffering, HotelStatus } from './hotel.model';
 
 export function toHotel(dto: HotelResponseDto): Hotel {
   return {
@@ -31,6 +31,25 @@ export function toHotelServiceOffering(dto: HotelServiceOfferingResponseDto): Ho
     priceCurrency: dto.priceCurrency,
     active: dto.active,
     availabilityRule: dto.availabilityRule ?? '',
+  };
+}
+
+export function toHotelRoomType(dto: RoomTypeResponseDto): HotelRoomType {
+  return {
+    roomTypeId: dto.roomTypeId,
+    hotelId: dto.hotelId,
+    name: dto.name,
+    maxAdults: dto.maxAdults,
+    maxChildren: dto.maxChildren,
+    maxInfants: dto.maxInfants,
+    maxTotalGuests: dto.maxTotalGuests,
+    petsAllowed: dto.petsAllowed,
+    maxPets: dto.maxPets,
+    basePriceAmount: dto.basePriceAmount,
+    basePriceCurrency: dto.basePriceCurrency,
+    description: dto.description ?? '',
+    bedSetup: dto.bedSetup ?? null,
+    roomSizeSqm: dto.roomSizeSqm ?? null,
   };
 }
 

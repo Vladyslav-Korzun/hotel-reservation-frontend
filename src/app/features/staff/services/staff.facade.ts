@@ -5,13 +5,23 @@ import { toReservation } from '../../reservations/model/reservation.mapper';
 import { StaffApi } from '../api/staff.api';
 import { toRoomOperation } from '../model/room-operation.mapper';
 import { RoomOperation, RoomOperationalStatus } from '../model/room-operation.model';
+import { toStaffCreateReservationRequestDto } from '../model/staff-reservation.mapper';
+import { StaffCreateReservationRequest } from '../model/staff-reservation.model';
 
 @Injectable({ providedIn: 'root' })
 export class StaffFacade {
   private readonly api = inject(StaffApi);
 
-  listReservations(): Observable<Reservation[]> {
-    return this.api.listReservations().pipe(map((items) => items.map(toReservation)));
+  listReservations(limit = 100): Observable<Reservation[]> {
+    return this.api.listReservations(limit).pipe(map((items) => items.map(toReservation)));
+  }
+
+  listRooms(): Observable<RoomOperation[]> {
+    return this.api.listRooms().pipe(map((items) => items.map(toRoomOperation)));
+  }
+
+  createReservation(request: StaffCreateReservationRequest): Observable<Reservation> {
+    return this.api.createReservation(toStaffCreateReservationRequestDto(request)).pipe(map(toReservation));
   }
 
   checkInReservation(reservationId: string): Observable<Reservation> {

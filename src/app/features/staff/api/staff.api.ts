@@ -2,14 +2,29 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { RoomOperationResponseDto, StaffReservationResponseDto, UpdateRoomStatusRequestDto } from './staff.dto';
+import {
+  RoomOperationResponseDto,
+  StaffCreateReservationRequestDto,
+  StaffReservationResponseDto,
+  UpdateRoomStatusRequestDto,
+} from './staff.dto';
 
 @Injectable({ providedIn: 'root' })
 export class StaffApi {
   private readonly http = inject(HttpClient);
 
-  listReservations(): Observable<StaffReservationResponseDto[]> {
-    return this.http.get<StaffReservationResponseDto[]>(`${environment.apiBaseUrl}/reservations`);
+  listReservations(limit = 100): Observable<StaffReservationResponseDto[]> {
+    return this.http.get<StaffReservationResponseDto[]>(`${environment.apiBaseUrl}/reservations`, {
+      params: { limit },
+    });
+  }
+
+  listRooms(): Observable<RoomOperationResponseDto[]> {
+    return this.http.get<RoomOperationResponseDto[]>(`${environment.apiBaseUrl}/staff/rooms`);
+  }
+
+  createReservation(request: StaffCreateReservationRequestDto): Observable<StaffReservationResponseDto> {
+    return this.http.post<StaffReservationResponseDto>(`${environment.apiBaseUrl}/staff/reservations`, request);
   }
 
   checkInReservation(reservationId: string): Observable<StaffReservationResponseDto> {
