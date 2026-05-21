@@ -55,14 +55,10 @@ export class Navbar implements AfterViewInit {
     {
       label: 'Hotels',
       path: '/hotels',
-      authenticatedOnly: true,
-      roles: ['GUEST', 'STAFF', 'ADMIN'],
     },
     {
       label: 'Search',
       path: '/stays/search',
-      authenticatedOnly: true,
-      roles: ['GUEST', 'STAFF', 'ADMIN'],
     },
     {
       label: 'My reservations',

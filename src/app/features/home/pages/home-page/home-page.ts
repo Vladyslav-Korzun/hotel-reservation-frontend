@@ -2,7 +2,6 @@ import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { accommodationPartyToQueryParams } from '../../../../shared/accommodation/accommodation-party-query.util';
-import { AuthService } from '../../../../core/auth/auth.service';
 import { toProblemDetail } from '../../../../core/http/api-error.util';
 import { ProblemDetail } from '../../../../core/http/problem-detail.model';
 import { HotelNetworkCarousel } from '../../components/hotel-network-carousel/hotel-network-carousel';
@@ -23,7 +22,6 @@ import { StaySearchCriteria } from '../../../stays/model/stay-search.model';
 })
 export class HomePage {
   private readonly router = inject(Router);
-  private readonly auth = inject(AuthService);
   private readonly hotelsFacade = inject(HotelsFacade);
 
   protected readonly hotels = signal<Hotel[]>([]);
@@ -42,12 +40,6 @@ export class HomePage {
       checkOut: criteria.checkOut,
       ...accommodationPartyToQueryParams(criteria),
     };
-
-    if (!this.auth.isAuthenticated()) {
-      const targetUrl = this.router.createUrlTree(['/stays/search'], { queryParams }).toString();
-      this.auth.login(targetUrl);
-      return;
-    }
 
     void this.router.navigate(['/stays/search'], { queryParams });
   }
