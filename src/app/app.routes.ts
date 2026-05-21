@@ -60,7 +60,7 @@ export const routes: Routes = [
   },
   {
     path: 'staff',
-    canActivate: [roleGuard(['STAFF', 'ADMIN'])],
+    canActivate: [roleGuard(['STAFF'])],
     loadComponent: () =>
       import('./features/staff/pages/staff-dashboard-page/staff-dashboard-page').then((m) => m.StaffDashboardPage),
   },

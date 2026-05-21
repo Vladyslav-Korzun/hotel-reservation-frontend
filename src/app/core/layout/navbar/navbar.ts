@@ -70,7 +70,7 @@ export class Navbar implements AfterViewInit {
       label: 'Staff',
       path: '/staff',
       authenticatedOnly: true,
-      roles: ['STAFF', 'ADMIN'],
+      roles: ['STAFF'],
     },
     {
       label: 'Admin',
