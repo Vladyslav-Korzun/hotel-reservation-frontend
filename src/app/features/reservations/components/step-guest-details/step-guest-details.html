@@ -143,7 +143,8 @@
               autocomplete="bday"
               maxlength="10"
               [class.wp-field__input--invalid]="
-                view.control.controls.dateOfBirth.touched && view.control.controls.dateOfBirth.invalid
+                view.control.controls.dateOfBirth.touched &&
+                (view.control.controls.dateOfBirth.invalid || dobConsistencyMessage(view).length > 0)
               "
               (input)="formatDobInput(view.control)"
               (blur)="normalizeDobInput(view.control)"
@@ -155,6 +156,8 @@
                 <span class="wp-field__error">Use format DD.MM.YYYY.</span>
               } @else if (view.control.controls.dateOfBirth.hasError('dateInFuture')) {
                 <span class="wp-field__error">Date of birth cannot be in the future.</span>
+              } @else if (dobConsistencyMessage(view); as message) {
+                <span class="wp-field__error">{{ message }}</span>
               }
             }
           </label>

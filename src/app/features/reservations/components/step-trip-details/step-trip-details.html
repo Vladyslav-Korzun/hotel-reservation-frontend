@@ -48,8 +48,7 @@
     </div>
   </div>
 
-  <!-- Per-child age picker (collapsible chips). Backend needs real ages to classify
-       infant vs child against the hotel policy. DOB on Step 2 will overwrite. -->
+  <!-- Per-child age picker (collapsible chips). DOB on Step 2 must stay in the same age category. -->
   @if (childrenCount() > 0) {
     <div class="wp-card wp-age-list std__ages">
       @for (control of childrenAgeControls(); track $index; let i = $index) {

@@ -21,7 +21,7 @@ import { HotelsFacade } from '../../../hotels/services/hotels.facade';
 import { AvailabilityByDate, RoomAvailabilityDay } from '../../../stays/model/availability.model';
 import { StaysFacade } from '../../../stays/services/stays.facade';
 import { BookingPolicy, UNKNOWN_BOOKING_POLICY } from '../../../../shared/accommodation/booking-policy';
-import { canFitRoom } from '../../../../shared/accommodation/guest-classification.util';
+import { ageGroup, canFitRoom } from '../../../../shared/accommodation/guest-classification.util';
 import {
   LiveReservationSummary,
   SummaryDisplayDetails,
@@ -39,6 +39,7 @@ import {
   StayingGuest,
 } from '../../model/reservation.model';
 import { ReservationsFacade } from '../../services/reservations.facade';
+import { calcAgeFromDob, getGuestAgeConsistencyIssue } from '../../wizard/guest-age-consistency';
 import { syncGuestRoster } from '../../wizard/guest-detail';
 import { WizardStep } from '../../wizard/wizard-step';
 import { WizardForm, createWizardForm } from '../../wizard/wizard-form.factory';
@@ -190,26 +191,6 @@ export class CreateReservationPage {
       syncGuestRoster(this.form.controls.guests, adults, childCount);
     });
 
-    // When a child's DOB is filled on Step 2, derive their age and overwrite the
-    // childrenAges entry chosen on Step 1. Empty / partial / unparseable DOB →
-    // keep Step 1's value (don't reset to 0).
-    effect(() => {
-      const v = this.formValue();
-      const guests = v.guests ?? [];
-      const childDobs = guests.filter((g) => g?.role === 'CHILD').map((g) => g?.dateOfBirth ?? '');
-      const arr = this.form.controls.childrenAges;
-      childDobs.forEach((dob, i) => {
-        if (!dob) return;
-        // DOB is stored as DD.MM.YYYY display string — convert to ISO for age calc.
-        const iso = parseDisplayDate(dob);
-        if (!iso) return;
-        const control = arr.at(i);
-        if (!control) return;
-        const age = calcAgeFromDob(iso);
-        if (control.value !== age) control.setValue(age, { emitEvent: false });
-      });
-    });
-
     // Load services + hotel details if hotelId is known
     const hotelId = this.form.controls.hotelId.value;
     if (hotelId) {
@@ -351,6 +332,9 @@ export class CreateReservationPage {
     let badDob = 0;
     let missingGender = 0;
     let adultsAtLeastEighteen = 0;
+    let adultIndex = 0;
+    let childIndex = 0;
+    const ageConsistencyIssues: string[] = [];
     c.guests.controls.forEach((g) => {
       if (g.controls.firstName.invalid || g.controls.lastName.invalid) missingNames++;
       const dob = g.controls.dateOfBirth;
@@ -359,8 +343,16 @@ export class CreateReservationPage {
       if (g.controls.gender.invalid) missingGender++;
 
       if (g.controls.role.value === 'ADULT') {
+        adultIndex++;
         const age = calcAgeFromDob(parseDisplayDate(dob.value) ?? '');
         if (age >= 18) adultsAtLeastEighteen++;
+        const issue = getGuestAgeConsistencyIssue(g, null, this.policy());
+        if (issue) ageConsistencyIssues.push(`Adult ${adultIndex}: ${issue.message}`);
+      } else {
+        const selectedAge = c.childrenAges.at(childIndex)?.value ?? null;
+        childIndex++;
+        const issue = getGuestAgeConsistencyIssue(g, selectedAge, this.policy());
+        if (issue) ageConsistencyIssues.push(`${childAgeLabel(selectedAge, childIndex, this.policy())}: ${issue.message}`);
       }
     });
 
@@ -382,9 +374,10 @@ export class CreateReservationPage {
         `Select gender for ${missingGender} ${missingGender === 1 ? 'guest' : 'guests'}.`,
       );
     }
-    if (missingDob === 0 && badDob === 0 && adultsAtLeastEighteen === 0) {
+    if (missingDob === 0 && badDob === 0 && adultsAtLeastEighteen === 0 && ageConsistencyIssues.length === 0) {
       issues.push('At least one staying guest must be 18 or older.');
     }
+    issues.push(...ageConsistencyIssues);
 
     return issues;
   }
@@ -457,6 +450,20 @@ export class CreateReservationPage {
           'Signed-in staff and admin accounts must use the staff reservation flow. To reserve as a customer, use a guest account or sign out.',
         status: 403,
       });
+      return;
+    }
+
+    const tripIssues = this.collectTripIssues();
+    if (tripIssues.length > 0) {
+      this.stepError.set(tripIssues);
+      this.currentStep.set(WizardStep.Trip);
+      return;
+    }
+
+    const guestIssues = this.collectGuestsIssues();
+    if (guestIssues.length > 0) {
+      this.stepError.set(guestIssues);
+      this.currentStep.set(WizardStep.Guests);
       return;
     }
 
@@ -703,6 +710,18 @@ function normalizePhoneToNull(value: string | null | undefined): string | null {
   return normalized.length > 0 ? normalized : null;
 }
 
+function childAgeLabel(age: number | null, index: number, policy: BookingPolicy): string {
+  if (age === null) return `Child ${index}`;
+  switch (ageGroup(age, policy)) {
+    case 'infant':
+      return `Infant ${index}`;
+    case 'adult-equivalent-minor':
+      return `Teen ${index}`;
+    default:
+      return `Child ${index}`;
+  }
+}
+
 function trimToNull(value: string | null | undefined): string | null {
   const trimmed = (value ?? '').trim();
   return trimmed.length > 0 ? trimmed : null;
@@ -715,16 +734,4 @@ function toStayingGuests(guests: NonNullable<ReturnType<WizardForm['getRawValue'
     age: calcAgeFromDob(parseDisplayDate(guest.dateOfBirth) ?? ''),
     gender: guest.gender ?? 'OTHER',
   }));
-}
-
-/** Derive age (years) from an ISO date-of-birth string. Empty / invalid → 0. */
-function calcAgeFromDob(dobIso: string): number {
-  if (!dobIso) return 0;
-  const dob = new Date(dobIso);
-  if (Number.isNaN(dob.getTime())) return 0;
-  const today = new Date();
-  let age = today.getFullYear() - dob.getFullYear();
-  const m = today.getMonth() - dob.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-  return Math.max(0, age);
 }

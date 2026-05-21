@@ -7,6 +7,7 @@ import {
   parseDisplayDate,
   toDisplayDate,
 } from '../../../../shared/date/display-date.util';
+import { getGuestAgeConsistencyIssue } from '../../wizard/guest-age-consistency';
 import { GUEST_GENDERS, GuestDetailGroup, GuestGender } from '../../wizard/guest-detail';
 
 interface GuestView {
@@ -91,6 +92,16 @@ export class StepGuestDetails {
     if (iso) {
       dobControl.setValue(toDisplayDate(iso));
     }
+  }
+
+  protected dobConsistencyMessage(view: GuestView): string {
+    return (
+      getGuestAgeConsistencyIssue(
+        view.control,
+        view.isAdult ? null : view.childAge,
+        this.policy(),
+      )?.message ?? ''
+    );
   }
 
   /**

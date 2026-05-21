@@ -136,8 +136,8 @@ export class StepTripDetails {
   protected readonly adultsCap = computed(() =>
     effectiveCap(this.policy().maxAdults, ACCOMMODATION_LIMITS.MAX_ADULTS),
   );
-  /** Children counter on Step 1 covers both "future children" and "future infants" —
-   *  exact classification happens on Step 2 from DOB. We cap by maxChildren + maxInfants. */
+  /** Children counter on Step 1 covers children, infants, and teens under 18.
+   *  DOB on Step 2 must stay in the same selected age category. */
   protected readonly childrenCap = computed(() => {
     const p = this.policy();
     if (!p.childrenAllowed) return 0;
@@ -147,7 +147,7 @@ export class StepTripDetails {
   /**
    * Step-1 working budget for "adults + child rows".
    * Infants do NOT count toward backend `maxTotalGuests` (they share with an adult),
-   * but classification happens on Step 2 from DOB. Until then we treat the cap as
+   * but DOB details are entered on Step 2. Until then we treat the cap as
    * `maxTotalGuests + maxInfants`, so a user can pick the composition advertised in the
    * policy hint (e.g. 2 adults + 1 child + 1 infant when totalGuests=3, infants=1).
    * The real per-category limits are re-validated on Step 2 and by the backend.
