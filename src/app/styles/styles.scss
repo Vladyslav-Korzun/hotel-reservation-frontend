@@ -239,6 +239,12 @@ h2 {
   font-weight: 700;
 }
 
+// ─── Typography utilities ─────────────────────────────────────────────────────
+
+.serif-heading {
+  font-family: var(--font-serif);
+}
+
 /* ─── Feature Page ───────────────────────────────────────────────────────── */
 /* Wrap the root element of a full-page feature with .feature-page.          */
 

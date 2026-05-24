@@ -6,10 +6,10 @@
   }
 
   <div class="rbc-price-row">
-    <span class="rbc-price">{{ nightlyPrice() | currency: currency() : 'symbol' : '1.0-0' }}</span>
+    <span class="rbc-price serif-heading">{{ nightlyPrice() | currency: currency() : 'symbol' : '1.0-0' }}</span>
     <span class="rbc-price-per">/ night</span>
   </div>
-  <div class="rbc-price-from">starting rate, taxes included</div>
+  <div class="rbc-price-from serif-heading">starting rate, taxes included</div>
 
   @if (maxAdults() > 0 || maxTotalGuests() > 0) {
     <div class="rbc-capacity d-flex flex-wrap gap-2 mt-3" aria-label="Room capacity">
@@ -59,7 +59,7 @@
     <section class="rbc-svc">
       <div class="rbc-svc__head">
         <span class="rbc-svc__title">Available hotel services</span>
-        <span class="rbc-svc__hint">add at checkout</span>
+        <span class="rbc-svc__hint serif-heading">add at checkout</span>
       </div>
       <ul class="rbc-svc__list">
         @for (svc of previewServices(); track svc.serviceOfferingId) {
@@ -94,8 +94,8 @@
     </div>
     <div class="rbc-hairline" style="margin: 10px 0"></div>
     <div class="rbc-breakdown__total">
-      <span class="rbc-breakdown__total-label">Total</span>
-      <span class="rbc-breakdown__total-amount">{{ roomTotal() | currency: currency() : 'symbol' : '1.2-2' }}</span>
+      <span class="rbc-breakdown__total-label serif-heading">Total</span>
+      <span class="rbc-breakdown__total-amount serif-heading">{{ roomTotal() | currency: currency() : 'symbol' : '1.2-2' }}</span>
     </div>
   </div>
 

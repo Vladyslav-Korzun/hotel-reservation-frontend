@@ -1,7 +1,7 @@
 <section class="wpanel">
 
   <header class="wpanel__head">
-    <h2>Tell us about your guests</h2>
+    <h2 class="serif-heading">Tell us about your guests</h2>
     <p>The hotel needs this info to register every guest at check-in.</p>
   </header>
 
@@ -76,7 +76,7 @@
             }
           </span>
           <div class="sgd__title">
-            <div class="sgd__role">{{ view.positionLabel }}</div>
+            <div class="sgd__role serif-heading">{{ view.positionLabel }}</div>
             <div class="sgd__sub">
               @if (view.isBooker) {
                 Primary guest · makes the reservation
@@ -193,14 +193,14 @@
   <div class="wpanel__divider"></div>
 
   <header class="wpanel__subhead">
-    <h3>Anything special?</h3>
+    <h3 class="serif-heading">Anything special?</h3>
     <p>Optional note for the hotel.</p>
   </header>
 
   <div class="sgd__textarea">
     <div class="sgd__textarea-head">
       <span class="sgd__textarea-label">Special requests</span>
-      <span class="sgd__textarea-counter">
+      <span class="sgd__textarea-counter serif-heading">
         {{ specialRequestsControl().value.length }} / 500
       </span>
     </div>

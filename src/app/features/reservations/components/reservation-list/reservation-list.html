@@ -21,7 +21,7 @@
                   <div class="reservation-card__heading">
                     <div>
                       <p class="eyebrow">{{ hotelLocation(reservation) }}</p>
-                      <h2>{{ hotelName(reservation) }}</h2>
+                      <h2 class="serif-heading">{{ hotelName(reservation) }}</h2>
                     </div>
                     <app-status-badge [status]="reservation.status" />
                   </div>
@@ -57,7 +57,7 @@
                 <div class="col-12 col-lg-auto">
                   <aside class="reservation-card__side">
                     <span class="reservation-card__price-label">Total price</span>
-                    <strong class="reservation-card__price">{{ displayPrice(reservation) }}</strong>
+                    <strong class="reservation-card__price serif-heading">{{ displayPrice(reservation) }}</strong>
                     <div class="reservation-card__actions">
                       <button
                         type="button"
@@ -87,7 +87,7 @@
                   <div class="row g-4">
                     <div class="col-12 col-lg-5">
                       <div class="reservation-card__detail-group">
-                        <h3>Stay details</h3>
+                        <h3 class="serif-heading">Stay details</h3>
                         <dl>
                           <div>
                             <dt>Property</dt>
@@ -117,7 +117,7 @@
 
                     <div class="col-12 col-lg-7">
                       <div class="reservation-card__detail-group">
-                        <h3>Staying guests</h3>
+                        <h3 class="serif-heading">Staying guests</h3>
                         @if (reservation.stayingGuests.length) {
                           <div class="row g-3">
                             @for (guest of reservation.stayingGuests; track guest.firstName + guest.lastName + guest.age + guest.gender) {
@@ -142,7 +142,7 @@
                     <div class="reservation-card__extras">
                       @if (reservation.serviceItems.length) {
                         <div class="reservation-card__detail-group">
-                          <h3>Selected services</h3>
+                          <h3 class="serif-heading">Selected services</h3>
                           <ul class="reservation-card__services">
                             @for (item of reservation.serviceItems; track item.serviceOfferingId) {
                               <li>
@@ -158,7 +158,7 @@
 
                       @if (reservation.specialRequests) {
                         <div class="reservation-card__detail-group">
-                          <h3>Special requests</h3>
+                          <h3 class="serif-heading">Special requests</h3>
                           <p class="reservation-card__note mb-0">{{ reservation.specialRequests }}</p>
                         </div>
                       }

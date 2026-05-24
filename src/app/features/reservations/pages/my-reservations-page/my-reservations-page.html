@@ -5,7 +5,7 @@
     <header class="page-header my-reservations-page__header">
       <div>
         <p class="eyebrow">My reservations</p>
-        <h1>Your stays, all in one place</h1>
+        <h1 class="serif-heading">Your stays, all in one place</h1>
         <p class="my-reservations-page__copy">
           Review booking dates, guest details, price snapshots and cancellation options for your account.
         </p>
@@ -13,7 +13,7 @@
 
       <div class="my-reservations-page__count" aria-label="Total reservations">
         <span>Total</span>
-        <strong>{{ countFor('all') }}</strong>
+        <strong class="serif-heading">{{ countFor('all') }}</strong>
       </div>
     </header>
 
@@ -91,7 +91,7 @@
       <div class="container cancel-dialog__content">
         <div class="dark-card cancel-dialog__panel p-4">
           <p class="eyebrow">Cancel reservation</p>
-          <h2 id="cancel-dialog-title">Cancel booking #{{ reservation.reservationId }}?</h2>
+          <h2 id="cancel-dialog-title" class="serif-heading">Cancel booking #{{ reservation.reservationId }}?</h2>
           <p>
             This will ask the backend to cancel the reservation connected to your guest account.
           </p>

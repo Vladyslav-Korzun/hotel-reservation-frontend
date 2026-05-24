@@ -1,7 +1,7 @@
 <section class="wpanel">
 
   <header class="wpanel__head">
-    <h2>When are you traveling?</h2>
+    <h2 class="serif-heading">When are you traveling?</h2>
     <p>Confirm your stay dates and who's coming along.</p>
   </header>
 
@@ -18,14 +18,14 @@
   </div>
 
   <header class="wpanel__subhead">
-    <h3>Who's coming?</h3>
+    <h3 class="serif-heading">Who's coming?</h3>
     <p>Backend uses these numbers to match room capacity policy.</p>
   </header>
 
   <!-- Adults -->
   <div class="std__counter-row">
     <div class="std__counter-copy">
-      <strong>Adults</strong>
+      <strong class="serif-heading">Adults</strong>
       <span>Age 18 or above · this room allows up to {{ adultsCap() }}</span>
     </div>
     <div class="wp-counter" role="group" aria-label="Adults count">
@@ -38,7 +38,7 @@
   <!-- Children + infants combined counter; classification happens on Step 2 from DOB -->
   <div class="std__counter-row">
     <div class="std__counter-copy">
-      <strong>{{ childrenSectionTitle() }}</strong>
+      <strong class="serif-heading">{{ childrenSectionTitle() }}</strong>
       <span>{{ childrenPolicyHint() }}</span>
     </div>
     <div class="wp-counter" role="group" aria-label="Children count">
@@ -89,7 +89,7 @@
 
   <!-- Pets -->
   <header class="wpanel__subhead">
-    <h3>Bringing a pet?</h3>
+    <h3 class="serif-heading">Bringing a pet?</h3>
     <p>
       @if (!petsAllowed()) {
         This room type does not allow pets.

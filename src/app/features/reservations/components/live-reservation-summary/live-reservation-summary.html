@@ -5,7 +5,7 @@
     <div class="lrs__img" [style.background-image]="'url(' + displayDetails().photoUrl + ')'"></div>
     <div class="lrs__room-body">
       <div class="lrs__hotel">{{ displayDetails().hotelName }}</div>
-      <div class="lrs__room-name">{{ displayDetails().roomName }}</div>
+      <div class="lrs__room-name serif-heading">{{ displayDetails().roomName }}</div>
       @if (displayDetails().location) {
         <div class="lrs__location">{{ displayDetails().location }}</div>
       }
@@ -18,7 +18,7 @@
     <div class="lrs__dates">
       <div class="lrs__date">
         <small>Check-in</small>
-        <strong>{{ formatDay(checkInDate(), 'day-month') }}</strong>
+        <strong class="serif-heading">{{ formatDay(checkInDate(), 'day-month') }}</strong>
         <span>{{ formatDay(checkInDate(), 'weekday-year') }}</span>
       </div>
       <span class="lrs__arrow" aria-hidden="true">
@@ -26,7 +26,7 @@
       </span>
       <div class="lrs__date">
         <small>Check-out</small>
-        <strong>{{ formatDay(checkOutDate(), 'day-month') }}</strong>
+        <strong class="serif-heading">{{ formatDay(checkOutDate(), 'day-month') }}</strong>
         <span>{{ formatDay(checkOutDate(), 'weekday-year') }}</span>
       </div>
     </div>
@@ -105,9 +105,9 @@
 
       <!-- 3) Total — everything together -->
       <div class="lrs__total">
-        <span class="lrs__total-label">Total</span>
+        <span class="lrs__total-label serif-heading">Total</span>
         @if (nightlyPrice() > 0 || servicesTotal() > 0) {
-          <span class="lrs__total-amount">{{ grandTotal() | currency: currency() : 'symbol' : '1.2-2' }}</span>
+          <span class="lrs__total-amount serif-heading">{{ grandTotal() | currency: currency() : 'symbol' : '1.2-2' }}</span>
         } @else {
           <span class="lrs__total-amount lrs__total-amount--pending">—</span>
         }

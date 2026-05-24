@@ -53,7 +53,6 @@
 
 .rdp-eyebrow {
   color: var(--color-gold);
-  font-family: var(--font-serif);
   font-style: italic;
   font-weight: 500;
   font-size: 15px;
@@ -73,7 +72,6 @@
 }
 
 .rdp-room-title {
-  font-family: var(--font-serif);
   font-weight: 500;
   font-size: clamp(40px, 5vw, 64px);
   line-height: 1.02;
@@ -124,7 +122,6 @@
 }
 
 .rdp-section__title {
-  font-family: var(--font-serif);
   font-size: 28px;
   font-weight: 500;
   color: var(--color-text);
@@ -135,7 +132,6 @@
   color: var(--color-text-subtle);
   font-size: 12px;
   font-style: italic;
-  font-family: var(--font-serif);
 }
 
 .rdp-section__copy {
@@ -177,7 +173,6 @@
 }
 
 .rdp-hotel-card__name {
-  font-family: var(--font-serif);
   font-size: 22px;
   font-weight: 500;
   color: var(--color-text);

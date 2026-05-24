@@ -18,8 +18,8 @@
     <!-- Title row -->
     <div class="rdp-title-row">
       <div>
-        <div class="rdp-eyebrow">Room details</div>
-        <h1 class="rdp-room-title">{{ stay.roomName }}</h1>
+        <div class="rdp-eyebrow serif-heading">Room details</div>
+        <h1 class="rdp-room-title serif-heading">{{ stay.roomName }}</h1>
         <div class="rdp-hotel-line">
           <strong>{{ stay.hotelName }}</strong>
           @if (stay.location) {
@@ -50,7 +50,7 @@
         <div class="rdp-hotel-card">
           <div class="rdp-hotel-card__img" [style.background-image]="'url(' + hotelImage + ')'"></div>
           <div class="rdp-hotel-card__body">
-            <div class="rdp-hotel-card__name">{{ stay.hotelName }}</div>
+            <div class="rdp-hotel-card__name serif-heading">{{ stay.hotelName }}</div>
             @if (stay.location) {
               <div class="rdp-hotel-card__meta">{{ stay.location }}</div>
             }
@@ -74,7 +74,7 @@
         <!-- Overview -->
         <section class="rdp-section">
           <div class="rdp-section__head">
-            <h2 class="rdp-section__title">Overview</h2>
+            <h2 class="rdp-section__title serif-heading">Overview</h2>
           </div>
           <div class="rdp-section__copy">
             <p>
@@ -88,8 +88,8 @@
         @if (amenitySections.length > 0) {
           <section class="rdp-section">
             <div class="rdp-section__head">
-              <h2 class="rdp-section__title">What this room offers</h2>
-              <span class="rdp-section__hint">In-room features confirmed by the hotel</span>
+              <h2 class="rdp-section__title serif-heading">What this room offers</h2>
+              <span class="rdp-section__hint serif-heading">In-room features confirmed by the hotel</span>
             </div>
             <div class="rdp-amenities">
               @for (section of amenitySections; track section.group) {
@@ -117,7 +117,7 @@
         <!-- Room policies -->
         <section class="rdp-section">
           <div class="rdp-section__head">
-            <h2 class="rdp-section__title">Room policies</h2>
+            <h2 class="rdp-section__title serif-heading">Room policies</h2>
           </div>
           <div class="rdp-policies">
             <div class="rdp-policy">
@@ -229,8 +229,8 @@
     <section class="rdp-section rdp-about">
       <div class="rdp-section__head">
         <div>
-          <div class="rdp-eyebrow">About this hotel</div>
-          <h2 class="rdp-section__title">{{ stay.hotelName }}</h2>
+          <div class="rdp-eyebrow serif-heading">About this hotel</div>
+          <h2 class="rdp-section__title serif-heading">{{ stay.hotelName }}</h2>
         </div>
       </div>
       <div class="rdp-about__grid">
@@ -270,11 +270,11 @@
         <div class="rdp-similar__head">
           <div>
             @if (stay.location) {
-              <div class="rdp-eyebrow">Also in {{ stay.location }}</div>
+              <div class="rdp-eyebrow serif-heading">Also in {{ stay.location }}</div>
             } @else {
-              <div class="rdp-eyebrow">You might also like</div>
+              <div class="rdp-eyebrow serif-heading">You might also like</div>
             }
-            <h2 class="rdp-section__title">Similar rooms</h2>
+            <h2 class="rdp-section__title serif-heading">Similar rooms</h2>
           </div>
         </div>
         <div class="rdp-carousel">

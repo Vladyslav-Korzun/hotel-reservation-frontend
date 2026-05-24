@@ -8,7 +8,7 @@
       </svg>
     </div>
     <div class="room-stat__label">Capacity</div>
-    <div class="room-stat__value">{{ maxAdults() }} adults</div>
+    <div class="room-stat__value serif-heading">{{ maxAdults() }} adults</div>
     <div class="room-stat__sub">+ {{ maxChildren() }} children, {{ maxInfants() }} infants</div>
   </div>
 
@@ -22,7 +22,7 @@
         </svg>
       </div>
       <div class="room-stat__label">Bed setup</div>
-      <div class="room-stat__value">{{ bedSetup() }}</div>
+      <div class="room-stat__value serif-heading">{{ bedSetup() }}</div>
       <div class="room-stat__sub">as configured by hotel</div>
     </div>
   }
@@ -35,7 +35,7 @@
         </svg>
       </div>
       <div class="room-stat__label">Room size</div>
-      <div class="room-stat__value">{{ roomSizeLabel() }}</div>
+      <div class="room-stat__value serif-heading">{{ roomSizeLabel() }}</div>
       <div class="room-stat__sub">floor area</div>
     </div>
   }
@@ -48,7 +48,7 @@
       </svg>
     </div>
     <div class="room-stat__label">Availability</div>
-    <div class="room-stat__value">{{ availableCount() }} {{ availableCount() === 1 ? 'room' : 'rooms' }} left</div>
+    <div class="room-stat__value serif-heading">{{ availableCount() }} {{ availableCount() === 1 ? 'room' : 'rooms' }} left</div>
     <div class="room-stat__sub">for selected dates</div>
   </div>
 </div>

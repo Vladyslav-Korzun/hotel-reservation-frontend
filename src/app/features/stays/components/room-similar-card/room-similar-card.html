@@ -8,13 +8,13 @@
       <span class="rsc__avail">{{ option().availableCount }} left</span>
     </div>
     <div class="rsc__body">
-      <div class="rsc__name">{{ option().roomName }}</div>
+      <div class="rsc__name serif-heading">{{ option().roomName }}</div>
       @if (showHotelName()) {
-        <div class="rsc__hotel">{{ option().hotelName }}</div>
+        <div class="rsc__hotel serif-heading">{{ option().hotelName }}</div>
       }
       <div class="rsc__cap">{{ capacityLabel() }}</div>
       <div class="rsc__price">
-        <b>{{ option().nightlyPrice | currency: option().currency : 'symbol' : '1.0-0' }}</b>
+        <b class="serif-heading">{{ option().nightlyPrice | currency: option().currency : 'symbol' : '1.0-0' }}</b>
         <small>&nbsp;/ night</small>
       </div>
     </div>
