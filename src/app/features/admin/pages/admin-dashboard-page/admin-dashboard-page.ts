@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { Observable, finalize, forkJoin } from 'rxjs';
 import { toProblemDetail } from '../../../../core/http/api-error.util';
 import { ProblemDetail } from '../../../../core/http/problem-detail.model';
@@ -36,11 +36,11 @@ type AdminResource = 'hotels' | 'roomTypes' | 'rooms' | 'services' | 'staff';
   templateUrl: './admin-dashboard-page.html',
   styleUrl: './admin-dashboard-page.scss',
 })
-export class AdminDashboardPage {
+export class AdminDashboardPage implements OnInit {
   private readonly adminFacade = inject(AdminFacade);
   private readonly hotelsFacade = inject(HotelsFacade);
 
-  protected readonly activeResource = signal<AdminResource>('hotels');
+  protected readonly activeResource = signal<AdminResource>('staff');
   protected readonly busyResource = signal<AdminResource | null>(null);
   protected readonly problem = signal<ProblemDetail | null>(null);
   protected readonly latestResult = signal<unknown | null>(null);
@@ -52,12 +52,12 @@ export class AdminDashboardPage {
   private readonly staffAssignmentsLoaded = signal(false);
 
   protected readonly resources: readonly { key: AdminResource; label: string }[] = [
-    { key: 'hotels', label: 'Hotels' },
-    { key: 'roomTypes', label: 'Room types' },
-    { key: 'rooms', label: 'Rooms' },
-    { key: 'services', label: 'Services' },
     { key: 'staff', label: 'Staff' },
   ];
+
+  ngOnInit(): void {
+    this.loadStaffAssignments();
+  }
 
   protected selectResource(resource: AdminResource): void {
     this.activeResource.set(resource);

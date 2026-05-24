@@ -4,22 +4,24 @@
   <div class="container admin-page__content">
     <section class="admin-hero">
       <p class="eyebrow">Admin</p>
-      <h1>Hotel catalog management</h1>
-      <p class="admin-hero__copy">Create and update hotels, room types, rooms and service offerings through backend admin endpoints.</p>
+      <h1>Staff assignments</h1>
+      <p class="admin-hero__copy">Assign staff accounts to hotels after they sign in for the first time.</p>
     </section>
 
-    <section class="nav nav-pills admin-tabs" aria-label="Admin resources">
-      @for (resource of resources; track resource.key) {
-        <button
-          type="button"
-          class="nav-link admin-tabs__button"
-          [class.active]="activeResource() === resource.key"
-          (click)="selectResource(resource.key)"
-        >
-          {{ resource.label }}
-        </button>
-      }
-    </section>
+    @if (resources.length > 1) {
+      <section class="nav nav-pills admin-tabs" aria-label="Admin resources">
+        @for (resource of resources; track resource.key) {
+          <button
+            type="button"
+            class="nav-link admin-tabs__button"
+            [class.active]="activeResource() === resource.key"
+            (click)="selectResource(resource.key)"
+          >
+            {{ resource.label }}
+          </button>
+        }
+      </section>
+    }
 
     @if (problem(); as problemDetail) {
       <section class="admin-feedback">
@@ -91,7 +93,7 @@
             @if (latestResult(); as result) {
               <pre>{{ formatResult(result) }}</pre>
             } @else {
-              <p>No admin operation has completed yet.</p>
+              <p>No staff assignment update has completed yet.</p>
             }
           </div>
         </div>

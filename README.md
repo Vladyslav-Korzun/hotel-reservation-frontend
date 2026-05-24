@@ -208,7 +208,7 @@ STAFF
 - cannot create a new reservation from the protected route
 
 ADMIN
-- can create a reservation
+- cannot create a normal guest self-booking from the protected route
 - can find reservations
 - can load all reservations
 ```
@@ -216,7 +216,7 @@ ADMIN
 Route protection:
 
 ```text
-/reservations/new   -> GUEST, ADMIN
+/reservations/new   -> GUEST
 /reservations/find  -> GUEST, STAFF, ADMIN
 /reservations/:id   -> GUEST, STAFF, ADMIN
 ```
