@@ -21,20 +21,7 @@
 @import 'bootstrap/scss/utilities/api';
 
 :root {
-  --bg-page: var(--color-ink-body);
-  --bg-soft: var(--color-surface);
-  --bg-panel: #ffffff;
-  --text-main: var(--color-ink-body);
-  --text-muted: #6f6a65;
-  --line: #cccccc;
-  --brand: #c49c74;
-  --brand-strong: #8f6742;
-  --brand-soft: #c9beb3;
-  --accent: #c49c74;
-  --danger: #b42318;
-  --danger-soft: #fff1f0;
-  --shadow: 0 18px 38px -28px rgba(0, 0, 0, 0.55);
-  color: var(--text-main);
+  color: var(--color-text-body);
   font-family: 'Trebuchet MS', 'Segoe UI', 'Lucida Sans Unicode', sans-serif;
   line-height: 1.5;
 }

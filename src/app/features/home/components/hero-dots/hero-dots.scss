@@ -13,7 +13,7 @@
 .hero-dots__dot {
   background: rgba(37, 37, 37, 0.18);
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   cursor: pointer;
   height: 0.38rem;
   padding: 0;

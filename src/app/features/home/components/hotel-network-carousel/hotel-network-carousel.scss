@@ -194,7 +194,7 @@
 .hotel-carousel__dot {
   background: rgba(246, 239, 231, 0.28);
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   cursor: pointer;
   height: 0.5rem;
   padding: 0;

@@ -7,7 +7,7 @@
 }
 
 .travel-inspiration__title {
-  color: #fffdf8;
+  color: var(--color-text);
   font-family: Georgia, 'Times New Roman', serif;
   font-size: clamp(1.8rem, 3vw, 2.8rem);
   font-weight: 500;
@@ -20,7 +20,7 @@
   background-color: #1a1c1b;
   background-position: center;
   background-size: cover;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -49,7 +49,7 @@
 }
 
 .inspiration-tile__title {
-  color: #fffdf8;
+  color: var(--color-text);
   font-family: Georgia, 'Times New Roman', serif;
   font-size: clamp(1.2rem, 2vw, 1.6rem);
   font-weight: 500;
@@ -64,9 +64,9 @@
 }
 
 .inspiration-tile__btn {
-  background: #c49c74;
+  background: var(--color-gold);
   border: 1px solid #c49c74;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: var(--color-ink);
   font-size: 0.82rem;
   font-weight: 800;

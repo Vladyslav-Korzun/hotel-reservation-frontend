@@ -4,7 +4,7 @@
 .photo-lightbox {
   align-items: center;
   animation: photo-lightbox-fade 0.18s ease-out;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
   background: rgba(8, 6, 4, 0.94);
   display: grid;
   grid-template-columns: auto 1fr auto;

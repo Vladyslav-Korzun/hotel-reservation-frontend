@@ -21,7 +21,7 @@
 
 .hero-topbar__app-link {
   border: 1px solid rgba(246, 246, 246, 0.78);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: var(--color-text-body);
   font-weight: 800;
   min-width: 132px;

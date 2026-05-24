@@ -21,7 +21,7 @@
 .service-row__icon {
   align-items: center;
   background: rgba(196, 156, 116, 0.08);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   color: var(--color-gold);
   display: inline-flex;
   height: 48px;

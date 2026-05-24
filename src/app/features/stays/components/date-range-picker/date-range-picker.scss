@@ -16,7 +16,7 @@
   align-items: center;
   background: var(--color-bg-field);
   border: 1px solid rgba(0, 0, 0, 0.62);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);

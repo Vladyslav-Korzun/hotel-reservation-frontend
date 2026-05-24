@@ -1,6 +1,6 @@
 .csm-overlay {
   position: fixed; inset: 0; z-index: 2000;
-  background: rgba(10, 9, 7, 0.78); backdrop-filter: blur(8px);
+  background: rgba(10, 9, 7, 0.78); backdrop-filter: blur(12px);
   display: flex; align-items: center; justify-content: center; padding: 20px;
   animation: csm-fade 0.25s ease;
 }
@@ -100,7 +100,7 @@
 .csm__copy {
   background: transparent;
   border: 1px solid var(--color-border-gold);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 7px 11px;
   color: var(--color-gold-hover);
   cursor: pointer;
