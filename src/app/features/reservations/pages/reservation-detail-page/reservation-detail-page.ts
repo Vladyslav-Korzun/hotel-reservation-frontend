@@ -5,6 +5,7 @@ import { distinctUntilChanged, finalize, map } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { toProblemDetail } from '../../../../core/http/api-error.util';
 import { ProblemDetail } from '../../../../core/http/problem-detail.model';
+import { ConfirmDialogOutlet, ConfirmDialogService } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
 import { ErrorMessage } from '../../../../shared/ui/error-message/error-message';
 import { LoadingState } from '../../../../shared/ui/loading-state/loading-state';
 import { ReservationSummary } from '../../components/reservation-summary/reservation-summary';
@@ -13,7 +14,7 @@ import { ReservationsFacade } from '../../services/reservations.facade';
 
 @Component({
   selector: 'app-reservation-detail-page',
-  imports: [ErrorMessage, LoadingState, ReservationSummary],
+  imports: [ConfirmDialogOutlet, ErrorMessage, LoadingState, ReservationSummary],
   templateUrl: './reservation-detail-page.html',
   styleUrl: './reservation-detail-page.scss',
 })
@@ -21,6 +22,7 @@ export class ReservationDetailPage {
   private readonly route = inject(ActivatedRoute);
   private readonly auth = inject(AuthService);
   private readonly reservations = inject(ReservationsFacade);
+  private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly reservationId = signal('');
 
   protected readonly loading = signal(true);
@@ -88,13 +90,24 @@ export class ReservationDetailPage {
     return 'This reservation is eligible for check-in.';
   }
 
-  protected cancelReservation(): void {
-    const reservationId = this.reservationId();
-    if (!reservationId || this.cancelling()) {
+  protected openCancelDialog(): void {
+    if (this.cancelling()) {
       return;
     }
 
-    if (!window.confirm('Cancel this reservation?')) {
+    this.confirmDialog.open({
+      title: 'Cancel this reservation?',
+      message: 'This will ask the backend to cancel the reservation and update the booking status.',
+      confirmLabel: 'Cancel reservation',
+      cancelLabel: 'Keep reservation',
+      busy: () => this.cancelling(),
+      onConfirm: () => this.confirmCancelReservation(),
+    });
+  }
+
+  private confirmCancelReservation(): void {
+    const reservationId = this.reservationId();
+    if (!reservationId || this.cancelling()) {
       return;
     }
 
@@ -105,8 +118,14 @@ export class ReservationDetailPage {
       .cancelReservation(reservationId)
       .pipe(finalize(() => this.cancelling.set(false)))
       .subscribe({
-        next: () => this.loadReservation(reservationId),
-        error: (error: unknown) => this.problem.set(toProblemDetail(error)),
+        next: () => {
+          this.confirmDialog.close();
+          this.loadReservation(reservationId);
+        },
+        error: (error: unknown) => {
+          this.confirmDialog.close();
+          this.problem.set(toProblemDetail(error));
+        },
       });
   }
 

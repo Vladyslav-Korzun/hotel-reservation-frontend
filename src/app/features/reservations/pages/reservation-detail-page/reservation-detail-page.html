@@ -62,7 +62,7 @@
                 type="button"
                 class="btn btn-brand-danger"
                 [disabled]="!canCancel(currentReservation)"
-                (click)="cancelReservation()"
+                (click)="openCancelDialog()"
               >
                 @if (cancelling()) {
                   Cancelling...
@@ -76,4 +76,6 @@
       </section>
     }
   </div>
+
+  <app-confirm-dialog-outlet />
 </main>

@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { Observable, finalize, forkJoin } from 'rxjs';
 import { toProblemDetail } from '../../../../core/http/api-error.util';
 import { ProblemDetail } from '../../../../core/http/problem-detail.model';
+import { ConfirmDialogOutlet, ConfirmDialogService } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
 import { ErrorMessage } from '../../../../shared/ui/error-message/error-message';
 import { LoadingState } from '../../../../shared/ui/loading-state/loading-state';
 import { Hotel } from '../../../hotels/model/hotel.model';
@@ -32,6 +33,7 @@ type AdminResource = 'hotels' | 'roomTypes' | 'rooms' | 'services' | 'staff';
     RoomTypeAdminForm,
     ServiceOfferingAdminForm,
     StaffAssignmentTable,
+    ConfirmDialogOutlet,
   ],
   templateUrl: './admin-dashboard-page.html',
   styleUrl: './admin-dashboard-page.scss',
@@ -39,6 +41,7 @@ type AdminResource = 'hotels' | 'roomTypes' | 'rooms' | 'services' | 'staff';
 export class AdminDashboardPage implements OnInit {
   private readonly adminFacade = inject(AdminFacade);
   private readonly hotelsFacade = inject(HotelsFacade);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   protected readonly activeResource = signal<AdminResource>('staff');
   protected readonly busyResource = signal<AdminResource | null>(null);
@@ -95,10 +98,63 @@ export class AdminDashboardPage implements OnInit {
   }
 
   protected submitService(command: ServiceOfferingAdminCommand): void {
-    if (command.mode === 'deactivate' && !window.confirm('Deactivate this service offering?')) {
+    if (command.mode === 'deactivate') {
+      this.confirmDialog.open({
+        title: 'Deactivate service offering?',
+        message: 'Guests will no longer be able to add this service to new reservations.',
+        confirmLabel: 'Deactivate service',
+        cancelLabel: 'Keep service',
+        busy: () => this.isBusy('services'),
+        onConfirm: () => this.executeServiceCommand(command, () => this.confirmDialog.close()),
+      });
       return;
     }
 
+    this.executeServiceCommand(command);
+  }
+
+  protected unassignStaffFromHotel(staffId: number): void {
+    if (this.busyStaffId()) {
+      return;
+    }
+
+    this.confirmDialog.open({
+      title: 'Unassign staff member?',
+      message: 'This staff account will lose access to hotel staff operations until an administrator assigns a hotel again.',
+      confirmLabel: 'Unassign staff',
+      cancelLabel: 'Keep assignment',
+      busy: () => this.busyStaffId() === staffId,
+      onConfirm: () => this.confirmStaffUnassignment(staffId),
+    });
+  }
+
+  private confirmStaffUnassignment(staffId: number): void {
+    if (this.busyStaffId()) {
+      return;
+    }
+
+    this.staffProblem.set(null);
+    this.busyStaffId.set(staffId);
+
+    this.adminFacade
+      .unassignStaffFromHotel(staffId)
+      .pipe(finalize(() => this.busyStaffId.set(null)))
+      .subscribe({
+        next: (updatedStaff) => {
+          this.latestResult.set(updatedStaff);
+          this.confirmDialog.close();
+          this.staffAssignments.update((items) =>
+            items.map((item) => (item.id === updatedStaff.id ? updatedStaff : item)),
+          );
+        },
+        error: (error: unknown) => {
+          this.confirmDialog.close();
+          this.staffProblem.set(toProblemDetail(error));
+        },
+      });
+  }
+
+  private executeServiceCommand(command: ServiceOfferingAdminCommand, onSuccess?: () => void): void {
     const request =
       command.mode === 'create'
         ? this.adminFacade.createServiceOffering(command.hotelId, command.request)
@@ -106,7 +162,12 @@ export class AdminDashboardPage implements OnInit {
           ? this.adminFacade.updateServiceOffering(command.hotelId, command.serviceId, command.request)
           : this.adminFacade.deactivateServiceOffering(command.hotelId, command.serviceId);
 
-    this.runAdminRequest('services', request, command.mode === 'deactivate' ? { deactivated: true } : undefined);
+    this.runAdminRequest(
+      'services',
+      request,
+      command.mode === 'deactivate' ? { deactivated: true } : undefined,
+      onSuccess,
+    );
   }
 
   protected reloadStaffAssignments(): void {
@@ -119,28 +180,6 @@ export class AdminDashboardPage implements OnInit {
 
     this.adminFacade
       .assignStaffToHotel(assignment.staffId, { hotelId: assignment.hotelId })
-      .pipe(finalize(() => this.busyStaffId.set(null)))
-      .subscribe({
-        next: (updatedStaff) => {
-          this.latestResult.set(updatedStaff);
-          this.staffAssignments.update((items) =>
-            items.map((item) => (item.id === updatedStaff.id ? updatedStaff : item)),
-          );
-        },
-        error: (error: unknown) => this.staffProblem.set(toProblemDetail(error)),
-      });
-  }
-
-  protected unassignStaffFromHotel(staffId: number): void {
-    if (!window.confirm('Unassign this staff member from their hotel?')) {
-      return;
-    }
-
-    this.staffProblem.set(null);
-    this.busyStaffId.set(staffId);
-
-    this.adminFacade
-      .unassignStaffFromHotel(staffId)
       .pipe(finalize(() => this.busyStaffId.set(null)))
       .subscribe({
         next: (updatedStaff) => {
@@ -183,14 +222,25 @@ export class AdminDashboardPage implements OnInit {
       });
   }
 
-  private runAdminRequest(resource: AdminResource, request: Observable<unknown>, emptyResult?: unknown): void {
+  private runAdminRequest(
+    resource: AdminResource,
+    request: Observable<unknown>,
+    emptyResult?: unknown,
+    onSuccess?: () => void,
+  ): void {
     this.problem.set(null);
     this.latestResult.set(null);
     this.busyResource.set(resource);
 
     request.pipe(finalize(() => this.busyResource.set(null))).subscribe({
-      next: (result) => this.latestResult.set(result ?? emptyResult ?? { ok: true }),
-      error: (error: unknown) => this.problem.set(toProblemDetail(error)),
+      next: (result) => {
+        this.latestResult.set(result ?? emptyResult ?? { ok: true });
+        onSuccess?.();
+      },
+      error: (error: unknown) => {
+        this.confirmDialog.close();
+        this.problem.set(toProblemDetail(error));
+      },
     });
   }
 }

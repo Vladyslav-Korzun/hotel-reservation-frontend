@@ -12,6 +12,7 @@ import { catchError, finalize, forkJoin, map, of, switchMap } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { toProblemDetail } from '../../../../core/http/api-error.util';
 import { ProblemDetail } from '../../../../core/http/problem-detail.model';
+import { ConfirmDialogOutlet, ConfirmDialogService } from '../../../../shared/ui/confirm-dialog/confirm-dialog';
 import { ErrorMessage } from '../../../../shared/ui/error-message/error-message';
 import { LoadingState } from '../../../../shared/ui/loading-state/loading-state';
 import { StatusBadge } from '../../../../shared/ui/status-badge/status-badge';
@@ -104,7 +105,7 @@ const MS_PER_DAY = 86_400_000;
 
 @Component({
   selector: 'app-staff-dashboard-page',
-  imports: [ReactiveFormsModule, ErrorMessage, LoadingState, StatusBadge, RoomStatusForm],
+  imports: [ReactiveFormsModule, ConfirmDialogOutlet, ErrorMessage, LoadingState, StatusBadge, RoomStatusForm],
   templateUrl: './staff-dashboard-page.html',
   styleUrl: './staff-dashboard-page.scss',
 })
@@ -112,6 +113,7 @@ export class StaffDashboardPage {
   private readonly staffFacade = inject(StaffFacade);
   private readonly hotelsFacade = inject(HotelsFacade);
   private readonly authService = inject(AuthService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   protected readonly reservations = signal<Reservation[]>([]);
   protected readonly rooms = signal<RoomOperation[]>([]);
@@ -435,8 +437,23 @@ export class StaffDashboardPage {
   }
 
   protected markNoShow(reservation: Reservation): void {
-    if (!window.confirm('Mark this reservation as no-show?')) return;
-    this.runReservationOperation(reservation, () => this.staffFacade.markNoShowReservation(reservation.reservationId));
+    if (this.busyReservationId()) {
+      return;
+    }
+
+    this.confirmDialog.open({
+      title: 'Mark as no-show?',
+      message: `This will mark ${this.guestTitle(reservation)} as a no-show and close active stay actions for this reservation.`,
+      confirmLabel: 'Mark no-show',
+      cancelLabel: 'Keep active',
+      busy: () => this.busyReservationId() === reservation.reservationId,
+      onConfirm: () =>
+        this.runReservationOperation(
+          reservation,
+          () => this.staffFacade.markNoShowReservation(reservation.reservationId),
+          () => this.confirmDialog.close(),
+        ),
+    });
   }
 
   protected openRoomDetails(room: RoomOperation): void {
@@ -666,6 +683,7 @@ export class StaffDashboardPage {
   private runReservationOperation(
     reservation: Reservation,
     operation: () => ReturnType<StaffFacade['checkInReservation']>,
+    onSuccess?: () => void,
   ): void {
     this.problem.set(null);
     this.busyReservationId.set(reservation.reservationId);
@@ -673,8 +691,14 @@ export class StaffDashboardPage {
     operation()
       .pipe(finalize(() => this.busyReservationId.set(null)))
       .subscribe({
-        next: (updated) => this.applyReservationUpdate(reservation, updated),
-        error: (error: unknown) => this.problem.set(this.problemFromError(error)),
+        next: (updated) => {
+          this.applyReservationUpdate(reservation, updated);
+          onSuccess?.();
+        },
+        error: (error: unknown) => {
+          this.confirmDialog.close();
+          this.problem.set(this.problemFromError(error));
+        },
       });
   }
 
