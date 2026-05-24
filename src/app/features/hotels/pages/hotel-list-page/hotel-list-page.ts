@@ -1,4 +1,6 @@
-﻿import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs';
 import { toProblemDetail } from '../../../../core/http/api-error.util';
 import { ProblemDetail } from '../../../../core/http/problem-detail.model';
@@ -16,21 +18,32 @@ import { HotelsFacade } from '../../services/hotels.facade';
 })
 export class HotelListPage {
   private readonly hotelsFacade = inject(HotelsFacade);
+  private readonly route = inject(ActivatedRoute);
 
   protected readonly hotels = signal<Hotel[]>([]);
   protected readonly loading = signal(false);
   protected readonly problem = signal<ProblemDetail | null>(null);
+  protected readonly cityFilter = signal('');
 
   constructor() {
-    this.loadHotels();
+    this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => {
+      const city = params.get('city')?.trim() ?? '';
+      this.cityFilter.set(city);
+      this.loadHotels(city);
+    });
   }
 
-  private loadHotels(): void {
+  protected emptyMessage(): string {
+    const city = this.cityFilter();
+    return city ? `No hotels are currently available in ${city}.` : 'No hotels are currently available.';
+  }
+
+  private loadHotels(city: string): void {
     this.problem.set(null);
     this.loading.set(true);
 
     this.hotelsFacade
-      .listHotels()
+      .listHotels(city ? { city } : {})
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (hotels) => this.hotels.set(hotels),

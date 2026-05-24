@@ -1,4 +1,4 @@
-﻿import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
@@ -9,8 +9,13 @@ export class HotelsApi {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiBaseUrl}/hotels`;
 
-  listHotels(): Observable<HotelResponseDto[]> {
-    return this.http.get<HotelResponseDto[]>(this.baseUrl);
+  listHotels(city?: string): Observable<HotelResponseDto[]> {
+    const normalizedCity = city?.trim();
+    const options = normalizedCity
+      ? { params: new HttpParams().set('city', normalizedCity) }
+      : undefined;
+
+    return this.http.get<HotelResponseDto[]>(this.baseUrl, options);
   }
 
   getHotel(hotelId: number): Observable<HotelResponseDto> {

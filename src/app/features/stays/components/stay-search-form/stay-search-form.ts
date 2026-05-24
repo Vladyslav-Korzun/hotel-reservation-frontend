@@ -58,6 +58,7 @@ export class StaySearchForm {
   private appliedCriteria: StaySearchCriteria | null = null;
 
   protected readonly hotels = signal<Hotel[]>([]);
+  private readonly selectedCity = signal('');
 
   protected readonly citySelectOptions = computed<SelectOption[]>(() => [
     { value: '', label: 'Any city' },
@@ -65,7 +66,7 @@ export class StaySearchForm {
   ]);
 
   protected readonly hotelSelectOptions = computed<SelectOption[]>(() => {
-    const filtered = filterHotelsByCity(this.hotels(), this.form.controls.destination.value);
+    const filtered = filterHotelsByCity(this.hotels(), this.selectedCity());
     return [
       { value: null, label: 'Any hotel' },
       ...filtered.map((h) => ({ value: h.hotelId, label: `${h.name} — ${h.city}` })),
@@ -113,13 +114,17 @@ export class StaySearchForm {
         },
         { emitEvent: false },
       );
+      this.selectedCity.set(criteria.destination);
       applyGuestsParty(this.guests, criteria);
       this.clearSelectedHotelIfOutsideCity();
     });
 
     this.form.controls.destination.valueChanges
       .pipe(takeUntilDestroyed())
-      .subscribe(() => this.clearSelectedHotelIfOutsideCity());
+      .subscribe((city) => {
+        this.selectedCity.set(city);
+        this.clearSelectedHotelIfOutsideCity();
+      });
 
     this.hotelsFacade
       .listHotels()
@@ -159,7 +164,7 @@ export class StaySearchForm {
   }
 
   protected cityDisplayLabel(): string {
-    return this.form.controls.destination.value || 'Any city';
+    return this.selectedCity() || 'Any city';
   }
 
   protected hasError(controlName: 'checkIn' | 'checkOut' | 'adults', error: string): boolean {

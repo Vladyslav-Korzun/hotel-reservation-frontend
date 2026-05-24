@@ -1,4 +1,4 @@
-﻿import { Injectable, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { HotelsApi } from '../api/hotels.api';
 import { toHotel, toHotelRoomType, toHotelServiceOffering } from '../model/hotel.mapper';
@@ -9,7 +9,7 @@ export class HotelsFacade {
   private readonly api = inject(HotelsApi);
 
   listHotels(filters: Partial<HotelFilters> = {}): Observable<Hotel[]> {
-    return this.api.listHotels().pipe(map((items) => filterHotels(items.map(toHotel), filters)));
+    return this.api.listHotels(filters.city).pipe(map((items) => items.map(toHotel)));
   }
 
   getHotelDetails(hotelId: number): Observable<Hotel> {
@@ -23,14 +23,4 @@ export class HotelsFacade {
   getHotelRoomTypes(hotelId: number): Observable<HotelRoomType[]> {
     return this.api.listHotelRoomTypes(hotelId).pipe(map((items) => items.map(toHotelRoomType)));
   }
-}
-
-function filterHotels(hotels: readonly Hotel[], filters: Partial<HotelFilters>): Hotel[] {
-  const city = filters.city?.trim().toLowerCase();
-
-  if (!city) {
-    return [...hotels];
-  }
-
-  return hotels.filter((hotel) => hotel.city.toLowerCase().includes(city));
 }

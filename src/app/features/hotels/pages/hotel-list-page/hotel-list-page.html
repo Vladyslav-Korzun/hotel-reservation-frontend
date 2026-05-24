@@ -9,6 +9,9 @@
       <p class="muted mb-0 hotels-page__subtitle">
         Find an active hotel, check its policies, then search rooms for your stay.
       </p>
+      @if (cityFilter()) {
+        <p class="muted mb-0 mt-2">Showing hotels in {{ cityFilter() }}.</p>
+      }
     </header>
 
     @if (problem(); as problemDetail) {
@@ -29,7 +32,7 @@
       } @else {
         <div class="hotels-page__empty p-4 p-md-5 text-center">
           <h2 class="mb-2">No hotels found</h2>
-          <p class="muted mb-0">No hotels are currently available.</p>
+          <p class="muted mb-0">{{ emptyMessage() }}</p>
         </div>
       }
     </section>
