@@ -1,6 +1,6 @@
-﻿import { Component, input, output } from '@angular/core';
+import { Component, effect, input, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RoomOperationalStatus } from '../../model/room-operation.model';
+import { RoomOperation, RoomOperationalStatus } from '../../model/room-operation.model';
 
 export interface RoomStatusUpdate {
   roomId: number;
@@ -14,6 +14,7 @@ export interface RoomStatusUpdate {
   styleUrl: './room-status-form.scss',
 })
 export class RoomStatusForm {
+  readonly room = input<RoomOperation | null>(null);
   readonly submitting = input(false);
   readonly submitted = output<RoomStatusUpdate>();
 
@@ -25,23 +26,30 @@ export class RoomStatusForm {
   ];
 
   protected readonly form = new FormGroup({
-    roomId: new FormControl<number | null>(null, [Validators.required, Validators.min(1)]),
     status: new FormControl<RoomOperationalStatus>('AVAILABLE', {
       nonNullable: true,
       validators: [Validators.required],
     }),
   });
 
+  private readonly syncRoomStatus = effect(() => {
+    const room = this.room();
+    if (!room || room.status === 'OCCUPIED') return;
+
+    this.form.controls.status.setValue(room.status, { emitEvent: false });
+  });
+
   protected submit(): void {
+    const room = this.room();
     this.form.markAllAsTouched();
 
-    if (this.form.invalid || this.submitting()) {
+    if (!room || room.status === 'OCCUPIED' || this.form.invalid || this.submitting()) {
       return;
     }
 
     const value = this.form.getRawValue();
     this.submitted.emit({
-      roomId: Number(value.roomId),
+      roomId: room.roomId,
       status: value.status,
     });
   }

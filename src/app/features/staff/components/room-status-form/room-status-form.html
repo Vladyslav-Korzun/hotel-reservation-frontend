@@ -1,25 +1,23 @@
-<form class="card room-status-form dark-form" [formGroup]="form" (ngSubmit)="submit()">
+<form class="room-status-form dark-form" [formGroup]="form" (ngSubmit)="submit()">
   <div class="room-status-form__header">
     <p class="eyebrow">Room status</p>
     <h2>Update operational status</h2>
+    @if (room(); as selectedRoom) {
+      <p>Room {{ selectedRoom.roomNumber }} is currently {{ selectedRoom.status }}.</p>
+    }
   </div>
 
   <div class="row g-3 room-status-form__grid">
-    <label class="col-12 col-md-5 col-xl-12 form-row">
-      <span class="form-label">Room id</span>
-      <input class="form-control" type="number" min="1" formControlName="roomId" autocomplete="off" />
-      @if (hasError('roomId')) {
-        <span class="invalid-feedback d-block">Room id is required.</span>
-      }
-    </label>
-
-    <label class="col-12 col-md-7 col-xl-12 form-row">
+    <label class="col-12 form-row">
       <span class="form-label">Status</span>
       <select class="form-select" formControlName="status">
         @for (status of statuses; track status) {
           <option [value]="status">{{ status }}</option>
         }
       </select>
+      @if (hasError('status')) {
+        <span class="field-error">Status is required.</span>
+      }
     </label>
   </div>
 

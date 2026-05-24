@@ -56,6 +56,17 @@
         </section>
       }
 
+      @if (latestUpdatedRoom(); as updatedRoom) {
+        <section class="staff-success dark-card">
+          <div>
+            <p class="eyebrow">Room status updated</p>
+            <h2>Room {{ updatedRoom.roomNumber }}</h2>
+            <p>{{ roomTypeName(updatedRoom.roomTypeId) }} В· {{ statusLabel(updatedRoom.status) }}</p>
+          </div>
+          <app-status-badge [status]="updatedRoom.status" />
+        </section>
+      }
+
       <section class="staff-toolbar dark-card">
         <div class="row g-3 align-items-center">
           <div class="col-12 col-lg-5">
@@ -319,7 +330,7 @@
                               [class.staff-room-tile--cleaning]="room.status === 'CLEANING'"
                               [class.staff-room-tile--maintenance]="room.status === 'MAINTENANCE'"
                               [class.staff-room-tile--out]="room.status === 'OUT_OF_SERVICE'"
-                              [disabled]="room.status !== 'OCCUPIED'"
+                              [attr.aria-label]="'Open room ' + room.roomNumber + ' details'"
                               (click)="openRoomDetails(room)"
                             >
                               <strong>{{ room.roomNumber }}</strong>
@@ -348,14 +359,69 @@
   </div>
 
   @if (selectedRoom(); as room) {
-    <section class="staff-modal" role="dialog" aria-modal="true" aria-label="Occupied room details">
+    <section class="staff-modal" role="dialog" aria-modal="true" aria-label="Room details">
       <div class="staff-modal__panel dark-card">
         <div class="staff-modal__header">
           <div>
-            <p class="eyebrow">Occupied room</p>
+            <p class="eyebrow">{{ room.status === 'OCCUPIED' ? 'Occupied room' : 'Room operations' }}</p>
             <h2>Room {{ room.roomNumber }}</h2>
           </div>
-          <button type="button" class="btn btn-brand-outline" (click)="closeRoomDetails()">Close</button>
+          <button type="button" class="btn btn-brand-outline" [disabled]="roomStatusUpdating()" (click)="closeRoomDetails()">
+            Close
+          </button>
+        </div>
+
+        <div class="staff-modal__body">
+          <app-status-badge [status]="room.status" />
+          <dl class="staff-mini-grid staff-mini-grid--modal">
+            <div>
+              <dt>Room type</dt>
+              <dd>{{ roomTypeName(room.roomTypeId) }}</dd>
+            </div>
+            <div>
+              <dt>Room capacity</dt>
+              <dd>{{ room.capacity }} guests</dd>
+            </div>
+            <div>
+              <dt>Room id</dt>
+              <dd>{{ room.roomId }}</dd>
+            </div>
+          </dl>
+
+          @if (selectedRoomType(); as roomType) {
+            <section class="staff-room-policy">
+              <div class="staff-room-policy__header">
+                <p class="eyebrow">Booking policy</p>
+                <strong>{{ roomTypeCapacityLabel(roomType) }}</strong>
+              </div>
+
+              <div class="row g-2">
+                <div class="col-12 col-sm-4">
+                  <div class="staff-policy-chip">
+                    <span>Adults</span>
+                    <strong>up to {{ roomType.maxAdults }}</strong>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-4">
+                  <div class="staff-policy-chip">
+                    <span>Children</span>
+                    <strong>up to {{ roomType.maxChildren }}</strong>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-4">
+                  <div class="staff-policy-chip">
+                    <span>Infants</span>
+                    <strong>up to {{ roomType.maxInfants }}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <p class="staff-muted mb-0">
+                Room capacity is not the adult limit. Search and booking use this policy, so a room for
+                {{ roomType.maxTotalGuests }} guests may still allow only {{ roomType.maxAdults }} adults.
+              </p>
+            </section>
+          }
         </div>
 
         @if (selectedRoomReservation(); as reservation) {
@@ -390,7 +456,21 @@
             </div>
           </div>
         } @else {
-          <p class="staff-muted">No checked-in reservation is currently matched to this room.</p>
+          @if (room.status === 'OCCUPIED') {
+            <p class="staff-muted">No checked-in reservation is currently matched to this room.</p>
+          } @else {
+            @if (roomStatusProblem(); as roomStatusProblemDetail) {
+              <app-error-message [problem]="roomStatusProblemDetail" />
+            }
+
+            @if (canUpdateRoomStatus(room)) {
+              <app-room-status-form
+                [room]="room"
+                [submitting]="roomStatusUpdating()"
+                (submitted)="updateRoomStatus($event)"
+              />
+            }
+          }
         }
       </div>
     </section>

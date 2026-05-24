@@ -349,16 +349,12 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   color: var(--color-text-body);
+  cursor: pointer;
   display: grid;
   gap: 0.25rem;
   min-height: 7.5rem;
   padding: 0.85rem;
   text-align: left;
-}
-
-.staff-room-tile:disabled {
-  cursor: default;
-  opacity: 1;
 }
 
 .staff-room-tile strong {
@@ -389,8 +385,8 @@
   box-shadow: inset 0 0 0 1px rgba(124, 177, 237, 0.12);
 }
 
-.staff-room-tile--occupied:hover,
-.staff-room-tile--occupied:focus-visible {
+.staff-room-tile:hover,
+.staff-room-tile:focus-visible {
   border-color: var(--color-gold);
   transform: translateY(-1px);
 }
@@ -445,6 +441,47 @@
 
 .staff-mini-grid--modal {
   grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+}
+
+.staff-room-policy {
+  background: rgba(196, 156, 116, 0.1);
+  border: 1px solid rgba(196, 156, 116, 0.28);
+  border-radius: var(--radius-sm);
+  display: grid;
+  gap: 0.8rem;
+  padding: 0.85rem;
+}
+
+.staff-room-policy__header {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.staff-room-policy__header strong {
+  color: var(--color-gold-hover);
+}
+
+.staff-policy-chip {
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  display: grid;
+  gap: 0.2rem;
+  min-height: 4.5rem;
+  padding: 0.65rem;
+}
+
+.staff-policy-chip span {
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.staff-policy-chip strong {
+  color: var(--color-text);
 }
 
 .form-row {

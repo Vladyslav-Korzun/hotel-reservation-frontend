@@ -26,6 +26,7 @@ import {
 } from '../../../reservations/model/reservation.model';
 import { HotelsFacade } from '../../../hotels/services/hotels.facade';
 import { RoomOperation, RoomStatus } from '../../model/room-operation.model';
+import { RoomStatusForm, RoomStatusUpdate } from '../../components/room-status-form/room-status-form';
 import { StaffCreateReservationRequest } from '../../model/staff-reservation.model';
 import { StaffFacade } from '../../services/staff.facade';
 
@@ -103,7 +104,7 @@ const MS_PER_DAY = 86_400_000;
 
 @Component({
   selector: 'app-staff-dashboard-page',
-  imports: [ReactiveFormsModule, ErrorMessage, LoadingState, StatusBadge],
+  imports: [ReactiveFormsModule, ErrorMessage, LoadingState, StatusBadge, RoomStatusForm],
   templateUrl: './staff-dashboard-page.html',
   styleUrl: './staff-dashboard-page.scss',
 })
@@ -124,10 +125,13 @@ export class StaffDashboardPage {
   protected readonly lookupProblem = signal<ProblemDetail | null>(null);
   protected readonly accessProblem = signal<ProblemDetail | null>(null);
   protected readonly busyReservationId = signal<string | null>(null);
+  protected readonly roomStatusUpdating = signal(false);
+  protected readonly roomStatusProblem = signal<ProblemDetail | null>(null);
   protected readonly creatingReservation = signal(false);
   protected readonly createProblem = signal<ProblemDetail | null>(null);
   protected readonly createFormError = signal('');
   protected readonly latestCreatedReservation = signal<Reservation | null>(null);
+  protected readonly latestUpdatedRoom = signal<RoomOperation | null>(null);
 
   protected readonly statusFilter = signal<ReservationStatusFilter>('ALL');
   protected readonly searchTerm = signal('');
@@ -268,6 +272,11 @@ export class StaffDashboardPage {
         (reservation) => reservation.status === 'CHECKED_IN' && reservation.roomId === room.roomId,
       ) ?? null
     );
+  });
+
+  protected readonly selectedRoomType = computed(() => {
+    const room = this.selectedRoom();
+    return room ? this.roomTypeById().get(room.roomTypeId) ?? null : null;
   });
 
   protected readonly selectedServiceLines = computed<ServiceLine[]>(() =>
@@ -431,12 +440,39 @@ export class StaffDashboardPage {
   }
 
   protected openRoomDetails(room: RoomOperation): void {
-    if (room.status !== 'OCCUPIED') return;
+    this.roomStatusProblem.set(null);
     this.selectedRoom.set(room);
   }
 
   protected closeRoomDetails(): void {
+    if (this.roomStatusUpdating()) return;
     this.selectedRoom.set(null);
+  }
+
+  protected canUpdateRoomStatus(room: RoomOperation): boolean {
+    return room.status !== 'OCCUPIED';
+  }
+
+  protected updateRoomStatus(update: RoomStatusUpdate): void {
+    const selectedRoom = this.selectedRoom();
+    if (!selectedRoom || selectedRoom.roomId !== update.roomId || selectedRoom.status === 'OCCUPIED') {
+      return;
+    }
+
+    this.roomStatusProblem.set(null);
+    this.roomStatusUpdating.set(true);
+
+    this.staffFacade
+      .updateRoomStatus(update.roomId, update.status)
+      .pipe(finalize(() => this.roomStatusUpdating.set(false)))
+      .subscribe({
+        next: (updatedRoom) => {
+          this.applyRoomUpdate(updatedRoom);
+          this.latestUpdatedRoom.set(updatedRoom);
+          this.selectedRoom.set(null);
+        },
+        error: (error: unknown) => this.roomStatusProblem.set(this.problemFromError(error)),
+      });
   }
 
   protected statusLabel(status: string): string {
@@ -510,6 +546,12 @@ export class StaffDashboardPage {
     return `${formatPrice(roomType.basePriceAmount, roomType.basePriceCurrency)} / night`;
   }
 
+  protected roomTypeCapacityLabel(roomType: HotelRoomType): string {
+    const guests = plural(roomType.maxTotalGuests, 'guest');
+    const infants = roomType.maxInfants > 0 ? ` + ${plural(roomType.maxInfants, 'infant')}` : '';
+    return `${guests}${infants}`;
+  }
+
   protected servicePriceLabel(service: HotelServiceOffering): string {
     return formatPrice(service.priceAmount, service.priceCurrency);
   }
@@ -546,6 +588,8 @@ export class StaffDashboardPage {
     this.problem.set(null);
     this.lookupProblem.set(null);
     this.accessProblem.set(null);
+    this.roomStatusProblem.set(null);
+    this.latestUpdatedRoom.set(null);
 
     this.staffFacade
       .listRooms()
@@ -647,8 +691,19 @@ export class StaffDashboardPage {
     const roomStatus = roomStatusFromReservationUpdate(updated.status);
     if (!roomId || !roomStatus) return;
 
+    const currentRoom = this.roomById().get(roomId);
+    if (!currentRoom) return;
+
+    this.applyRoomUpdate({ ...currentRoom, status: roomStatus });
+  }
+
+  private applyRoomUpdate(updatedRoom: RoomOperation): void {
     this.rooms.update((rooms) =>
-      rooms.map((room) => (room.roomId === roomId ? { ...room, status: roomStatus } : room)),
+      rooms.map((room) => (room.roomId === updatedRoom.roomId ? { ...room, ...updatedRoom } : room)),
+    );
+
+    this.selectedRoom.update((room) =>
+      room?.roomId === updatedRoom.roomId ? { ...room, ...updatedRoom } : room,
     );
   }
 
