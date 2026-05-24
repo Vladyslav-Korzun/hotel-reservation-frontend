@@ -1,0 +1,85 @@
+<section class="card staff-assignment dark-form">
+  <div class="card-body">
+    <div class="staff-assignment__header">
+      <div>
+        <p class="eyebrow">Admin / Staff</p>
+        <h2>Hotel staff assignments</h2>
+        <p class="muted mb-0">Roles are managed in Keycloak. This page only assigns staff accounts to hotels.</p>
+      </div>
+    </div>
+
+    <div class="table-responsive staff-assignment__table-wrap">
+      <table class="table staff-assignment__table align-middle mb-0">
+        <thead>
+          <tr>
+            <th scope="col">Staff member</th>
+            <th scope="col">Hotel</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (member of staff(); track member.id) {
+            <tr>
+              <td>
+                <div class="staff-assignment__identity">
+                  <strong title="{{ member.externalId }}">{{ externalIdPreview(member.externalId) }}</strong>
+                  <span>Record ID: {{ member.id }}</span>
+                </div>
+              </td>
+              <td>
+                @if (member.hotelId) {
+                  <span class="staff-assignment__hotel">{{ hotelLabel(member.hotelId) }}</span>
+                } @else {
+                  <span class="badge rounded-pill staff-assignment__badge">Unassigned</span>
+                }
+              </td>
+              <td>
+                <div class="row g-2 align-items-center">
+                  <div class="col-12 col-md">
+                    <label class="visually-hidden" [for]="'staff-hotel-' + member.id">Hotel for staff member</label>
+                    <select
+                      class="form-select"
+                      [id]="'staff-hotel-' + member.id"
+                      [value]="selectionFor(member) || ''"
+                      [disabled]="busyStaffId() === member.id || hotels().length === 0"
+                      (change)="updateSelection(member.id, $event)"
+                    >
+                      <option value="">Choose hotel</option>
+                      @for (hotel of hotels(); track hotel.hotelId) {
+                        <option [value]="hotel.hotelId">{{ hotel.name }} / {{ hotel.city }}</option>
+                      }
+                    </select>
+                  </div>
+
+                  <div class="col-12 col-md-auto">
+                    <div class="d-flex flex-column flex-sm-row gap-2">
+                      <button
+                        type="button"
+                        class="btn btn-brand-light flex-fill"
+                        [disabled]="!canAssign(member)"
+                        (click)="assign(member)"
+                      >
+                        {{ busyStaffId() === member.id ? 'Saving...' : member.hotelId ? 'Change' : 'Assign' }}
+                      </button>
+
+                      @if (member.hotelId) {
+                        <button
+                          type="button"
+                          class="btn btn-brand-outline flex-fill"
+                          [disabled]="!canUnassign(member)"
+                          (click)="unassign(member)"
+                        >
+                          Unassign
+                        </button>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

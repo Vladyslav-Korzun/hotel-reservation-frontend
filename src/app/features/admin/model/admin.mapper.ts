@@ -3,9 +3,17 @@ import {
   HotelServiceOfferingResponseDto,
   RoomResponseDto,
   RoomTypeResponseDto,
+  StaffResponseDto,
 } from '../api/admin.dto';
 import { toHotel, toHotelServiceOffering } from '../../hotels/model/hotel.mapper';
-import { AdminHotel, AdminRoom, AdminRoomStatus, AdminRoomType, AdminServiceOffering } from './admin.model';
+import {
+  AdminHotel,
+  AdminRoom,
+  AdminRoomStatus,
+  AdminRoomType,
+  AdminServiceOffering,
+  AdminStaff,
+} from './admin.model';
 
 export function toAdminHotel(dto: HotelResponseDto): AdminHotel {
   return toHotel(dto);
@@ -48,6 +56,14 @@ export function toAdminRoom(dto: RoomResponseDto): AdminRoom {
 
 export function toAdminServiceOffering(dto: HotelServiceOfferingResponseDto): AdminServiceOffering {
   return toHotelServiceOffering(dto);
+}
+
+export function toAdminStaff(dto: StaffResponseDto): AdminStaff {
+  return {
+    id: dto.id,
+    externalId: dto.externalId,
+    hotelId: dto.hotelId ?? null,
+  };
 }
 
 function toAdminRoomStatus(status: RoomResponseDto['status']): AdminRoomStatus {

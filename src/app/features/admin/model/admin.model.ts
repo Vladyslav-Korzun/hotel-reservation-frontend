@@ -55,3 +55,9 @@ export interface AdminRoom {
   capacity: number;
   status: AdminRoomStatus;
 }
+
+export interface AdminStaff {
+  id: number;
+  externalId: string;
+  hotelId: number | null;
+}

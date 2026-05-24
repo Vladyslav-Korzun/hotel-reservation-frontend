@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import {
+  AssignStaffToHotelRequestDto,
   CreateHotelRequestDto,
   CreateRoomRequestDto,
   CreateRoomTypeRequestDto,
@@ -11,6 +12,7 @@ import {
   HotelServiceOfferingResponseDto,
   RoomResponseDto,
   RoomTypeResponseDto,
+  StaffResponseDto,
   UpdateHotelRequestDto,
   UpdateRoomRequestDto,
   UpdateRoomTypeRequestDto,
@@ -68,5 +70,22 @@ export class AdminApi {
 
   deactivateServiceOffering(hotelId: number, serviceId: number): Observable<void> {
     return this.http.delete<void>(`${environment.apiBaseUrl}/admin/hotels/${hotelId}/services/${serviceId}`);
+  }
+
+  listStaff(): Observable<StaffResponseDto[]> {
+    return this.http.get<StaffResponseDto[]>(`${environment.apiBaseUrl}/admin/staff`);
+  }
+
+  assignStaffToHotel(staffId: number, request: AssignStaffToHotelRequestDto): Observable<StaffResponseDto> {
+    return this.http.put<StaffResponseDto>(
+      `${environment.apiBaseUrl}/admin/staff/${encodeURIComponent(staffId)}/hotel`,
+      request,
+    );
+  }
+
+  unassignStaffFromHotel(staffId: number): Observable<StaffResponseDto> {
+    return this.http.delete<StaffResponseDto>(
+      `${environment.apiBaseUrl}/admin/staff/${encodeURIComponent(staffId)}/hotel`,
+    );
   }
 }

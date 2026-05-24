@@ -42,6 +42,45 @@
           @case ('services') {
             <app-service-offering-admin-form [submitting]="isBusy('services')" (submitted)="submitService($event)" />
           }
+          @case ('staff') {
+            @if (loadingStaffAssignments()) {
+              <section class="admin-staff-loading">
+                <app-loading-state label="Loading staff..." />
+                <div class="admin-staff-skeleton" aria-hidden="true"></div>
+              </section>
+            } @else if (staffProblem(); as problemDetail) {
+              @if (problemDetail.status === 403) {
+                <section class="card admin-empty-state">
+                  <div class="card-body">
+                    <p class="eyebrow">Access denied</p>
+                    <h2>Admin access required</h2>
+                    <p>Sign in with an account that has the ADMIN role.</p>
+                  </div>
+                </section>
+              } @else {
+                <app-error-message [problem]="problemDetail" />
+              }
+            } @else if (staffAssignments().length === 0) {
+              <section class="card admin-empty-state">
+                <div class="card-body">
+                  <p class="eyebrow">Staff</p>
+                  <h2>No staff members yet</h2>
+                  <p>They will appear here after their first sign-in to the system.</p>
+                  <button type="button" class="btn btn-brand-outline" (click)="reloadStaffAssignments()">
+                    Refresh
+                  </button>
+                </div>
+              </section>
+            } @else {
+              <app-staff-assignment-table
+                [staff]="staffAssignments()"
+                [hotels]="staffHotels()"
+                [busyStaffId]="busyStaffId()"
+                (assignmentRequested)="assignStaffToHotel($event)"
+                (unassignmentRequested)="unassignStaffFromHotel($event)"
+              />
+            }
+          }
         }
       </div>
 

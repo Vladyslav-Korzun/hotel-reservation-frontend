@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import {
+  AssignStaffToHotelRequestDto,
   CreateHotelRequestDto,
   CreateRoomRequestDto,
   CreateRoomTypeRequestDto,
@@ -16,8 +17,9 @@ import {
   toAdminRoom,
   toAdminRoomType,
   toAdminServiceOffering,
+  toAdminStaff,
 } from '../model/admin.mapper';
-import { AdminHotel, AdminRoom, AdminRoomType, AdminServiceOffering } from '../model/admin.model';
+import { AdminHotel, AdminRoom, AdminRoomType, AdminServiceOffering, AdminStaff } from '../model/admin.model';
 
 @Injectable({ providedIn: 'root' })
 export class AdminFacade {
@@ -64,5 +66,17 @@ export class AdminFacade {
 
   deactivateServiceOffering(hotelId: number, serviceId: number): Observable<void> {
     return this.api.deactivateServiceOffering(hotelId, serviceId);
+  }
+
+  listStaff(): Observable<AdminStaff[]> {
+    return this.api.listStaff().pipe(map((items) => items.map(toAdminStaff)));
+  }
+
+  assignStaffToHotel(staffId: number, request: AssignStaffToHotelRequestDto): Observable<AdminStaff> {
+    return this.api.assignStaffToHotel(staffId, request).pipe(map(toAdminStaff));
+  }
+
+  unassignStaffFromHotel(staffId: number): Observable<AdminStaff> {
+    return this.api.unassignStaffFromHotel(staffId).pipe(map(toAdminStaff));
   }
 }

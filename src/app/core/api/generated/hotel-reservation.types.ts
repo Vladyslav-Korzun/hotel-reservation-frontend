@@ -480,7 +480,11 @@ export interface paths {
         /** Assign a staff member to a hotel */
         put: operations["assignStaffToHotel"];
         post?: never;
-        delete?: never;
+        /**
+         * Remove a staff member from their hotel
+         * @description Clears the staff member's hotel assignment. The staff record itself is kept.
+         */
+        delete: operations["unassignStaffFromHotel"];
         options?: never;
         head?: never;
         patch?: never;
@@ -2522,6 +2526,64 @@ export interface operations {
                 };
             };
             /** @description Staff or hotel not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    unassignStaffFromHotel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                staffId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Staff member unassigned */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffResponse"];
+                };
+            };
+            /** @description Validation error */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff not found */
             404: {
                 headers: {
                     [name: string]: unknown;

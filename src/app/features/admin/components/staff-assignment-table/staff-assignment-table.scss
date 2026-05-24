@@ -1,0 +1,64 @@
+.staff-assignment {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-md);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-body);
+}
+
+.staff-assignment__header {
+  display: grid;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.staff-assignment__header h2 {
+  color: var(--color-text);
+  font-family: var(--font-serif);
+  letter-spacing: 0;
+}
+
+.staff-assignment__table-wrap {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.staff-assignment__table {
+  --bs-table-bg: transparent;
+  --bs-table-border-color: var(--color-border);
+  --bs-table-color: var(--color-text-body);
+}
+
+.staff-assignment__table th {
+  color: var(--color-gold-muted);
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.staff-assignment__table td {
+  min-width: 12rem;
+}
+
+.staff-assignment__identity {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.staff-assignment__identity strong {
+  color: var(--color-text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  overflow-wrap: anywhere;
+}
+
+.staff-assignment__identity span,
+.staff-assignment__hotel {
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.staff-assignment__badge {
+  background: rgba(196, 156, 116, 0.18);
+  border: 1px solid var(--color-border-gold);
+  color: var(--color-gold-hover);
+  font-weight: 900;
+}

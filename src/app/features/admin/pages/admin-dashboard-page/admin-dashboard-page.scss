@@ -39,7 +39,7 @@
 .admin-tabs__button {
   background: var(--color-bg-card-soft);
   border: 1px solid rgba(201, 190, 179, 0.18);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: #f7f7f2;
   font-weight: 800;
   min-height: 42px;
@@ -52,8 +52,8 @@
 }
 
 .admin-tabs__button.active {
-  background: #c49c74;
-  border-color: #c49c74;
+  background: var(--color-gold);
+  border-color: var(--color-gold);
   color: var(--color-ink-body);
 }
 
@@ -75,12 +75,65 @@
 
 .admin-result pre {
   background: rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   margin: 0.75rem 0 0;
   max-height: 560px;
   overflow: auto;
   padding: 0.85rem;
   white-space: pre-wrap;
+}
+
+.admin-empty-state {
+  background: var(--color-bg-card);
+  border: 1px solid rgba(201, 190, 179, 0.18);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-body);
+}
+
+.admin-empty-state .card-body {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: start;
+}
+
+.admin-empty-state h2 {
+  color: var(--color-text);
+  font-family: var(--font-serif);
+  letter-spacing: 0;
+}
+
+.admin-empty-state p:not(.eyebrow) {
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.admin-staff-loading {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-staff-skeleton {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-md);
+  border-radius: var(--radius-lg);
+  min-height: 18rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.admin-staff-skeleton::after {
+  animation: admin-shimmer 1.4s ease-in-out infinite;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  content: '';
+  inset: 0;
+  position: absolute;
+  transform: translateX(-100%);
+}
+
+@keyframes admin-shimmer {
+  to {
+    transform: translateX(100%);
+  }
 }
 
 @media (max-width: 720px) {

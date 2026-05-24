@@ -12,3 +12,5 @@ export type RoomResponseDto = components['schemas']['RoomResponse'];
 export type CreateServiceOfferingRequestDto = components['schemas']['CreateServiceOfferingRequest'];
 export type UpdateServiceOfferingRequestDto = components['schemas']['UpdateServiceOfferingRequest'];
 export type HotelServiceOfferingResponseDto = components['schemas']['HotelServiceOfferingResponse'];
+export type StaffResponseDto = components['schemas']['StaffResponse'];
+export type AssignStaffToHotelRequestDto = components['schemas']['AssignStaffToHotelRequest'];
