@@ -1,10 +1,4 @@
-/**
- * DTO shape for the availability-calendar endpoint.
- * TODO(backend): replace with `components['schemas']['RoomAvailabilityDay']` once the
- * OpenAPI types are regenerated.
- */
-export interface RoomAvailabilityDayDto {
-  date: string;
-  availableCount: number;
-  available: boolean;
-}
+import type { components } from '../../../core/api/generated/hotel-reservation.types';
+
+/** Type alias for the availability-calendar endpoint response item. */
+export type RoomAvailabilityDayDto = components['schemas']['RoomTypeAvailabilityCalendarDayResponse'];

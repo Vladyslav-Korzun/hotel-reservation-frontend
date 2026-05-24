@@ -15,8 +15,7 @@ export function toHotel(dto: HotelResponseDto): Hotel {
     petsAllowed: dto.petsAllowed,
     infantMaxAge: dto.infantMaxAge,
     childMaxAge: dto.childMaxAge,
-    // TODO(backend): once HotelResponseDto exposes `adultEquivalentAge`, drop the fallback.
-    adultEquivalentAge: (dto as { adultEquivalentAge?: number }).adultEquivalentAge ?? 13,
+    adultEquivalentAge: dto.adultEquivalentAge,
   };
 }
 
