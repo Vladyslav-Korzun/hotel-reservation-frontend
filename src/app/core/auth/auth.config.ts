@@ -10,5 +10,9 @@ export const authCodeFlowConfig: AuthConfig = {
   scope: 'openid profile email',
   requireHttps: environment.auth.requireHttps,
   showDebugInformation: !environment.production,
-  useSilentRefresh: true,
+  // No `useSilentRefresh: true` on purpose.
+  // With responseType === 'code', angular-oauth2-oidc routes automatic renewal
+  // through the refresh_token grant (no iframe, no silent-refresh.html required).
+  // Keycloak returns a refresh_token by default for the authorization_code flow,
+  // and setupAutomaticSilentRefresh() in AuthService schedules the call.
 };

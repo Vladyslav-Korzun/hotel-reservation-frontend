@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, inject, provideAppInitializer, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { provideOAuthClient } from 'angular-oauth2-oidc';
@@ -21,11 +21,6 @@ export const appConfig: ApplicationConfig = {
     ),
     provideHttpClient(withInterceptors([authTokenInterceptor])),
     provideOAuthClient(),
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (auth: AuthService) => () => auth.initialize(),
-      deps: [AuthService],
-      multi: true,
-    },
+    provideAppInitializer(() => inject(AuthService).initialize()),
   ],
 };
