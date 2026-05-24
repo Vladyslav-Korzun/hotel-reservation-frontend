@@ -8,7 +8,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { catchError, finalize, forkJoin, of } from 'rxjs';
+import { catchError, finalize, forkJoin, map, of, switchMap } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { toProblemDetail } from '../../../../core/http/api-error.util';
 import { ProblemDetail } from '../../../../core/http/problem-detail.model';
@@ -547,14 +547,21 @@ export class StaffDashboardPage {
     this.lookupProblem.set(null);
     this.accessProblem.set(null);
 
-    forkJoin({
-      reservations: this.staffFacade
-        .listReservations(100)
-        .pipe(catchError((error: unknown) => this.recoverStaffCollection<Reservation>(error))),
-      rooms: this.staffFacade
-        .listRooms()
-        .pipe(catchError((error: unknown) => this.recoverStaffCollection<RoomOperation>(error))),
-    })
+    this.staffFacade
+      .listRooms()
+      .pipe(
+        catchError((error: unknown) => this.recoverStaffCollection<RoomOperation>(error)),
+        switchMap((rooms) => {
+          if (this.accessProblem() || this.problem()) {
+            return of({ reservations: [] as Reservation[], rooms });
+          }
+
+          return this.staffFacade.listReservations(100).pipe(
+            catchError((error: unknown) => this.recoverStaffCollection<Reservation>(error)),
+            map((reservations) => ({ reservations, rooms })),
+          );
+        }),
+      )
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe(({ reservations, rooms }) => {
         this.reservations.set(sortReservationsByCreated(reservations));
