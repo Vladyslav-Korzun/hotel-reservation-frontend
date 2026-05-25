@@ -35,9 +35,13 @@
 }
 
 .date-range .search-field {
+  align-items: center;
   background: transparent;
   border: 0;
   border-radius: 0;
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: auto minmax(0, 1fr);
   height: 68px;
   padding: 0;
   pointer-events: none;
@@ -58,9 +62,14 @@
 }
 
 .date-range .date-text-input {
+  background: transparent;
+  border: 0;
   color: rgba(246, 246, 246, 0.92);
   cursor: pointer;
   font-weight: 800;
+  min-width: 0;
+  outline: 0;
+  width: 100%;
 }
 
 .date-range .date-text-input::placeholder {
@@ -297,4 +306,30 @@
   left: 0.8rem;
   position: absolute;
   top: calc(100% + 0.3rem);
+}
+
+@media (max-width: 640px) {
+  .date-popover,
+  .date-popover--compact {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(20rem, calc(100vw - 2rem));
+  }
+
+  .date-popover__months {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .date-popover__months .date-month:nth-child(2) {
+    display: none;
+  }
+
+  .date-month__weekdays {
+    font-size: 0.66rem;
+  }
+
+  .date-month__day {
+    min-height: 2.15rem;
+  }
 }

@@ -1,22 +1,20 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { finalize } from 'rxjs';
+import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { accommodationPartyToQueryParams } from '../../../../shared/accommodation/accommodation-party-query.util';
 import { toProblemDetail } from '../../../../core/http/api-error.util';
 import { ProblemDetail } from '../../../../core/http/problem-detail.model';
 import { HotelNetworkCarousel } from '../../components/hotel-network-carousel/hotel-network-carousel';
-import { HomeActions } from '../../components/home-actions/home-actions';
 import { HomeHero } from '../../components/home-hero/home-hero';
 import { ServicesPreview } from '../../components/services-preview/services-preview';
-import { TravelInspiration } from '../../components/travel-inspiration/travel-inspiration';
 import { HomeFinalCta } from '../../components/home-final-cta/home-final-cta';
-import { Hotel } from '../../../hotels/model/hotel.model';
+import { Hotel, HotelServiceOffering } from '../../../hotels/model/hotel.model';
 import { HotelsFacade } from '../../../hotels/services/hotels.facade';
 import { StaySearchCriteria } from '../../../stays/model/stay-search.model';
 
 @Component({
   selector: 'app-home-page',
-  imports: [HomeHero, HotelNetworkCarousel, HomeActions, ServicesPreview, TravelInspiration, HomeFinalCta],
+  imports: [HomeHero, HotelNetworkCarousel, ServicesPreview, HomeFinalCta],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
@@ -27,6 +25,9 @@ export class HomePage {
   protected readonly hotels = signal<Hotel[]>([]);
   protected readonly hotelsLoading = signal(false);
   protected readonly hotelsProblem = signal<ProblemDetail | null>(null);
+
+  protected readonly services = signal<HotelServiceOffering[]>([]);
+  protected readonly servicesLoading = signal(false);
 
   constructor() {
     this.loadHotels();
@@ -52,10 +53,37 @@ export class HomePage {
       .listHotels()
       .pipe(finalize(() => this.hotelsLoading.set(false)))
       .subscribe({
-        next: (hotels) => this.hotels.set(hotels),
+        next: (hotels) => {
+          this.hotels.set(hotels);
+          if (hotels.length) {
+            this.loadNetworkServices(hotels.map((h) => h.hotelId));
+          }
+        },
         error: (error: unknown) => {
           this.hotels.set([]);
           this.hotelsProblem.set(toProblemDetail(error));
+        },
+      });
+  }
+
+  private loadNetworkServices(hotelIds: number[]): void {
+    this.servicesLoading.set(true);
+
+    forkJoin(
+      hotelIds.map((id) =>
+        this.hotelsFacade.getHotelServices(id).pipe(catchError(() => of<HotelServiceOffering[]>([])))
+      ),
+    )
+      .pipe(finalize(() => this.servicesLoading.set(false)))
+      .subscribe({
+        next: (allServices) => {
+          const seen = new Set<string>();
+          const unique = allServices.flat().filter((s) => {
+            if (!s.active || seen.has(s.name)) return false;
+            seen.add(s.name);
+            return true;
+          });
+          this.services.set(unique);
         },
       });
   }

@@ -151,6 +151,14 @@ export class DateRangePicker implements OnInit {
     );
   }
 
+  protected toggle(): void {
+    if (this.isOpen()) {
+      this.close();
+    } else {
+      this.open();
+    }
+  }
+
   protected showPreviousMonths(): void {
     const previous = startOfMonth(addMonths(this.calendarBase(), -1));
     if (previous < startOfMonth(new Date())) return;
@@ -213,6 +221,7 @@ export class DateRangePicker implements OnInit {
       }
       this.applyDate('checkOut', isoDate);
       this.availabilityError.set('');
+      this.isOpen.set(false);
       return;
     }
 

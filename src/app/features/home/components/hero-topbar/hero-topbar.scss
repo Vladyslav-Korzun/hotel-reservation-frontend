@@ -19,21 +19,16 @@
   margin-left: 0.12rem;
 }
 
-.hero-topbar__app-link {
+.hero-topbar__decorator {
   border: 1px solid rgba(246, 246, 246, 0.78);
   border-radius: var(--radius-pill);
   color: var(--color-text-body);
-  font-weight: 800;
-  min-width: 132px;
-  padding: 0.62rem 1.15rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 0.5rem 1rem;
   text-align: center;
-  text-decoration: none;
-}
-
-.hero-topbar__app-link::after {
-  content: ' down';
-  font-size: 0.82rem;
-  opacity: 0.84;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.34);
 }
 
 @media (max-width: 920px) {
@@ -48,7 +43,4 @@
     gap: 1rem;
   }
 
-  .hero-topbar__app-link {
-    min-width: auto;
-  }
 }

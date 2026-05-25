@@ -116,6 +116,7 @@ export class GuestsPicker {
     const next = clamp(Number(control.value) + delta, 1, this.maxAdults);
     control.setValue(next);
     control.markAsTouched();
+    this.arrayVersion.update((v) => v + 1);
   }
 
   protected changeChildren(delta: number): void {

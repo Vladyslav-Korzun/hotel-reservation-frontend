@@ -5,8 +5,9 @@
     [loading]="hotelsLoading()"
     [problem]="hotelsProblem()"
   />
-  <app-services-preview />
-<app-travel-inspiration />
+  <app-services-preview
+    [services]="services()"
+    [loading]="servicesLoading()"
+  />
   <app-home-final-cta />
-  <app-home-actions />
 </main>

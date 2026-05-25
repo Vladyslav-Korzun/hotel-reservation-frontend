@@ -10,26 +10,6 @@
     <h2 id="csm-title" class="serif-heading">{{ title() }}</h2>
     <p class="csm__sub">{{ subtitle() }}</p>
 
-    <div class="csm__id-block">
-      <div>
-        <span class="csm__id-label">{{ idLabel() }}</span>
-        <span class="csm__id-value">{{ entityId() }}</span>
-      </div>
-      <button type="button" class="csm__copy" (click)="copyId()">
-        @if (justCopied()) {
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
-            <path d="M5 12l5 5L20 7"/>
-          </svg>
-          Copied
-        } @else {
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <rect x="9" y="9" width="11" height="11" rx="2"/>
-            <path d="M5 15V5a2 2 0 0 1 2-2h10"/>
-          </svg>
-          Copy
-        }
-      </button>
-    </div>
 
     <div class="csm__actions">
       <button type="button" class="csm__primary" (click)="primaryAction.emit()">

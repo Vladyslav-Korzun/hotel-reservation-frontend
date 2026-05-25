@@ -16,6 +16,16 @@ import { ConfirmDialogOutlet, ConfirmDialogService } from '../../../../shared/ui
 import { ErrorMessage } from '../../../../shared/ui/error-message/error-message';
 import { LoadingState } from '../../../../shared/ui/loading-state/loading-state';
 import { StatusBadge } from '../../../../shared/ui/status-badge/status-badge';
+import { formatInternationalPhone } from '../../../../shared/phone/phone-format.util';
+import {
+  dateNotInPastValidator,
+  displayDateValidator,
+  parseDisplayDate,
+  todayDisplayDate,
+  tomorrowDisplayDate,
+} from '../../../../shared/date/display-date.util';
+import { BookingPolicy, UNKNOWN_BOOKING_POLICY } from '../../../../shared/accommodation/booking-policy';
+import { ageGroup, canFitRoom } from '../../../../shared/accommodation/guest-classification.util';
 import { Hotel, HotelRoomType, HotelServiceOffering } from '../../../hotels/model/hotel.model';
 import {
   Reservation,
@@ -25,6 +35,8 @@ import {
   isCheckInAllowedReservation,
   isCheckOutAllowedReservation,
 } from '../../../reservations/model/reservation.model';
+import { ServiceOfferingSelector } from '../../../reservations/components/service-offering-selector/service-offering-selector';
+import { DateRangePicker } from '../../../stays/components/date-range-picker/date-range-picker';
 import { HotelsFacade } from '../../../hotels/services/hotels.facade';
 import { RoomOperation, RoomStatus } from '../../model/room-operation.model';
 import { RoomStatusForm, RoomStatusUpdate } from '../../components/room-status-form/room-status-form';
@@ -54,18 +66,14 @@ type StaffCreateForm = FormGroup<{
   stayingGuests: FormArray<StaffGuestFormGroup>;
 }>;
 
+interface CapacityFormError {
+  message: string;
+}
+
 interface RoomFloor {
   floor: number;
   label: string;
   rooms: RoomOperation[];
-}
-
-interface ServiceLine {
-  serviceOfferingId: number;
-  name: string;
-  quantity: number;
-  priceLabel: string;
-  totalLabel: string;
 }
 
 const STATUS_FILTERS: readonly ReservationStatusFilter[] = [
@@ -105,7 +113,16 @@ const MS_PER_DAY = 86_400_000;
 
 @Component({
   selector: 'app-staff-dashboard-page',
-  imports: [ReactiveFormsModule, ConfirmDialogOutlet, ErrorMessage, LoadingState, StatusBadge, RoomStatusForm],
+  imports: [
+    ReactiveFormsModule,
+    ConfirmDialogOutlet,
+    ErrorMessage,
+    LoadingState,
+    StatusBadge,
+    RoomStatusForm,
+    ServiceOfferingSelector,
+    DateRangePicker,
+  ],
   templateUrl: './staff-dashboard-page.html',
   styleUrl: './staff-dashboard-page.scss',
 })
@@ -145,27 +162,34 @@ export class StaffDashboardPage {
 
   protected readonly statusFilters = STATUS_FILTERS;
   protected readonly genderOptions: readonly GuestGender[] = ['MALE', 'FEMALE', 'OTHER'];
-  protected readonly serviceOfferingId = new FormControl<number | null>(null);
-  protected readonly serviceQuantity = new FormControl(1, {
-    nonNullable: true,
-    validators: [Validators.required, Validators.min(1)],
-  });
 
   protected readonly createForm: StaffCreateForm = new FormGroup(
     {
       roomTypeId: new FormControl<number | null>(null, [Validators.required, Validators.min(1)]),
-      checkIn: new FormControl(todayIsoDate(), { nonNullable: true, validators: [Validators.required] }),
-      checkOut: new FormControl(addIsoDays(todayIsoDate(), 1), { nonNullable: true, validators: [Validators.required] }),
-      firstName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
-      lastName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
+      checkIn: new FormControl(todayDisplayDate(), {
+        nonNullable: true,
+        validators: [Validators.required, displayDateValidator, dateNotInPastValidator],
+      }),
+      checkOut: new FormControl(tomorrowDisplayDate(), {
+        nonNullable: true,
+        validators: [Validators.required, displayDateValidator, dateNotInPastValidator],
+      }),
+      firstName: new FormControl('', { nonNullable: true, validators: [Validators.required, nonBlankValidator, Validators.maxLength(100)] }),
+      lastName: new FormControl('', { nonNullable: true, validators: [Validators.required, nonBlankValidator, Validators.maxLength(100)] }),
       email: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.email, Validators.maxLength(255)],
+        validators: [Validators.required, nonBlankValidator, Validators.email, Validators.maxLength(255)],
       }),
-      phone: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(32)] }),
+      phone: new FormControl('', { nonNullable: true, validators: [Validators.required, nonBlankValidator, Validators.maxLength(32)] }),
       stayingGuests: new FormArray<StaffGuestFormGroup>([createGuestGroup()]),
     },
-    { validators: [checkOutAfterCheckInIsoValidator] },
+    {
+      validators: [
+        checkOutAfterCheckInIsoValidator,
+        atLeastOneAdultGuestValidator,
+        (control) => this.staffRoomCapacityValidator(control),
+      ],
+    },
   );
 
   protected readonly roomTypeById = computed(
@@ -281,22 +305,6 @@ export class StaffDashboardPage {
     return room ? this.roomTypeById().get(room.roomTypeId) ?? null : null;
   });
 
-  protected readonly selectedServiceLines = computed<ServiceLine[]>(() =>
-    this.selectedServices().map((selection) => {
-      const service = this.serviceById().get(selection.serviceOfferingId);
-      const price = service?.priceAmount ?? 0;
-      const currency = service?.priceCurrency ?? this.preliminaryCurrency();
-
-      return {
-        serviceOfferingId: selection.serviceOfferingId,
-        name: service?.name ?? 'Service unavailable',
-        quantity: selection.quantity,
-        priceLabel: formatPrice(price, currency),
-        totalLabel: formatPrice(price * selection.quantity, currency),
-      };
-    }),
-  );
-
   constructor() {
     this.loadPage();
   }
@@ -338,37 +346,107 @@ export class StaffDashboardPage {
   }
 
   protected addStayingGuest(): void {
+    if (!this.canAddStayingGuest()) {
+      this.createForm.markAsTouched();
+      this.createForm.updateValueAndValidity();
+      return;
+    }
+
     this.stayingGuests.push(createGuestGroup());
+    this.createForm.markAsDirty();
+    this.createForm.updateValueAndValidity();
   }
 
   protected removeStayingGuest(index: number): void {
     if (this.stayingGuests.length <= 1) return;
     this.stayingGuests.removeAt(index);
+    this.createForm.markAsDirty();
+    this.createForm.updateValueAndValidity();
   }
 
-  protected addService(): void {
-    const serviceOfferingId = this.serviceOfferingId.value;
-    const quantity = Number(this.serviceQuantity.value);
+  protected updateSelectedServices(selections: ReservationServiceSelection[]): void {
+    this.selectedServices.set(selections);
+  }
 
-    if (!serviceOfferingId || !Number.isFinite(quantity) || quantity < 1) return;
+  protected copyContactToGuest(index: number): void {
+    const group = this.stayingGuests.at(index);
+    if (!group) return;
 
-    this.selectedServices.update((items) => {
-      const existing = items.find((item) => item.serviceOfferingId === serviceOfferingId);
-      if (existing) {
-        return items.map((item) =>
-          item.serviceOfferingId === serviceOfferingId ? { ...item, quantity: item.quantity + quantity } : item,
-        );
-      }
-
-      return [...items, { serviceOfferingId, quantity }];
+    group.patchValue({
+      firstName: this.createForm.controls.firstName.value,
+      lastName: this.createForm.controls.lastName.value,
     });
-
-    this.serviceOfferingId.setValue(null);
-    this.serviceQuantity.setValue(1);
+    group.markAsDirty();
+    group.markAllAsTouched();
   }
 
-  protected removeService(serviceOfferingId: number): void {
-    this.selectedServices.update((items) => items.filter((item) => item.serviceOfferingId !== serviceOfferingId));
+  protected formatStaffPhoneInput(): void {
+    const control = this.createForm.controls.phone;
+    const raw = control.value ?? '';
+    const formatted = formatInternationalPhone(raw);
+    if (formatted !== raw) {
+      control.setValue(formatted, { emitEvent: false });
+    }
+  }
+
+  protected showControlError(control: AbstractControl, error: string): boolean {
+    return control.touched && control.hasError(error);
+  }
+
+  protected hasCreateFormError(error: string): boolean {
+    return this.createForm.touched && this.createForm.hasError(error);
+  }
+
+  protected createCapacityError(): string {
+    const error = this.createForm.getError('roomCapacity') as CapacityFormError | null;
+    return this.createForm.touched || this.createForm.dirty ? (error?.message ?? '') : '';
+  }
+
+  protected canAddStayingGuest(): boolean {
+    const roomType = this.selectedCreateRoomType();
+    if (!roomType) return true;
+
+    const policy = this.createBookingPolicy(roomType);
+    const maxOccupants = policy.maxTotalGuests + (policy.childrenAllowed ? policy.maxInfants : 0);
+    return maxOccupants <= 0 || this.stayingGuests.length < maxOccupants;
+  }
+
+  protected selectedCreateRoomType(): HotelRoomType | null {
+    const roomTypeId = this.createForm.controls.roomTypeId.value;
+    return this.findRoomType(Number(roomTypeId));
+  }
+
+  protected createRoomCapacityHint(): string {
+    const roomType = this.selectedCreateRoomType();
+    if (!roomType) return 'Select a room type to see its guest limits.';
+
+    const parts = [
+      `up to ${plural(roomType.maxAdults, 'adult')}`,
+      `up to ${plural(roomType.maxTotalGuests, 'guest')} excluding infants`,
+    ];
+
+    if (roomType.maxChildren > 0) parts.push(`up to ${plural(roomType.maxChildren, 'child', 'children')}`);
+    if (roomType.maxInfants > 0) parts.push(`up to ${plural(roomType.maxInfants, 'infant')}`);
+
+    return `${roomType.name}: ${parts.join(' · ')}.`;
+  }
+
+  protected guestAgeLabel(group: StaffGuestFormGroup): string {
+    const age = Number(group.controls.age.value);
+    if (!Number.isFinite(age)) return 'Age pending';
+
+    const roomType = this.selectedCreateRoomType();
+    const policy = roomType ? this.createBookingPolicy(roomType) : UNKNOWN_BOOKING_POLICY;
+    if (age >= 18) return 'Adult guest';
+
+    switch (ageGroup(age, policy)) {
+      case 'infant':
+        return 'Infant guest';
+      case 'adult-equivalent-minor':
+        return 'Teen guest · counts as adult';
+      default:
+        return 'Child guest';
+    }
   }
 
   protected submitCreateReservation(): void {
@@ -383,7 +461,7 @@ export class StaffDashboardPage {
     }
 
     if (this.createForm.invalid) {
-      this.createFormError.set('Fill in the required fields and make sure check-out is after check-in.');
+      this.createFormError.set('Fill in the required fields before creating a staff reservation.');
       return;
     }
 
@@ -393,12 +471,15 @@ export class StaffDashboardPage {
       return;
     }
 
-    if (!stayingGuests.some((guest) => guest.age >= 18)) {
-      this.createFormError.set('At least one staying guest must be an adult.');
+    const value = this.createForm.getRawValue();
+    const checkIn = parseDisplayDate(value.checkIn);
+    const checkOut = parseDisplayDate(value.checkOut);
+
+    if (!checkIn || !checkOut) {
+      this.createFormError.set('Check-in and check-out dates must use DD.MM.YYYY.');
       return;
     }
 
-    const value = this.createForm.getRawValue();
     const serviceOfferings = this.selectedServices();
     const request: StaffCreateReservationRequest = {
       hotelId,
@@ -407,8 +488,8 @@ export class StaffDashboardPage {
       lastName: value.lastName.trim(),
       email: value.email.trim(),
       phone: value.phone.trim(),
-      checkIn: value.checkIn,
-      checkOut: value.checkOut,
+      checkIn,
+      checkOut,
       stayingGuests,
       serviceOfferings: serviceOfferings.length ? serviceOfferings : undefined,
     };
@@ -569,10 +650,6 @@ export class StaffDashboardPage {
     return `${guests}${infants}`;
   }
 
-  protected servicePriceLabel(service: HotelServiceOffering): string {
-    return formatPrice(service.priceAmount, service.priceCurrency);
-  }
-
   protected canCheckIn(reservation: Reservation): boolean {
     return isCheckInAllowedReservation(reservation.status);
   }
@@ -677,6 +754,7 @@ export class StaffDashboardPage {
       this.roomTypes.set(roomTypes);
       this.hotelServices.set(services);
       this.ensureDefaultRoomType();
+      this.createForm.updateValueAndValidity({ emitEvent: false });
     });
   }
 
@@ -740,6 +818,47 @@ export class StaffDashboardPage {
     this.createForm.controls.roomTypeId.setValue(this.roomTypes()[0].roomTypeId);
   }
 
+  private staffRoomCapacityValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value as {
+      roomTypeId?: number | null;
+      stayingGuests?: Array<{ age?: number | string | null }>;
+    };
+
+    const roomType = this.findRoomType(Number(value.roomTypeId));
+    if (!roomType) return null;
+
+    const guests = value.stayingGuests ?? [];
+    const adults = guests.filter((guest) => Number(guest.age) >= 18).length;
+    const childrenAges = guests
+      .map((guest) => Number(guest.age))
+      .filter((age) => Number.isFinite(age) && age < 18);
+
+    const result = canFitRoom(adults, childrenAges, this.createBookingPolicy(roomType));
+    return result.ok ? null : { roomCapacity: { message: result.issue.message } satisfies CapacityFormError };
+  }
+
+  private createBookingPolicy(roomType: HotelRoomType): BookingPolicy {
+    const hotel = this.hotel();
+
+    return {
+      maxAdults: roomType.maxAdults,
+      maxChildren: roomType.maxChildren,
+      maxInfants: roomType.maxInfants,
+      maxTotalGuests: roomType.maxTotalGuests,
+      petsAllowed: roomType.petsAllowed,
+      maxPets: roomType.maxPets,
+      infantMaxAge: hotel?.infantMaxAge ?? UNKNOWN_BOOKING_POLICY.infantMaxAge,
+      childMaxAge: hotel?.childMaxAge ?? UNKNOWN_BOOKING_POLICY.childMaxAge,
+      adultEquivalentAge: hotel?.adultEquivalentAge ?? UNKNOWN_BOOKING_POLICY.adultEquivalentAge,
+      childrenAllowed: hotel?.childrenAllowed ?? UNKNOWN_BOOKING_POLICY.childrenAllowed,
+    };
+  }
+
+  private findRoomType(roomTypeId: number): HotelRoomType | null {
+    if (!Number.isFinite(roomTypeId) || roomTypeId <= 0) return null;
+    return this.roomTypes().find((roomType) => roomType.roomTypeId === roomTypeId) ?? null;
+  }
+
   private normalizedStayingGuests(): StayingGuest[] {
     return this.stayingGuests.controls.map((group) => {
       const value = group.getRawValue();
@@ -755,8 +874,8 @@ export class StaffDashboardPage {
   private resetCreateForm(): void {
     this.createForm.reset({
       roomTypeId: this.roomTypes()[0]?.roomTypeId ?? null,
-      checkIn: todayIsoDate(),
-      checkOut: addIsoDays(todayIsoDate(), 1),
+      checkIn: todayDisplayDate(),
+      checkOut: tomorrowDisplayDate(),
       firstName: '',
       lastName: '',
       email: '',
@@ -765,8 +884,6 @@ export class StaffDashboardPage {
     this.stayingGuests.clear();
     this.stayingGuests.push(createGuestGroup());
     this.selectedServices.set([]);
-    this.serviceOfferingId.setValue(null);
-    this.serviceQuantity.setValue(1);
     this.createFormError.set('');
     this.createProblem.set(null);
   }
@@ -802,11 +919,22 @@ export class StaffDashboardPage {
 
 function createGuestGroup(): StaffGuestFormGroup {
   return new FormGroup({
-    firstName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
-    lastName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
+    firstName: new FormControl('', { nonNullable: true, validators: [Validators.required, nonBlankValidator, Validators.maxLength(100)] }),
+    lastName: new FormControl('', { nonNullable: true, validators: [Validators.required, nonBlankValidator, Validators.maxLength(100)] }),
     age: new FormControl(18, { nonNullable: true, validators: [Validators.required, Validators.min(0), Validators.max(130)] }),
     gender: new FormControl<GuestGender>('OTHER', { nonNullable: true, validators: [Validators.required] }),
   });
+}
+
+function nonBlankValidator(control: AbstractControl): ValidationErrors | null {
+  const value = control.value;
+  return typeof value === 'string' && value.trim().length === 0 ? { required: true } : null;
+}
+
+function atLeastOneAdultGuestValidator(control: AbstractControl): ValidationErrors | null {
+  const value = control.value as { stayingGuests?: Array<{ age?: number | string | null }> };
+  const stayingGuests = value.stayingGuests ?? [];
+  return stayingGuests.some((guest) => Number(guest.age) >= 18) ? null : { adultGuestRequired: true };
 }
 
 function checkOutAfterCheckInIsoValidator(control: AbstractControl): ValidationErrors | null {
@@ -848,20 +976,16 @@ function plural(value: number, singular: string, pluralLabel = `${singular}s`): 
 }
 
 function nightsBetween(checkIn: string, checkOut: string): number {
-  const start = Date.parse(`${checkIn}T00:00:00`);
-  const end = Date.parse(`${checkOut}T00:00:00`);
+  const checkInIso = parseDisplayDate(checkIn) ?? checkIn;
+  const checkOutIso = parseDisplayDate(checkOut) ?? checkOut;
+  const start = Date.parse(`${checkInIso}T00:00:00`);
+  const end = Date.parse(`${checkOutIso}T00:00:00`);
   if (!Number.isFinite(start) || !Number.isFinite(end)) return 0;
   return Math.max(0, Math.round((end - start) / MS_PER_DAY));
 }
 
 function todayIsoDate(): string {
   return toLocalIsoDate(new Date());
-}
-
-function addIsoDays(isoDate: string, days: number): string {
-  const date = new Date(`${isoDate}T00:00:00`);
-  date.setDate(date.getDate() + days);
-  return toLocalIsoDate(date);
 }
 
 function toLocalIsoDate(date: Date): string {

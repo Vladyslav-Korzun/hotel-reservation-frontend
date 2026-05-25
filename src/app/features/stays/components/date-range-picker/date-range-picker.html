@@ -4,7 +4,7 @@
 
     <!-- ── Normal (search-form) mode ─────────────────────────── -->
     <div class="date-range-group">
-      <div class="date-range" [class.date-range--open]="isOpen()" (click)="open()">
+      <div class="date-range" [class.date-range--open]="isOpen()" (click)="toggle()">
 
         <div class="date-field-group">
           <div class="search-field search-field--check-in">
@@ -12,7 +12,7 @@
               type="button"
               class="calendar-trigger"
               aria-label="Open check-in date picker"
-              (click)="open()"
+              (click)="$event.stopPropagation()"
             >
               <span class="field-icon field-icon--calendar" aria-hidden="true"></span>
             </button>
@@ -53,7 +53,7 @@
               type="button"
               class="calendar-trigger"
               aria-label="Open check-out date picker"
-              (click)="open()"
+              (click)="$event.stopPropagation()"
             >
               <span class="field-icon field-icon--calendar" aria-hidden="true"></span>
             </button>
@@ -136,7 +136,7 @@
 
     <!-- ── Compact mode (booking card / wizard step) ─────────── -->
     <div class="drp-compact">
-      <div class="drp-compact__trigger" (click)="open()">
+      <div class="drp-compact__trigger" (click)="toggle()">
         <div class="drp-cell">
           <div class="drp-cell__label">Check-in</div>
           <div class="drp-cell__value">

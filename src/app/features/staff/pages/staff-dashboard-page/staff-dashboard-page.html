@@ -508,17 +508,20 @@
                 </option>
               }
             </select>
+            @if (showControlError(createForm.controls.roomTypeId, 'required')) {
+              <span class="field-error">Room type is required.</span>
+            }
           </label>
 
-          <label class="col-12 col-md-3 form-row">
-            <span class="form-label">Check-in</span>
-            <input class="form-control" type="date" formControlName="checkIn" />
-          </label>
-
-          <label class="col-12 col-md-3 form-row">
-            <span class="form-label">Check-out</span>
-            <input class="form-control" type="date" formControlName="checkOut" />
-          </label>
+          <div class="col-12 col-md-6 form-row">
+            <span class="form-label">Stay dates</span>
+            <app-date-range-picker
+              [compact]="true"
+              [checkInControl]="createForm.controls.checkIn"
+              [checkOutControl]="createForm.controls.checkOut"
+              [rangeError]="hasCreateFormError('dateRange') ? 'Check-out must be after check-in.' : ''"
+            />
+          </div>
         </div>
 
         <section class="staff-form-section">
@@ -533,18 +536,50 @@
             <label class="col-12 col-md-6 form-row">
               <span class="form-label">First name</span>
               <input class="form-control" formControlName="firstName" autocomplete="given-name" />
+              @if (showControlError(createForm.controls.firstName, 'required')) {
+                <span class="field-error">First name is required.</span>
+              } @else if (showControlError(createForm.controls.firstName, 'maxlength')) {
+                <span class="field-error">First name is too long.</span>
+              }
             </label>
             <label class="col-12 col-md-6 form-row">
               <span class="form-label">Last name</span>
               <input class="form-control" formControlName="lastName" autocomplete="family-name" />
+              @if (showControlError(createForm.controls.lastName, 'required')) {
+                <span class="field-error">Last name is required.</span>
+              } @else if (showControlError(createForm.controls.lastName, 'maxlength')) {
+                <span class="field-error">Last name is too long.</span>
+              }
             </label>
             <label class="col-12 col-md-6 form-row">
               <span class="form-label">Email</span>
               <input class="form-control" type="email" formControlName="email" autocomplete="email" />
+              @if (showControlError(createForm.controls.email, 'required')) {
+                <span class="field-error">Email is required.</span>
+              } @else if (showControlError(createForm.controls.email, 'email')) {
+                <span class="field-error">Use a valid email address.</span>
+              } @else if (showControlError(createForm.controls.email, 'maxlength')) {
+                <span class="field-error">Email is too long.</span>
+              }
             </label>
             <label class="col-12 col-md-6 form-row">
               <span class="form-label">Phone</span>
-              <input class="form-control" type="tel" formControlName="phone" autocomplete="tel" />
+              <input
+                class="form-control"
+                type="tel"
+                inputmode="tel"
+                maxlength="32"
+                formControlName="phone"
+                autocomplete="tel"
+                placeholder="+421 912 345 678"
+                (input)="formatStaffPhoneInput()"
+                (blur)="formatStaffPhoneInput()"
+              />
+              @if (showControlError(createForm.controls.phone, 'required')) {
+                <span class="field-error">Phone is required.</span>
+              } @else if (showControlError(createForm.controls.phone, 'maxlength')) {
+                <span class="field-error">Phone is too long.</span>
+              }
             </label>
           </div>
         </section>
@@ -555,43 +590,83 @@
               <p class="eyebrow">Staying guests</p>
               <h3 class="serif-heading">Occupants</h3>
             </div>
-            <button type="button" class="btn btn-brand-outline" (click)="addStayingGuest()">Add guest</button>
+            <button type="button" class="btn btn-brand-outline" [disabled]="!canAddStayingGuest()" (click)="addStayingGuest()">
+              Add guest
+            </button>
           </div>
+
+          <p class="field-hint">{{ createRoomCapacityHint() }}</p>
+
+          @if (hasCreateFormError('adultGuestRequired')) {
+            <p class="field-error">At least one staying guest must be an adult.</p>
+          }
+
+          @if (createCapacityError()) {
+            <p class="field-error">{{ createCapacityError() }}</p>
+          }
 
           <div class="row g-3">
             @for (guestGroup of stayingGuests.controls; track guestGroup; let index = $index) {
               <fieldset class="col-12 staff-guest-editor" [formGroupName]="index">
-                <div class="row g-3 align-items-end">
-                  <label class="col-12 col-lg-3 form-row">
-                    <span class="form-label">First name</span>
-                    <input class="form-control" formControlName="firstName" />
-                  </label>
-                  <label class="col-12 col-lg-3 form-row">
-                    <span class="form-label">Last name</span>
-                    <input class="form-control" formControlName="lastName" />
-                  </label>
-                  <label class="col-6 col-lg-2 form-row">
-                    <span class="form-label">Age</span>
-                    <input class="form-control" type="number" min="0" max="130" formControlName="age" />
-                  </label>
-                  <label class="col-6 col-lg-2 form-row">
-                    <span class="form-label">Gender</span>
-                    <select class="form-select" formControlName="gender">
-                      @for (gender of genderOptions; track gender) {
-                        <option [ngValue]="gender">{{ gender }}</option>
-                      }
-                    </select>
-                  </label>
-                  <div class="col-12 col-lg-2">
+                <div class="staff-guest-editor__header">
+                  <div>
+                    <strong class="serif-heading">Guest {{ index + 1 }}</strong>
+                    <span>{{ guestAgeLabel(guestGroup) }}</span>
+                  </div>
+                  <div class="staff-guest-editor__actions">
+                    <button type="button" class="btn btn-brand-outline" (click)="copyContactToGuest(index)">
+                      Use contact
+                    </button>
                     <button
                       type="button"
-                      class="btn btn-brand-danger w-100"
+                      class="btn btn-brand-danger"
                       [disabled]="stayingGuests.length <= 1"
                       (click)="removeStayingGuest(index)"
                     >
                       Remove
                     </button>
                   </div>
+                </div>
+
+                <div class="row g-3">
+                  <label class="col-12 col-md-6 col-xl-3 form-row">
+                    <span class="form-label">First name</span>
+                    <input class="form-control" formControlName="firstName" />
+                    @if (showControlError(guestGroup.controls.firstName, 'required')) {
+                      <span class="field-error">First name is required.</span>
+                    } @else if (showControlError(guestGroup.controls.firstName, 'maxlength')) {
+                      <span class="field-error">First name is too long.</span>
+                    }
+                  </label>
+                  <label class="col-12 col-md-6 col-xl-3 form-row">
+                    <span class="form-label">Last name</span>
+                    <input class="form-control" formControlName="lastName" />
+                    @if (showControlError(guestGroup.controls.lastName, 'required')) {
+                      <span class="field-error">Last name is required.</span>
+                    } @else if (showControlError(guestGroup.controls.lastName, 'maxlength')) {
+                      <span class="field-error">Last name is too long.</span>
+                    }
+                  </label>
+                  <label class="col-6 col-xl-3 form-row">
+                    <span class="form-label">Age</span>
+                    <input class="form-control" type="number" min="0" max="130" formControlName="age" />
+                    @if (showControlError(guestGroup.controls.age, 'required')) {
+                      <span class="field-error">Age is required.</span>
+                    } @else if (showControlError(guestGroup.controls.age, 'min') || showControlError(guestGroup.controls.age, 'max')) {
+                      <span class="field-error">Age must be from 0 to 130.</span>
+                    }
+                  </label>
+                  <label class="col-6 col-xl-3 form-row">
+                    <span class="form-label">Gender</span>
+                    <select class="form-select" formControlName="gender">
+                      @for (gender of genderOptions; track gender) {
+                        <option [ngValue]="gender">{{ gender }}</option>
+                      }
+                    </select>
+                    @if (showControlError(guestGroup.controls.gender, 'required')) {
+                      <span class="field-error">Gender is required.</span>
+                    }
+                  </label>
                 </div>
               </fieldset>
             }
@@ -607,42 +682,10 @@
           </div>
 
           @if (activeServices().length) {
-            <div class="row g-2 align-items-end">
-              <label class="col-12 col-md form-row">
-                <span class="form-label">Service</span>
-                <select class="form-select" [formControl]="serviceOfferingId">
-                  <option [ngValue]="null">Select service</option>
-                  @for (service of activeServices(); track service.serviceOfferingId) {
-                    <option [ngValue]="service.serviceOfferingId">
-                      {{ service.name }} · {{ servicePriceLabel(service) }}
-                    </option>
-                  }
-                </select>
-              </label>
-
-              <label class="col-12 col-md-2 form-row">
-                <span class="form-label">Quantity</span>
-                <input class="form-control" type="number" min="1" [formControl]="serviceQuantity" />
-              </label>
-
-              <div class="col-12 col-md-auto">
-                <button type="button" class="btn btn-brand-outline w-100" (click)="addService()">Add service</button>
-              </div>
-            </div>
-
-            @if (selectedServiceLines().length) {
-              <div class="staff-selected-services">
-                @for (line of selectedServiceLines(); track line.serviceOfferingId) {
-                  <div class="staff-selected-service">
-                    <span>{{ line.name }} x{{ line.quantity }}</span>
-                    <strong>{{ line.totalLabel }}</strong>
-                    <button type="button" class="btn btn-brand-danger" (click)="removeService(line.serviceOfferingId)">
-                      Remove
-                    </button>
-                  </div>
-                }
-              </div>
-            }
+            <app-service-offering-selector
+              [services]="activeServices()"
+              (selectionsChanged)="updateSelectedServices($event)"
+            />
           } @else {
             <p class="staff-muted">No active services were returned for this hotel.</p>
           }
@@ -654,7 +697,7 @@
             <strong class="serif-heading">{{ preliminaryTotalLabel() }}</strong>
             <small>{{ selectedNights() }} nights · final price is calculated by backend after creation</small>
           </div>
-          <button type="submit" class="btn btn-brand" [disabled]="creatingReservation()">
+          <button type="submit" class="btn btn-brand" [disabled]="creatingReservation() || createForm.invalid">
             {{ creatingReservation() ? 'Creating...' : 'Create reservation' }}
           </button>
         </footer>

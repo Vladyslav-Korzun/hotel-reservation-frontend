@@ -7,6 +7,7 @@ import {
   parseDisplayDate,
   toDisplayDate,
 } from '../../../../shared/date/display-date.util';
+import { formatInternationalPhone } from '../../../../shared/phone/phone-format.util';
 import { getGuestAgeConsistencyIssue } from '../../wizard/guest-age-consistency';
 import { GUEST_GENDERS, GuestDetailGroup, GuestGender } from '../../wizard/guest-detail';
 
@@ -116,11 +117,7 @@ export class StepGuestDetails {
   protected formatPhoneInput(): void {
     const ctrl = this.contactPhoneControl();
     const raw = ctrl.value ?? '';
-    const trimmed = raw.trimStart();
-    const digitsSource = trimmed.startsWith('00') ? trimmed.slice(2) : trimmed;
-    const digits = digitsSource.replace(/\D/g, '').slice(0, 15);
-    const grouped = digits.match(/.{1,3}/g)?.join(' ') ?? '';
-    const formatted = digits ? `+${grouped}` : trimmed.startsWith('+') ? '+' : '';
+    const formatted = formatInternationalPhone(raw);
     if (formatted !== raw) {
       ctrl.setValue(formatted, { emitEvent: false });
     }
