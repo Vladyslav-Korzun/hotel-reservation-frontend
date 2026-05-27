@@ -8,13 +8,45 @@
 
 .hotels-page__title {
   color: var(--color-text);
-  font-family: Georgia, 'Times New Roman', serif;
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 500;
 }
 
 .hotels-page__subtitle {
   max-width: 640px;
+}
+
+.pagination-bar {
+  border-top: 1px solid var(--color-border);
+  padding-top: 2rem;
+}
+
+.pagination-btn {
+  background: var(--color-bg-badge);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.38rem 0.9rem;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  &:hover:not(:disabled) {
+    border-color: rgba(196, 156, 116, 0.5);
+    color: var(--color-gold-muted);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.35;
+  }
+}
+
+.pagination-info {
+  color: var(--color-text-subtle);
+  font-size: 0.82rem;
+  font-weight: 700;
 }
 
 .hotels-page__empty {

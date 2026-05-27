@@ -1,9 +1,9 @@
 <main class="hotels-page feature-page">
   <div class="hotels-page__backdrop feature-page__backdrop" aria-hidden="true"></div>
 
-  <div class="container-xxl px-4 px-md-5 pb-5 position-relative">
+  <div class="container-xxl px-4 pb-5 position-relative">
 
-    <header class="pt-4 pt-md-5 mb-4">
+    <header class="mb-4">
       <p class="eyebrow mb-1">Hotels</p>
       <h1 class="hotels-page__title mb-2">Browse available hotels</h1>
       <p class="muted mb-0 hotels-page__subtitle">
@@ -23,12 +23,25 @@
         <app-loading-state label="Loading hotels..." />
       } @else if (hotels().length) {
         <div class="row g-4">
-          @for (hotel of hotels(); track hotel.hotelId) {
+          @for (hotel of pagedHotels(); track hotel.hotelId) {
             <div class="col-12 col-md-6 col-xl-4">
               <app-hotel-card [hotel]="hotel" />
             </div>
           }
         </div>
+
+        @if (totalPages() > 1) {
+          <nav class="pagination-bar d-flex justify-content-center align-items-center gap-3 mt-5"
+               aria-label="Hotel pages">
+            <button class="pagination-btn"
+                    [disabled]="currentPage() === 1"
+                    (click)="currentPage.update(p => p - 1)">← Prev</button>
+            <span class="pagination-info">Page {{ currentPage() }} of {{ totalPages() }}</span>
+            <button class="pagination-btn"
+                    [disabled]="currentPage() === totalPages()"
+                    (click)="currentPage.update(p => p + 1)">Next →</button>
+          </nav>
+        }
       } @else {
         <div class="hotels-page__empty p-4 p-md-5 text-center">
           <h2 class="mb-2">No hotels found</h2>

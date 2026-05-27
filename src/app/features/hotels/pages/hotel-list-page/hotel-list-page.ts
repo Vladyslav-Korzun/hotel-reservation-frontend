@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -25,6 +25,16 @@ export class HotelListPage {
   protected readonly problem = signal<ProblemDetail | null>(null);
   protected readonly cityFilter = signal('');
 
+  protected readonly PAGE_SIZE = 15;
+  protected readonly currentPage = signal(1);
+  protected readonly totalPages = computed(() =>
+    Math.max(1, Math.ceil(this.hotels().length / this.PAGE_SIZE)),
+  );
+  protected readonly pagedHotels = computed(() => {
+    const start = (this.currentPage() - 1) * this.PAGE_SIZE;
+    return this.hotels().slice(start, start + this.PAGE_SIZE);
+  });
+
   constructor() {
     this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => {
       const city = params.get('city')?.trim() ?? '';
@@ -40,7 +50,12 @@ export class HotelListPage {
 
   private loadHotels(city: string): void {
     this.problem.set(null);
-    this.loading.set(true);
+    this.currentPage.set(1);
+
+    // Skip the loading spinner when the result is already in cache
+    if (!this.hotelsFacade.hasHotelsCache(city)) {
+      this.loading.set(true);
+    }
 
     this.hotelsFacade
       .listHotels(city ? { city } : {})
