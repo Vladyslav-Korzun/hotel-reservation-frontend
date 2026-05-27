@@ -22,8 +22,15 @@
             <tr>
               <td>
                 <div class="staff-assignment__identity">
-                  <strong title="{{ member.externalId }}">{{ externalIdPreview(member.externalId) }}</strong>
-                  <span>Record ID: {{ member.id }}</span>
+                  @if (member.username) {
+                    <strong>{{ member.username }}</strong>
+                    @if (member.email) {
+                      <span class="staff-assignment__email">{{ member.email }}</span>
+                    }
+                  } @else {
+                    <strong title="{{ member.externalId }}">{{ externalIdPreview(member.externalId) }}</strong>
+                  }
+                  <span class="staff-assignment__record-id">ID: {{ member.id }}</span>
                 </div>
               </td>
               <td>

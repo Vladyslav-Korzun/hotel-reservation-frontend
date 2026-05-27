@@ -45,7 +45,6 @@
 
 .staff-assignment__identity strong {
   color: var(--color-text);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   overflow-wrap: anywhere;
 }
 
@@ -53,6 +52,15 @@
 .staff-assignment__hotel {
   color: var(--color-text-muted);
   font-weight: 700;
+}
+
+.staff-assignment__email {
+  font-size: 0.82rem;
+}
+
+.staff-assignment__record-id {
+  font-size: 0.75rem;
+  opacity: 0.5;
 }
 
 .staff-assignment__badge {

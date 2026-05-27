@@ -504,6 +504,10 @@ export interface components {
              * @description Hotel the staff member is assigned to. Null when not yet assigned.
              */
             hotelId?: number | null;
+            /** @description Display name from Keycloak (preferred_username). */
+            username?: string | null;
+            /** @description Email from Keycloak. */
+            email?: string | null;
         };
         AssignStaffToHotelRequest: {
             /** Format: int64 */

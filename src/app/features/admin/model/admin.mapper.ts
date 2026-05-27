@@ -63,6 +63,8 @@ export function toAdminStaff(dto: StaffResponseDto): AdminStaff {
     id: dto.id,
     externalId: dto.externalId,
     hotelId: dto.hotelId ?? null,
+    username: dto.username ?? null,
+    email: dto.email ?? null,
   };
 }
 

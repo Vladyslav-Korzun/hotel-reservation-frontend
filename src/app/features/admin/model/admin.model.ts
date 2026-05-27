@@ -60,4 +60,6 @@ export interface AdminStaff {
   id: number;
   externalId: string;
   hotelId: number | null;
+  username: string | null;
+  email: string | null;
 }
