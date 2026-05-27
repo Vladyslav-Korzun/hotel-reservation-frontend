@@ -37,12 +37,6 @@ export class StaySearchPage {
   protected readonly loading = signal(false);
   protected readonly problem = signal<ProblemDetail | null>(null);
   protected readonly results = signal<StayOption[]>([]);
-  /**
-   * hotelId → Hotel lookup, fed by `GET /hotels`. Lets each result card show
-   * its own city instead of the search criterion ("All cities").
-   * TODO(backend): once `AvailableRoomResponse` exposes `hotelCity` + `hotelCountry`,
-   *                drop this lookup and read directly from `StayOption`.
-   */
   private readonly hotelsById = signal<ReadonlyMap<number, Hotel>>(new Map());
   protected readonly sortMode = signal<'price-asc' | 'price-desc' | 'availability'>('price-asc');
   protected readonly petsOnly = signal(false);
@@ -56,16 +50,35 @@ export class StaySearchPage {
     return [...items].sort((a, b) => b.availableCount - a.availableCount);
   });
 
+  protected readonly PAGE_SIZE = 15;
+  protected readonly currentPage = signal(1);
+  protected readonly totalPages = computed(() =>
+    Math.max(1, Math.ceil(this.displayResults().length / this.PAGE_SIZE)),
+  );
+  protected readonly pagedResults = computed(() => {
+    const start = (this.currentPage() - 1) * this.PAGE_SIZE;
+    return this.displayResults().slice(start, start + this.PAGE_SIZE);
+  });
+
   constructor() {
     this.loadResults(this.criteria());
     this.loadHotelsLookup();
   }
 
-  /** Show the actual hotel city for this room (not the search criterion). */
   protected hotelCityLabel(option: StayOption): string {
     const hotel = this.hotelsById().get(option.hotelId);
-    if (!hotel) return option.hotelName; // graceful fallback while lookup is loading
+    if (!hotel) return option.hotelName;
     return `${hotel.city}, ${hotel.country}`;
+  }
+
+  protected setSortMode(mode: 'price-asc' | 'price-desc' | 'availability'): void {
+    this.sortMode.set(mode);
+    this.currentPage.set(1);
+  }
+
+  protected togglePetsOnly(): void {
+    this.petsOnly.update(v => !v);
+    this.currentPage.set(1);
   }
 
   private loadHotelsLookup(): void {
@@ -148,8 +161,6 @@ export class StaySearchPage {
       currency: option.currency,
     };
 
-    // New backend fields — only include when present, so the URL stays short
-    // when older room types have no extras configured.
     if (option.bedSetup) base['bedSetup'] = option.bedSetup;
     if (option.roomSizeSqm !== null) base['roomSizeSqm'] = option.roomSizeSqm;
     if (option.amenities.length > 0) base['amenities'] = option.amenities.join(',');
@@ -168,6 +179,7 @@ export class StaySearchPage {
   private loadResults(criteria: StaySearchCriteria): void {
     this.problem.set(null);
     this.loading.set(true);
+    this.currentPage.set(1);
 
     this.stays
       .search(criteria)

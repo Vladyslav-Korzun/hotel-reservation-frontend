@@ -9,11 +9,27 @@ import { StayOption, StaySearchCriteria } from '../model/stay-search.model';
 export class StaysFacade {
   private readonly api = inject(StaysApi);
 
+  /** Cache: same search criteria returns the same observable. */
+  private readonly searchCache = new Map<string, Observable<StayOption[]>>();
+
   /** Cache: same (hotelId, roomTypeId, from, to) returns the same observable. */
   private readonly availabilityCache = new Map<string, Observable<readonly RoomAvailabilityDay[]>>();
 
   search(criteria: StaySearchCriteria): Observable<StayOption[]> {
-    return this.api
+    const key = [
+      criteria.destination,
+      criteria.hotelId ?? '',
+      criteria.checkIn,
+      criteria.checkOut,
+      criteria.adults,
+      criteria.childrenAges.join(','),
+      JSON.stringify(criteria.pets),
+    ].join('|');
+
+    const cached = this.searchCache.get(key);
+    if (cached) return cached;
+
+    const request$ = this.api
       .searchAvailableRooms({
         city: criteria.destination,
         hotelId: criteria.hotelId ?? undefined,
@@ -23,7 +39,13 @@ export class StaysFacade {
         childrenAges: criteria.childrenAges,
         pets: criteria.pets,
       })
-      .pipe(map((items) => items.map(toStayOption)));
+      .pipe(
+        map((items) => items.map(toStayOption)),
+        shareReplay({ bufferSize: 1, refCount: false }),
+      );
+
+    this.searchCache.set(key, request$);
+    return request$;
   }
 
   /**

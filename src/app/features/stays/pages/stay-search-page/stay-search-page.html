@@ -1,7 +1,7 @@
 <main class="stay-search-page feature-page">
   <div class="stay-search-page__backdrop feature-page__backdrop" aria-hidden="true"></div>
 
-  <div class="container stay-search-page__content">
+  <div class="container-xxl px-4 pb-5 stay-search-page__content">
     <section class="stays-header">
       <p class="eyebrow">Available stays</p>
       <h1>Choose a hotel for your trip</h1>
@@ -27,11 +27,11 @@
 
     @if (!loading() && results().length) {
       <div class="filter-bar d-flex flex-wrap align-items-center gap-2 mt-3">
-        <button class="filter-pill" [class.filter-pill--active]="sortMode() === 'price-asc'" (click)="sortMode.set('price-asc')">Price ↑</button>
-        <button class="filter-pill" [class.filter-pill--active]="sortMode() === 'price-desc'" (click)="sortMode.set('price-desc')">Price ↓</button>
-        <button class="filter-pill" [class.filter-pill--active]="sortMode() === 'availability'" (click)="sortMode.set('availability')">Most available</button>
+        <button class="filter-pill" [class.filter-pill--active]="sortMode() === 'price-asc'" (click)="setSortMode('price-asc')">Price ↑</button>
+        <button class="filter-pill" [class.filter-pill--active]="sortMode() === 'price-desc'" (click)="setSortMode('price-desc')">Price ↓</button>
+        <button class="filter-pill" [class.filter-pill--active]="sortMode() === 'availability'" (click)="setSortMode('availability')">Most available</button>
         <span class="filter-bar__divider" aria-hidden="true"></span>
-        <button class="filter-pill" [class.filter-pill--active]="petsOnly()" (click)="petsOnly.update(v => !v)">Pets only</button>
+        <button class="filter-pill" [class.filter-pill--active]="petsOnly()" (click)="togglePetsOnly()">Pets only</button>
       </div>
     }
 
@@ -39,7 +39,7 @@
       <app-loading-state label="Loading available rooms..." />
     } @else if (displayResults().length) {
       <div class="row g-4 mt-2">
-        @for (option of displayResults(); track option.hotelId + '-' + option.roomTypeId; let index = $index) {
+        @for (option of pagedResults(); track option.hotelId + '-' + option.roomTypeId; let index = $index) {
           <div class="col-12 col-md-6 col-xl-4">
             <article class="card stay-card h-100">
               <div class="stay-card__media">
@@ -72,6 +72,19 @@
           </div>
         }
       </div>
+
+      @if (totalPages() > 1) {
+        <nav class="pagination-bar d-flex justify-content-center align-items-center gap-3 mt-5"
+             aria-label="Search result pages">
+          <button class="pagination-btn"
+                  [disabled]="currentPage() === 1"
+                  (click)="currentPage.update(p => p - 1)">← Prev</button>
+          <span class="pagination-info">Page {{ currentPage() }} of {{ totalPages() }}</span>
+          <button class="pagination-btn"
+                  [disabled]="currentPage() === totalPages()"
+                  (click)="currentPage.update(p => p + 1)">Next →</button>
+        </nav>
+      }
     } @else {
       <div class="alert empty-results mt-3">
         <h2 class="h5">No matching rooms</h2>
