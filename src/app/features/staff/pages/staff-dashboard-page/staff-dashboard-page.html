@@ -520,6 +520,8 @@
               [checkInControl]="createForm.controls.checkIn"
               [checkOutControl]="createForm.controls.checkOut"
               [rangeError]="hasCreateFormError('dateRange') ? 'Check-out must be after check-in.' : ''"
+              [availabilityByDate]="availabilityByDate()"
+              (visibleRangeChange)="onPickerRangeChange($event)"
             />
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormArray,
@@ -37,6 +38,8 @@ import {
 } from '../../../reservations/model/reservation.model';
 import { ServiceOfferingSelector } from '../../../reservations/components/service-offering-selector/service-offering-selector';
 import { DateRangePicker } from '../../../stays/components/date-range-picker/date-range-picker';
+import { AvailabilityByDate, RoomAvailabilityDay } from '../../../stays/model/availability.model';
+import { StaysFacade } from '../../../stays/services/stays.facade';
 import { HotelsFacade } from '../../../hotels/services/hotels.facade';
 import { RoomOperation, RoomStatus } from '../../model/room-operation.model';
 import { RoomStatusForm, RoomStatusUpdate } from '../../components/room-status-form/room-status-form';
@@ -129,6 +132,7 @@ const MS_PER_DAY = 86_400_000;
 export class StaffDashboardPage {
   private readonly staffFacade = inject(StaffFacade);
   private readonly hotelsFacade = inject(HotelsFacade);
+  private readonly staysFacade = inject(StaysFacade);
   private readonly authService = inject(AuthService);
   private readonly confirmDialog = inject(ConfirmDialogService);
 
@@ -159,6 +163,11 @@ export class StaffDashboardPage {
   protected readonly selectedRoom = signal<RoomOperation | null>(null);
   protected readonly createModalOpen = signal(false);
   protected readonly selectedServices = signal<ReservationServiceSelection[]>([]);
+
+  /** Per-day availability shown in the create-reservation date picker. */
+  protected readonly availabilityByDate = signal<AvailabilityByDate>({});
+  private readonly loadedAvailabilityWindows = new Set<string>();
+  private lastVisibleRange: { fromIso: string; toIso: string } | null = null;
 
   protected readonly statusFilters = STATUS_FILTERS;
   protected readonly genderOptions: readonly GuestGender[] = ['MALE', 'FEMALE', 'OTHER'];
@@ -307,6 +316,18 @@ export class StaffDashboardPage {
 
   constructor() {
     this.loadPage();
+
+    // When the staff member picks a different room type, clear cached availability
+    // so the calendar re-fetches and shows correct occupied dates.
+    this.createForm.controls.roomTypeId.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.loadedAvailabilityWindows.clear();
+        this.availabilityByDate.set({});
+        if (this.lastVisibleRange) {
+          this.fetchAvailabilityWindow(this.lastVisibleRange);
+        }
+      });
   }
 
   protected get stayingGuests(): FormArray<StaffGuestFormGroup> {
@@ -343,6 +364,40 @@ export class StaffDashboardPage {
   protected closeCreateModal(): void {
     if (this.creatingReservation()) return;
     this.createModalOpen.set(false);
+  }
+
+  /** Called by DateRangePicker when its visible 2-month window changes. */
+  protected onPickerRangeChange(range: { fromIso: string; toIso: string }): void {
+    this.lastVisibleRange = range;
+    this.fetchAvailabilityWindow(range);
+  }
+
+  private fetchAvailabilityWindow(range: { fromIso: string; toIso: string }): void {
+    const hotelId = this.hotelId();
+    const roomTypeId = Number(this.createForm.controls.roomTypeId.value);
+    if (!hotelId || !roomTypeId) return;
+
+    const windowKey = `${hotelId}|${roomTypeId}|${range.fromIso}|${range.toIso}`;
+    if (this.loadedAvailabilityWindows.has(windowKey)) return;
+    this.loadedAvailabilityWindows.add(windowKey);
+
+    this.staysFacade
+      .getAvailabilityCalendar(hotelId, roomTypeId, range.fromIso, range.toIso)
+      .subscribe({
+        next: (days) => this.mergeAvailability(days),
+        error: () => {
+          // Soft-fail: keep existing data, backend re-validates on submit.
+          this.loadedAvailabilityWindows.delete(windowKey);
+        },
+      });
+  }
+
+  private mergeAvailability(days: readonly RoomAvailabilityDay[]): void {
+    this.availabilityByDate.update((prev) => {
+      const next = { ...prev };
+      for (const d of days) next[d.date] = d;
+      return next;
+    });
   }
 
   protected addStayingGuest(): void {
