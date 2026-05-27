@@ -184,8 +184,12 @@ export class MyReservationsPage {
       return true;
     }
 
+    if (filter === 'cancelled') {
+      return reservation.status === 'CANCELLED';
+    }
+
     if (reservation.status === 'CANCELLED') {
-      return filter === 'cancelled';
+      return false;
     }
 
     const past = this.isPastReservation(reservation);

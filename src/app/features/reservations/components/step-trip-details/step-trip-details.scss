@@ -17,11 +17,18 @@
     border-top: 0;
     padding-top: 0;
   }
+
+  /* Prevent the counter pill from being clipped by overflow:hidden on .wpanel */
+  > .wp-counter {
+    flex-shrink: 0;
+  }
 }
 
 .std__counter-copy {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
   gap: 2px;
 
   strong {
@@ -33,6 +40,7 @@
   span {
     color: var(--color-text-muted);
     font-size: 12.5px;
+    overflow-wrap: break-word;
   }
 }
 

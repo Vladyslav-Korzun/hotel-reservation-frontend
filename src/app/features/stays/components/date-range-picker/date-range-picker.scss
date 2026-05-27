@@ -217,13 +217,16 @@
   font-weight: inherit;
 }
 
-/* Externally marked as unavailable — keep base look, just strike through */
+/* Externally marked as unavailable — red tint so booked dates stand out */
 .date-month__day--unavailable,
 .date-month__day--unavailable:hover {
-  background: transparent;
-  color: rgba(246, 246, 246, 0.32);
-  text-decoration: line-through;
+  background: rgba(210, 55, 55, 0.15);
+  border-radius: var(--radius-sm);
+  color: rgba(255, 115, 95, 0.6);
+  cursor: not-allowed;
   font-weight: inherit;
+  text-decoration: line-through;
+  text-decoration-color: rgba(255, 115, 95, 0.45);
 }
 
 /* Inline error under the month-nav row */
