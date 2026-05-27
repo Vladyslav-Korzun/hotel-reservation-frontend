@@ -1,7 +1,7 @@
 import { CurrencyPipe } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { Params, RouterLink } from '@angular/router';
-import { STAY_PHOTO_IDS, unsplashUrl } from '../../../../shared/assets/placeholder-images';
+import { roomPhotoUrl } from '../../../../shared/assets/placeholder-images';
 import { StayOption } from '../../model/stay-search.model';
 
 @Component({
@@ -24,7 +24,7 @@ export class RoomSimilarCard {
 
   protected readonly imgSrc = computed(() => {
     const opt = this.option();
-    return unsplashUrl(STAY_PHOTO_IDS[(opt.hotelId + opt.roomTypeId) % STAY_PHOTO_IDS.length], 800);
+    return roomPhotoUrl(opt.roomTypeId);
   });
 
   protected readonly capacityLabel = computed(() => {

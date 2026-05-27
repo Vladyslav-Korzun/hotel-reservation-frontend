@@ -3,7 +3,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
-import { STAY_PHOTO_IDS, unsplashUrl } from '../../../../shared/assets/placeholder-images';
+import { roomPhotoUrl } from '../../../../shared/assets/placeholder-images';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { formatAccommodationPartySummary } from '../../../../shared/accommodation/accommodation-party-presenter.util';
 import {
@@ -168,8 +168,8 @@ export class StaySearchPage {
     return base;
   }
 
-  protected stayImage(index: number): string {
-    return unsplashUrl(STAY_PHOTO_IDS[index % STAY_PHOTO_IDS.length], 1200);
+  protected stayImage(roomTypeId: number): string {
+    return roomPhotoUrl(roomTypeId);
   }
 
   protected displayDate(value: string): string {

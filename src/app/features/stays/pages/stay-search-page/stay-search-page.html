@@ -44,7 +44,7 @@
             <article class="card stay-card h-100">
               <div class="stay-card__media">
                 <div class="ratio ratio-16x9">
-                  <img class="stay-card__img" [src]="stayImage(index)" [alt]="option.roomName" loading="lazy" />
+                  <img class="stay-card__img" [src]="stayImage(option.roomTypeId)" [alt]="option.roomName" loading="lazy" />
                 </div>
                 <span class="stay-card__count">{{ option.availableCount }} left</span>
               </div>
