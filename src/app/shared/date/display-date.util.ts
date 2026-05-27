@@ -60,7 +60,9 @@ export function parseDisplayDate(value: string): string | null {
     Number.isNaN(date.getTime()) ||
     date.getFullYear() !== yearNumber ||
     date.getMonth() !== monthNumber - 1 ||
-    date.getDate() !== dayNumber
+    date.getDate() !== dayNumber ||
+    yearNumber < 1900 ||
+    yearNumber > new Date().getFullYear()
   ) {
     return null;
   }
