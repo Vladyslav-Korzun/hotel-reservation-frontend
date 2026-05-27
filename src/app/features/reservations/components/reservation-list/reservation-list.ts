@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { HOTEL_PHOTO_IDS, unsplashUrl } from '../../../../shared/assets/placeholder-images';
+import { hotelPhotoUrl } from '../../../../shared/assets/placeholder-images';
 import { toDisplayDate } from '../../../../shared/date/display-date.util';
 import { StatusBadge } from '../../../../shared/ui/status-badge/status-badge';
 import {
@@ -140,8 +140,7 @@ export class ReservationList {
   }
 
   protected photoUrl(hotelId: number): string {
-    const index = Math.abs(hotelId) % HOTEL_PHOTO_IDS.length;
-    return unsplashUrl(HOTEL_PHOTO_IDS[index], 420);
+    return hotelPhotoUrl(hotelId);
   }
 
   protected guestName(guest: StayingGuest): string {

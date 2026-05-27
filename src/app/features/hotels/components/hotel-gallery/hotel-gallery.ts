@@ -1,5 +1,5 @@
 import { Component, computed, input, signal } from '@angular/core';
-import { HOTEL_PHOTO_IDS, unsplashUrl } from '../../../../shared/assets/placeholder-images';
+import { hotelPhotoUrl } from '../../../../shared/assets/placeholder-images';
 import { PhotoLightbox } from '../../../../shared/ui/photo-lightbox/photo-lightbox';
 
 /**
@@ -18,20 +18,14 @@ import { PhotoLightbox } from '../../../../shared/ui/photo-lightbox/photo-lightb
 export class HotelGallery {
   readonly hotelId = input.required<number>();
 
-  /**
-   * Start at offset (hotelId + 1) % 6 so the gallery doesn't repeat the hero photo
-   * (hero uses `HOTEL_PHOTO_IDS[hotelId % 6]`).
-   */
   protected readonly cells = computed(() => {
-    const start = (Math.abs(this.hotelId()) + 1) % HOTEL_PHOTO_IDS.length;
-    return Array.from({ length: 5 }, (_, i) => {
-      const id = HOTEL_PHOTO_IDS[(start + i) % HOTEL_PHOTO_IDS.length];
-      return {
-        id,
-        thumbUrl: unsplashUrl(id, i === 0 ? 1400 : 900, 82),
-        fullUrl: unsplashUrl(id, 2000, 86),
-      };
-    });
+    const url = hotelPhotoUrl(this.hotelId());
+    // Show the same hotel photo in all 5 gallery slots (backend gallery not yet available).
+    return Array.from({ length: 5 }, (_, i) => ({
+      id: `${this.hotelId()}-${i}`,
+      thumbUrl: url,
+      fullUrl: url,
+    }));
   });
 
   /** Full-size images list fed into the shared lightbox. */

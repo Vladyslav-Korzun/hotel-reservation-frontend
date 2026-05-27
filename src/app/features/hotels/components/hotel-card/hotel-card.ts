@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { HOTEL_PHOTO_IDS, unsplashUrl } from '../../../../shared/assets/placeholder-images';
+import { hotelPhotoUrl } from '../../../../shared/assets/placeholder-images';
 import { toTitleCase } from '../../../../shared/text/title-case.util';
 import { Hotel } from '../../model/hotel.model';
 
@@ -53,5 +53,5 @@ export class HotelCard {
 }
 
 function hotelImageUrl(hotelId: number): string {
-  return unsplashUrl(HOTEL_PHOTO_IDS[Math.abs(hotelId) % HOTEL_PHOTO_IDS.length], 1200, 82);
+  return hotelPhotoUrl(hotelId);
 }

@@ -1,7 +1,7 @@
 ﻿import { Component, computed, effect, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProblemDetail } from '../../../../core/http/problem-detail.model';
-import { HOTEL_PHOTO_IDS, unsplashUrl } from '../../../../shared/assets/placeholder-images';
+import { hotelPhotoUrl } from '../../../../shared/assets/placeholder-images';
 import { toTitleCase } from '../../../../shared/text/title-case.util';
 import { ErrorMessage } from '../../../../shared/ui/error-message/error-message';
 import { LoadingState } from '../../../../shared/ui/loading-state/loading-state';
@@ -66,7 +66,7 @@ export class HotelNetworkCarousel {
   }
 
   protected imageUrl(hotel: Hotel): string {
-    return unsplashUrl(HOTEL_PHOTO_IDS[Math.abs(hotel.hotelId) % HOTEL_PHOTO_IDS.length], 1400, 82);
+    return hotelPhotoUrl(hotel.hotelId);
   }
 
   protected hasImage(hotel: Hotel): boolean {

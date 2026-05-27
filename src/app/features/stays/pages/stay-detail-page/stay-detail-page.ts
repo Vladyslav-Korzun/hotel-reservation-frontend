@@ -8,7 +8,7 @@ import {
   accommodationPartyToQueryParams,
   readAccommodationPartyFromQuery,
 } from '../../../../shared/accommodation/accommodation-party-query.util';
-import { HOTEL_PHOTO_IDS, STAY_PHOTO_IDS, unsplashUrl } from '../../../../shared/assets/placeholder-images';
+import { hotelPhotoUrl, STAY_PHOTO_IDS, unsplashUrl } from '../../../../shared/assets/placeholder-images';
 import {
   groupAmenities,
   ROOM_AMENITY_META,
@@ -84,7 +84,7 @@ export class StayDetailPage {
   protected readonly thumbImages = [...STAY_PHOTO_IDS].map((id) => unsplashUrl(id, 800));
 
   protected readonly hotelImage = unsplashUrl(
-    HOTEL_PHOTO_IDS[this.stay.hotelId % HOTEL_PHOTO_IDS.length],
+    hotelPhotoUrl(this.stay.hotelId),
     600,
   );
 

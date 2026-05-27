@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { HOTEL_PHOTO_IDS, unsplashUrl } from '../../../../shared/assets/placeholder-images';
+import { hotelPhotoUrl } from '../../../../shared/assets/placeholder-images';
 import { StatusBadge } from '../../../../shared/ui/status-badge/status-badge';
 import { Hotel } from '../../model/hotel.model';
 
@@ -15,7 +15,7 @@ export class HotelHero {
 
   /** Deterministic hero photo: same hotel always gets the same image. */
   protected readonly backgroundUrl = computed(() =>
-    unsplashUrl(HOTEL_PHOTO_IDS[Math.abs(this.hotel().hotelId) % HOTEL_PHOTO_IDS.length], 2400, 82),
+    hotelPhotoUrl(this.hotel().hotelId),
   );
 
   /** Honest substitute for the mockup's invented "Boutique hotel · since 1923" line. */

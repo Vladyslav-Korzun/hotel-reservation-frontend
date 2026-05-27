@@ -13,7 +13,7 @@ import {
   readGuestsParty,
 } from '../../../../shared/accommodation/guests-form.util';
 import { parseDisplayDate, toDisplayDate } from '../../../../shared/date/display-date.util';
-import { HOTEL_PHOTO_IDS, unsplashUrl } from '../../../../shared/assets/placeholder-images';
+import { hotelPhotoUrl } from '../../../../shared/assets/placeholder-images';
 import { ConfirmSuccessModal } from '../../../../shared/ui/confirm-success-modal/confirm-success-modal';
 import { ErrorMessage } from '../../../../shared/ui/error-message/error-message';
 import { Hotel, HotelServiceOffering } from '../../../hotels/model/hotel.model';
@@ -675,7 +675,7 @@ function readDisplayDetails(route: ActivatedRoute): PageDisplayDetails {
     hotelName: q.get('hotelName')?.trim() || (hotelId > 0 ? `Hotel #${hotelId}` : 'Selected hotel'),
     roomName: q.get('roomName')?.trim() || 'Selected room',
     location: q.get('location')?.trim() ?? '',
-    photoUrl: unsplashUrl(HOTEL_PHOTO_IDS[hotelId % HOTEL_PHOTO_IDS.length], 400),
+    photoUrl: hotelPhotoUrl(hotelId),
   };
 }
 
