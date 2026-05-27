@@ -33,20 +33,8 @@ export class HomeHero implements OnDestroy {
 }
 
 const HERO_SLIDES = [
-  {
-    imageUrl:
-      'https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=2000&q=82',
-  },
-  {
-    imageUrl:
-      'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=2000&q=82',
-  },
-  {
-    imageUrl:
-      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=2000&q=82',
-  },
-  {
-    imageUrl:
-      'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=2000&q=82',
-  },
+  { imageUrl: '/images/hero/hero-1.jpg' },
+  { imageUrl: '/images/hero/hero-2.jpg' },
+  { imageUrl: '/images/hero/hero-3.jpg' },
+  { imageUrl: '/images/hero/hero-4.jpg' },
 ] as const;
