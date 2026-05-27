@@ -36,6 +36,9 @@ export class PhotoLightbox {
   /** Internal cursor — seeded by `openAtIndex` then navigates freely via prev/next. */
   private readonly internalIndex = signal(0);
 
+  /** Touch X at the start of a gesture — used to detect horizontal swipes. */
+  private touchStartX = 0;
+
   protected readonly isOpen = computed(
     () => this.openAtIndex() !== null && this.images().length > 0,
   );
@@ -94,5 +97,20 @@ export class PhotoLightbox {
         this.next();
         break;
     }
+  }
+
+  @HostListener('document:touchstart', ['$event'])
+  protected onTouchStart(event: TouchEvent): void {
+    if (!this.isOpen()) return;
+    this.touchStartX = event.touches[0].clientX;
+  }
+
+  /** Swipe left → next photo, swipe right → previous photo. Threshold: 50 px. */
+  @HostListener('document:touchend', ['$event'])
+  protected onTouchEnd(event: TouchEvent): void {
+    if (!this.isOpen()) return;
+    const deltaX = event.changedTouches[0].clientX - this.touchStartX;
+    if (Math.abs(deltaX) < 50) return;
+    deltaX < 0 ? this.next() : this.prev();
   }
 }

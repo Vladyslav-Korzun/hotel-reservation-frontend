@@ -114,31 +114,39 @@
 
 @media (max-width: 720px) {
   .photo-lightbox {
-    grid-template-columns: 1fr;
+    /* Stage spans both columns (row 1); nav buttons sit side-by-side (row 2) */
+    grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr auto;
   }
 
+  .photo-lightbox__stage {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    max-height: calc(100dvh - 90px);
+    padding: 52px 12px 8px; /* top clears the close button */
+  }
+
   .photo-lightbox__image {
-    max-height: calc(100vh - 180px);
+    max-height: calc(100dvh - 130px);
     max-width: calc(100vw - 24px);
   }
 
   .photo-lightbox__nav {
     grid-row: 2;
     height: 44px;
-    margin: 0;
+    margin: 0 0 20px;
     width: 44px;
 
     &--prev {
+      grid-column: 1;
       justify-self: end;
-      margin-bottom: 18px;
-      margin-right: 12px;
+      margin-right: 8px;
     }
 
     &--next {
+      grid-column: 2;
       justify-self: start;
-      margin-bottom: 18px;
-      margin-left: 12px;
+      margin-left: 8px;
     }
 
     svg {
