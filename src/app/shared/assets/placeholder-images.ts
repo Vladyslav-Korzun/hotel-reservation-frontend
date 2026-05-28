@@ -19,30 +19,30 @@ const HOTEL_1004_GALLERY: readonly string[] = [
 // Room galleries — 6 photos each
 // ---------------------------------------------------------------------------
 const ROOM_1401_GALLERY: readonly string[] = [
-  '/images/rooms/1401/gallery/1.jpg',
-  '/images/rooms/1401/gallery/2.jpg',
-  '/images/rooms/1401/gallery/3.jpg',
-  '/images/rooms/1401/gallery/4.jpg',
-  '/images/rooms/1401/gallery/5.jpg',
-  '/images/rooms/1401/gallery/6.jpg',
+  '/images/rooms/1401/gallery/antonio-araujo-WWYF8Lts8Ho-unsplash.jpg',
+  '/images/rooms/1401/gallery/adam-winger-JByeWNMdfoY-unsplash.jpg',
+  '/images/rooms/1401/gallery/billy-jo-catbagan--5m_rM6fs_Q-unsplash.jpg',
+  '/images/rooms/1401/gallery/oswald-elsaboath-ym_EI-DTS1g-unsplash.jpg',
+  '/images/rooms/1401/gallery/patrick-konior-n4eg3hRSZIE-unsplash.jpg',
+  '/images/rooms/1401/gallery/puscas-adryan-cctXsbxydg0-unsplash.jpg',
 ];
 
 const ROOM_1402_GALLERY: readonly string[] = [
-  '/images/rooms/1402/gallery/1.jpg',
-  '/images/rooms/1402/gallery/2.jpg',
-  '/images/rooms/1402/gallery/3.jpg',
-  '/images/rooms/1402/gallery/4.jpg',
-  '/images/rooms/1402/gallery/5.jpg',
-  '/images/rooms/1402/gallery/6.jpg',
+  '/images/rooms/1402/gallery/claudio-pecci-xqIF1YDewjk-unsplash.jpg',
+  '/images/rooms/1402/gallery/collov-home-design-kSoe7EoxHIE-unsplash.jpg',
+  '/images/rooms/1402/gallery/hemant-kanojiya-LSKfjiXsbUU-unsplash.jpg',
+  '/images/rooms/1402/gallery/huy-nguyen-I__khoHttww-unsplash.jpg',
+  '/images/rooms/1402/gallery/kin-shing-lai-o_0EQCFAkrU-unsplash.jpg',
+  '/images/rooms/1402/gallery/yu-yi-tsai-UX_Pn1L2FkQ-unsplash.jpg',
 ];
 
 const ROOM_1403_GALLERY: readonly string[] = [
-  '/images/rooms/1403/gallery/1.jpg',
-  '/images/rooms/1403/gallery/2.jpg',
-  '/images/rooms/1403/gallery/3.jpg',
-  '/images/rooms/1403/gallery/4.jpg',
-  '/images/rooms/1403/gallery/5.jpg',
-  '/images/rooms/1403/gallery/6.jpg',
+  '/images/rooms/1403/gallery/ariel-domenden-nWYotnbVlXk-unsplash.jpg',
+  '/images/rooms/1403/gallery/albeg-BiYZ45ImeCs-unsplash.jpg',
+  '/images/rooms/1403/gallery/ikshana-productions-Uxr2PqYtgW4-unsplash.jpg',
+  '/images/rooms/1403/gallery/khatshoot-uzojmJr2Brc-unsplash.jpg',
+  '/images/rooms/1403/gallery/roberto-nickson-emqnSQwQQDo-unsplash.jpg',
+  '/images/rooms/1403/gallery/zac-gudakov-UPbYh3A5cdg-unsplash.jpg',
 ];
 
 /** Per-hotel gallery override. When present, used instead of ALL_HOTEL_PHOTOS pool. */
@@ -68,9 +68,9 @@ export const HOTEL_BG_MAP: Record<number, string> = {
 
 /** Per-room background photo, keyed by roomTypeId. */
 export const ROOM_BG_MAP: Record<number, string> = {
-  1401: '/images/rooms/1401/bg/main.jpg',
-  1402: '/images/rooms/1402/bg/main.jpg',
-  1403: '/images/rooms/1403/bg/main.jpg',
+  1401: '/images/rooms/1401/bg/antonio-araujo-WWYF8Lts8Ho-unsplash.jpg',
+  1402: '/images/rooms/1402/bg/claudio-pecci-xqIF1YDewjk-unsplash.jpg',
+  1403: '/images/rooms/1403/bg/ariel-domenden-nWYotnbVlXk-unsplash.jpg',
 };
 
 /** Returns the background photo for a hotel card (falls back to card photo). */
@@ -238,9 +238,9 @@ export const ROOM_PHOTO_MAP: Record<number, string> = {
   1301: '/images/rooms/room-1301.jpg',
   1302: '/images/rooms/room-1302.jpg',
   1303: '/images/rooms/room-1303.jpg',
-  1401: '/images/rooms/1401/card/main.jpg',
-  1402: '/images/rooms/1402/card/main.jpg',
-  1403: '/images/rooms/1403/card/main.jpg',
+  1401: '/images/rooms/1401/card/antonio-araujo-WWYF8Lts8Ho-unsplash.jpg',
+  1402: '/images/rooms/1402/card/claudio-pecci-xqIF1YDewjk-unsplash.jpg',
+  1403: '/images/rooms/1403/card/ariel-domenden-nWYotnbVlXk-unsplash.jpg',
   2101: '/images/rooms/room-2101.jpg',
   2102: '/images/rooms/room-2102.jpg',
   2103: '/images/rooms/room-2103.jpg',
