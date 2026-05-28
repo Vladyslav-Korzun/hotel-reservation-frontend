@@ -29,8 +29,8 @@
       </section>
     }
 
-    <section class="row g-4 admin-layout">
-      <div class="col-12 col-xl-8">
+    <section class="row g-4 admin-layout" [class.admin-layout--full]="activeResource() === 'auditLog'">
+      <div [class]="activeResource() === 'auditLog' ? 'col-12' : 'col-12 col-xl-8'">
         @switch (activeResource()) {
           @case ('hotels') {
             <app-hotel-admin-form [submitting]="isBusy('hotels')" (submitted)="submitHotel($event)" />
@@ -44,6 +44,160 @@
           @case ('services') {
             <app-service-offering-admin-form [submitting]="isBusy('services')" (submitted)="submitService($event)" />
           }
+          @case ('auditLog') {
+            <div class="d-grid gap-3">
+
+              <!-- Top controls row -->
+              <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="eyebrow">Show last</span>
+                  <div class="d-flex gap-1">
+                    @for (opt of auditLimitOptions; track opt) {
+                      <button type="button" class="audit-limit-btn" [class.active]="auditLimit() === opt" (click)="changeAuditLimit(opt)">{{ opt }}</button>
+                    }
+                  </div>
+                </div>
+                <button type="button" class="btn btn-brand-outline btn-sm" [disabled]="auditLoading()" (click)="loadAuditLog()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="margin-right:5px"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                  {{ auditLoading() ? 'Loading…' : 'Refresh' }}
+                </button>
+              </div>
+
+              <!-- Search row -->
+              <div class="row g-2">
+                <div class="col-12 col-sm">
+                  <div class="audit-search-field">
+                    <svg class="audit-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    <input
+                      type="text"
+                      class="audit-search__input"
+                      placeholder="Search by actor, role, action, entity…"
+                      [value]="auditSearchQuery()"
+                      (input)="auditSearchQuery.set($any($event.target).value)"
+                    />
+                    @if (auditSearchQuery()) {
+                      <button type="button" class="audit-search__clear" (click)="auditSearchQuery.set('')" aria-label="Clear">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                      </button>
+                    }
+                  </div>
+                </div>
+                <div class="col-12 col-sm-auto">
+                  <app-audit-date-picker
+                    [value]="auditSearchDate()"
+                    (valueChange)="auditSearchDate.set($event)"
+                  />
+                </div>
+              </div>
+
+              <!-- States -->
+              @if (auditLoading()) {
+                <app-loading-state label="Loading audit log…" />
+              } @else if (auditProblem(); as p) {
+                <app-error-message [problem]="p" />
+              } @else if (auditEntries().length === 0) {
+                <div class="card admin-empty-state">
+                  <div class="card-body">
+                    <p class="eyebrow">Audit Log</p>
+                    <h2 class="serif-heading">No entries yet</h2>
+                    <p>Actions will appear here as users interact with the system.</p>
+                  </div>
+                </div>
+              } @else {
+
+                <!-- Table -->
+                <div class="audit-table-wrap">
+                  <table class="audit-table">
+                    <thead>
+                      <tr>
+                        <th class="d-none d-sm-table-cell">#</th>
+                        <th>Time</th>
+                        <th>Actor</th>
+                        <th class="d-none d-md-table-cell">Role</th>
+                        <th>Action</th>
+                        <th class="d-none d-md-table-cell">Entity</th>
+                        <th class="d-none d-lg-table-cell">Details</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (entry of filteredAuditEntries(); track entry.id) {
+                        <!-- Main row -->
+                        <tr
+                          class="audit-row"
+                          [class.audit-row--expanded]="auditExpandedId() === entry.id"
+                          (click)="toggleAuditExpand(entry.id)"
+                        >
+                          <td class="audit-table__id d-none d-sm-table-cell">{{ entry.id }}</td>
+                          <td class="audit-table__time">
+                            <span class="audit-time-date">{{ entry.timestamp | date:'dd MMM' }}</span>
+                            <span class="audit-time-hour">{{ entry.timestamp | date:'HH:mm' }}</span>
+                          </td>
+                          <td class="audit-table__actor" [title]="entry.actorId">{{ shortId(entry.actorId) }}</td>
+                          <td class="d-none d-md-table-cell">
+                            <span class="audit-badge audit-badge--role">{{ entry.actorRole }}</span>
+                          </td>
+                          <td>
+                            <span class="audit-badge" [attr.data-category]="auditActionCategory(entry.actionType)">
+                              {{ entry.actionType.replace(/_/g, ' ') }}
+                            </span>
+                          </td>
+                          <td class="d-none d-md-table-cell">
+                            <span class="audit-entity">
+                              <svg class="audit-entity__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                                <path [attr.d]="auditEntityIconPath(entry.entityType)" />
+                              </svg>
+                              {{ entry.entityType.replace('_', ' ') }}
+                            </span>
+                          </td>
+                          <td class="audit-table__details d-none d-lg-table-cell">{{ entry.details }}</td>
+                          <td class="audit-table__chevron">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.rotated]="auditExpandedId() === entry.id"><path d="M9 18l6-6-6-6"/></svg>
+                          </td>
+                        </tr>
+
+                        <!-- Expanded detail row -->
+                        @if (auditExpandedId() === entry.id) {
+                          <tr class="audit-detail-row">
+                            <td colspan="8">
+                              <div class="audit-detail row g-3 m-0 px-2 py-3">
+                                <div class="audit-detail__item col-12 col-sm-6 col-xl-3">
+                                  <span class="audit-detail__label">Actor ID</span>
+                                  <code class="audit-detail__value">{{ entry.actorId }}</code>
+                                </div>
+                                <div class="audit-detail__item col-12 col-sm-6 col-xl-3">
+                                  <span class="audit-detail__label">Entity ID</span>
+                                  <code class="audit-detail__value">{{ entry.entityId }}</code>
+                                </div>
+                                <div class="audit-detail__item col-12 col-sm-6 col-xl-3">
+                                  <span class="audit-detail__label">Timestamp</span>
+                                  <span class="audit-detail__value">{{ entry.timestamp | date:'dd MMMM yyyy, HH:mm:ss' }}</span>
+                                </div>
+                                <div class="audit-detail__item col-12 col-sm-6 col-xl-3">
+                                  <span class="audit-detail__label">Details</span>
+                                  <span class="audit-detail__value">{{ entry.details }}</span>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        }
+                      }
+                    </tbody>
+                  </table>
+                </div>
+
+                <p class="audit-count">
+                  @if (filteredAuditEntries().length !== auditEntries().length) {
+                    {{ filteredAuditEntries().length }} of {{ auditEntries().length }} entries
+                  } @else {
+                    {{ auditEntries().length }} entries
+                  }
+                </p>
+
+              }
+            </div>
+          }
+
           @case ('staff') {
             @if (loadingStaffAssignments()) {
               <section class="admin-staff-loading">
@@ -86,6 +240,7 @@
         }
       </div>
 
+      @if (activeResource() !== 'auditLog') {
       <aside class="col-12 col-xl-4">
         <div class="card admin-result">
           <div class="card-body">
@@ -98,6 +253,7 @@
           </div>
         </div>
       </aside>
+      }
     </section>
   </div>
 

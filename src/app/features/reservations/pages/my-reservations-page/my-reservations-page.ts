@@ -1,10 +1,11 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { catchError, finalize, forkJoin, of } from 'rxjs';
+import { catchError, finalize, forkJoin, of, switchMap } from 'rxjs';
+import { map } from 'rxjs';
 import { toProblemDetail } from '../../../../core/http/api-error.util';
 import { ProblemDetail } from '../../../../core/http/problem-detail.model';
 import { ErrorMessage } from '../../../../shared/ui/error-message/error-message';
 import { LoadingState } from '../../../../shared/ui/loading-state/loading-state';
-import { Hotel } from '../../../hotels/model/hotel.model';
+import { Hotel, HotelRoomType } from '../../../hotels/model/hotel.model';
 import { HotelsFacade } from '../../../hotels/services/hotels.facade';
 import { ReservationHotelDisplay, ReservationList } from '../../components/reservation-list/reservation-list';
 import { Reservation, isCancellableReservation } from '../../model/reservation.model';
@@ -34,6 +35,7 @@ export class MyReservationsPage {
   protected readonly problem = signal<ProblemDetail | null>(null);
   protected readonly reservations = signal<Reservation[]>([]);
   protected readonly hotels = signal<Record<number, ReservationHotelDisplay>>({});
+  protected readonly roomTypes = signal<Record<number, string>>({});
   protected readonly activeFilter = signal<ReservationFilter>('all');
   protected readonly sortMode = signal<ReservationSort>('checkInAsc');
   protected readonly expandedReservationId = signal<string | null>(null);
@@ -166,11 +168,31 @@ export class MyReservationsPage {
       reservations: this.reservationsFacade.listMyReservations(),
       hotels: this.hotelsFacade.listHotels().pipe(catchError(() => of([]))),
     })
-      .pipe(finalize(() => this.loading.set(false)))
+      .pipe(
+        switchMap(({ reservations, hotels }) => {
+          const uniqueHotelIds = [...new Set(reservations.map((r) => r.hotelId))];
+          const roomTypes$ =
+            uniqueHotelIds.length > 0
+              ? forkJoin(
+                  uniqueHotelIds.map((id) =>
+                    this.hotelsFacade.getHotelRoomTypes(id).pipe(catchError(() => of([]))),
+                  ),
+                ).pipe(map((arrays) => arrays.flat()))
+              : of([] as HotelRoomType[]);
+
+          return forkJoin({
+            reservations: of(reservations),
+            hotels: of(hotels),
+            roomTypes: roomTypes$,
+          });
+        }),
+        finalize(() => this.loading.set(false)),
+      )
       .subscribe({
-        next: ({ reservations, hotels }) => {
+        next: ({ reservations, hotels, roomTypes }) => {
           this.reservations.set(reservations);
           this.hotels.set(toHotelDisplayMap(hotels));
+          this.roomTypes.set(toRoomTypeNameMap(roomTypes));
         },
         error: (error: unknown) => {
           this.reservations.set([]);
@@ -232,6 +254,13 @@ function toHotelDisplayMap(hotels: readonly Hotel[]): Record<number, Reservation
       name: hotel.name,
       location: [hotel.city, hotel.country].filter(Boolean).join(', '),
     };
+    return acc;
+  }, {});
+}
+
+function toRoomTypeNameMap(roomTypes: readonly HotelRoomType[]): Record<number, string> {
+  return roomTypes.reduce<Record<number, string>>((acc, rt) => {
+    acc[rt.roomTypeId] = rt.name;
     return acc;
   }, {});
 }

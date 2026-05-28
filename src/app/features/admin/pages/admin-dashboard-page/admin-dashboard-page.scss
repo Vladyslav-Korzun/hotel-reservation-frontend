@@ -1,4 +1,4 @@
-﻿.admin-page {
+.admin-page {
   color: var(--color-text-body);
   min-height: 100vh;
   padding: 7.5rem 0 4rem;
@@ -139,4 +139,288 @@
   .admin-page {
     padding-bottom: 3rem;
   }
+}
+
+// ── Audit Log ──────────────────────────────────────────────────────────────
+
+.audit-limit-btn {
+  background: var(--color-bg-card-soft);
+  border: 1px solid rgba(201, 190, 179, 0.18);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-body);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.28rem 0.75rem;
+  transition: background 0.15s, color 0.15s;
+}
+
+.audit-limit-btn.active {
+  background: var(--color-gold);
+  border-color: var(--color-gold);
+  color: var(--color-ink-body);
+}
+
+// Search field — visual wrapper only; width is handled by Bootstrap col-*
+.audit-search-field {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(201, 190, 179, 0.18);
+  border-radius: var(--radius-md);
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 0.75rem;
+  transition: border-color 0.15s;
+  width: 100%;
+
+  &:focus-within {
+    border-color: var(--color-gold);
+  }
+}
+
+.audit-search__icon {
+  color: var(--color-text-subtle);
+  flex-shrink: 0;
+  height: 15px;
+  width: 15px;
+}
+
+.audit-search__input {
+  background: transparent;
+  border: none;
+  color: var(--color-text-body);
+  font-size: 0.9rem;
+  min-width: 0;
+  outline: none;
+  padding: 0.6rem 0;
+  width: 100%;
+
+  &::placeholder {
+    color: var(--color-text-subtle);
+  }
+
+  &[type='date']::-webkit-calendar-picker-indicator {
+    filter: invert(0.5);
+    cursor: pointer;
+  }
+}
+
+.audit-search__clear {
+  background: none;
+  border: none;
+  color: var(--color-text-subtle);
+  cursor: pointer;
+  flex-shrink: 0;
+  height: 16px;
+  padding: 0;
+  width: 16px;
+
+  svg {
+    height: 100%;
+    width: 100%;
+  }
+
+  &:hover {
+    color: var(--color-text-body);
+  }
+}
+
+// Table wrapper
+.audit-table-wrap {
+  border: 1px solid rgba(201, 190, 179, 0.18);
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+}
+
+.audit-table {
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  min-width: 480px;
+  width: 100%;
+}
+
+.audit-table thead tr {
+  border-bottom: 1px solid rgba(201, 190, 179, 0.18);
+}
+
+.audit-table th {
+  color: var(--color-gold-muted);
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+// Main data rows
+.audit-row {
+  border-bottom: 1px solid rgba(201, 190, 179, 0.08);
+  cursor: pointer;
+  transition: background 0.12s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  &--expanded {
+    background: rgba(196, 156, 116, 0.07);
+  }
+}
+
+.audit-row td {
+  color: var(--color-text-body);
+  font-size: 0.92rem;
+  padding: 0.75rem 1rem;
+  vertical-align: middle;
+}
+
+.audit-table__id {
+  color: var(--color-text-subtle) !important;
+  font-size: 0.78rem;
+  width: 40px;
+}
+
+.audit-table__time {
+  white-space: nowrap;
+}
+
+.audit-time-date {
+  color: var(--color-text-body);
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.audit-time-hour {
+  color: var(--color-text-subtle);
+  display: block;
+  font-size: 0.78rem;
+}
+
+.audit-table__actor {
+  color: var(--color-text-subtle) !important;
+  font-family: monospace;
+  font-size: 0.82rem;
+}
+
+.audit-table__details {
+  color: var(--color-text-muted) !important;
+  font-size: 0.88rem;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.audit-table__chevron {
+  width: 28px;
+
+  svg {
+    color: var(--color-text-subtle);
+    display: block;
+    height: 16px;
+    transition: transform 0.2s;
+    width: 16px;
+
+    &.rotated {
+      transform: rotate(90deg);
+    }
+  }
+}
+
+// Expanded detail row — layout via Bootstrap row/col in HTML
+.audit-detail-row td {
+  padding: 0;
+}
+
+.audit-detail {
+  background: rgba(196, 156, 116, 0.06);
+  border-bottom: 1px solid rgba(201, 190, 179, 0.12);
+}
+
+.audit-detail__item {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.audit-detail__label {
+  color: var(--color-gold-muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.audit-detail__value {
+  color: var(--color-text-body);
+  font-size: 0.88rem;
+  overflow-wrap: anywhere;
+
+  &:is(code) {
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: var(--radius-sm);
+    font-family: monospace;
+    font-size: 0.82rem;
+    padding: 0.15rem 0.35rem;
+  }
+}
+
+// Badges
+.audit-badge {
+  border-radius: var(--radius-pill);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 0.22rem 0.6rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.audit-badge--role {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-subtle);
+}
+
+.audit-badge[data-category='create'] {
+  background: rgba(52, 168, 83, 0.16);
+  color: #6fcf97;
+}
+
+.audit-badge[data-category='update'] {
+  background: rgba(196, 156, 116, 0.18);
+  color: var(--color-gold-hover);
+}
+
+.audit-badge[data-category='danger'] {
+  background: rgba(235, 87, 87, 0.16);
+  color: #f28b82;
+}
+
+.audit-badge[data-category='neutral'] {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--color-text-muted);
+}
+
+// Entity cell with SVG icon
+.audit-entity {
+  align-items: center;
+  display: flex;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.audit-entity__icon {
+  flex-shrink: 0;
+  height: 15px;
+  opacity: 0.7;
+  width: 15px;
+}
+
+// Footer count
+.audit-count {
+  color: var(--color-text-subtle);
+  font-size: 0.8rem;
+  margin: 0;
+  text-align: right;
 }

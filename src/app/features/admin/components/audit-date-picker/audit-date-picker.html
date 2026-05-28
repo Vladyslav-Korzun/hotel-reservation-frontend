@@ -1,0 +1,60 @@
+<div class="adp-wrapper">
+
+  <!-- Trigger -->
+  <div class="adp-trigger" [class.adp-trigger--open]="isOpen()" (click)="toggle()">
+    <svg class="adp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+      <line x1="16" y1="2" x2="16" y2="6"/>
+      <line x1="8" y1="2" x2="8" y2="6"/>
+      <line x1="3" y1="10" x2="21" y2="10"/>
+    </svg>
+    <span class="adp-display" [class.adp-display--empty]="!value()">
+      {{ value() ? formatDisplay(value()) : 'Filter by date' }}
+    </span>
+    @if (value()) {
+      <button type="button" class="adp-clear" (click)="clear($event)" aria-label="Clear date">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    }
+  </div>
+
+  <!-- Popover -->
+  @if (isOpen()) {
+    <div class="adp-popover" (click)="$event.stopPropagation()">
+
+      <!-- Navigation -->
+      <div class="adp-nav">
+        <button type="button" class="adp-nav__btn" aria-label="Previous month" (click)="prevMonth()">‹</button>
+        <span class="adp-nav__label">{{ calendarMonth().label }}</span>
+        <button type="button" class="adp-nav__btn" aria-label="Next month" (click)="nextMonth()">›</button>
+      </div>
+
+      <!-- Weekday headers -->
+      <div class="adp-weekdays">
+        @for (wd of weekdayLabels; track wd) {
+          <span>{{ wd }}</span>
+        }
+      </div>
+
+      <!-- Day grid -->
+      <div class="adp-days">
+        @for (blank of calendarMonth().leadingBlanks; track blank) {
+          <span aria-hidden="true"></span>
+        }
+        @for (day of calendarMonth().days; track day.date) {
+          <button
+            type="button"
+            class="adp-day"
+            [class.adp-day--selected]="value() === day.date"
+            [class.adp-day--today]="day.date === todayIso"
+            (click)="selectDate(day.date)"
+          >{{ day.label }}</button>
+        }
+      </div>
+
+    </div>
+  }
+
+</div>

@@ -25,6 +25,8 @@ export class ReservationList {
   readonly cancelingReservationId = input<string | null>(null);
   readonly allowCancellation = input(false);
   readonly hotels = input<Record<number, ReservationHotelDisplay>>({});
+  /** roomTypeId → display name, built from hotel room-type data loaded by the parent page */
+  readonly roomTypes = input<Record<number, string>>({});
   readonly emptyTitle = input('No reservations found');
   readonly emptyMessage = input('No bookings match the current reservation view.');
 
@@ -96,12 +98,19 @@ export class ReservationList {
   }
 
   protected roomLabel(reservation: Reservation): string {
-    return reservation.roomId === null ? 'Reserved room' : 'Assigned room';
+    return this.roomTypes()[reservation.roomTypeId]
+      ?? (reservation.roomId === null ? 'Reserved room' : 'Assigned room');
   }
 
   protected roomDescription(reservation: Reservation): string {
-    return reservation.roomId === null
-      ? 'The exact room will be assigned by the hotel before check-in.'
+    const typeName = this.roomTypes()[reservation.roomTypeId];
+    if (reservation.roomId === null) {
+      return typeName
+        ? `${typeName} — exact room assigned by the hotel before check-in.`
+        : 'The exact room will be assigned by the hotel before check-in.';
+    }
+    return typeName
+      ? `${typeName} — your room has been assigned for this stay.`
       : 'Your room has been assigned for this stay.';
   }
 
