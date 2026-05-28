@@ -1,5 +1,5 @@
 import { Component, computed, input, signal } from '@angular/core';
-import { hotelPhotoUrl } from '../../../../shared/assets/placeholder-images';
+import { hotelGalleryPhotos } from '../../../../shared/assets/placeholder-images';
 import { PhotoLightbox } from '../../../../shared/ui/photo-lightbox/photo-lightbox';
 
 /**
@@ -19,9 +19,8 @@ export class HotelGallery {
   readonly hotelId = input.required<number>();
 
   protected readonly cells = computed(() => {
-    const url = hotelPhotoUrl(this.hotelId());
-    // Show the same hotel photo in all 5 gallery slots (backend gallery not yet available).
-    return Array.from({ length: 5 }, (_, i) => ({
+    const photos = hotelGalleryPhotos(this.hotelId(), 5);
+    return photos.map((url, i) => ({
       id: `${this.hotelId()}-${i}`,
       thumbUrl: url,
       fullUrl: url,
